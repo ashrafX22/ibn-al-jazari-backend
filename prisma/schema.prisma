@@ -1,0 +1,15 @@
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+  model sheikh {
+    id    Int     @id @default(autoincrement())
+    email String  @unique
+    name  String 
+  }
