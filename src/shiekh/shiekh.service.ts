@@ -6,15 +6,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class ShiekhService {
   constructor(private readonly prismaService: PrismaService) {}
-  create(createShiekhDto: CreateShiekhDto) {
-    const shiekh = this.prismaService.sheikh.create({
-      data: {
-        id: createShiekhDto.id,
-        name: createShiekhDto.name,
-        email: createShiekhDto.email,
-        password: createShiekhDto.password,
-        token: createShiekhDto.token,
-      },
+  async create(createShiekhDto: CreateShiekhDto) {
+    const shiekh = await this.prismaService.sheikh.create({
+      data: createShiekhDto,
     });
     return shiekh;
   }
