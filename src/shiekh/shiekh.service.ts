@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateShiekhDto } from './dto/create-shiekh.dto';
 import { UpdateShiekhDto } from './dto/update-shiekh.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ShiekhService {
+  constructor(private readonly prismaService: PrismaService) {}
   create(createShiekhDto: CreateShiekhDto) {
-    return 'This action adds a new shiekh';
+    const shiekh = this.prismaService.sheikh.create({
+      data: {
+        id: createShiekhDto.id,
+        name: createShiekhDto.name,
+        email: createShiekhDto.email,
+        password: createShiekhDto.password,
+        token: createShiekhDto.token,
+      },
+    });
+    return shiekh;
   }
 
   findAll() {
