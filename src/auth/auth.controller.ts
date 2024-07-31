@@ -17,4 +17,9 @@ export class AuthController {
   handleRedirect() {
     return { msg: 'OK' };
   }
+
+  @Get('')
+  getAll() {
+    return this.authService.getAll();
+  }
 }
