@@ -2,30 +2,42 @@ import { Injectable } from '@nestjs/common';
 import { CreateShiekhDto } from './dto/create-shiekh.dto';
 import { UpdateShiekhDto } from './dto/update-shiekh.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { sheikh } from '@prisma/client';
 
 @Injectable()
 export class ShiekhService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
   async create(createShiekhDto: CreateShiekhDto) {
-    const shiekh = await this.prismaService.sheikh.create({
+    const shiekh = await this.prisma.sheikh.create({
       data: createShiekhDto,
     });
     return shiekh;
   }
 
-  findAll() {
-    return `This action returns all shiekh`;
+  async findAll() {
+    const sheikhs = await this.prisma.sheikh.findMany();
+    return sheikhs;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shiekh`;
+  async findOne(id: number) {
+    const sheikh = await this.prisma.sheikh.findUnique({ where: { id } });
+    return sheikh;
   }
 
-  update(id: number, updateShiekhDto: UpdateShiekhDto) {
-    return `This action updates a #${id} shiekh`;
+  async update(id: number, updateShiekhDto: UpdateShiekhDto) {
+    const updateUser = await this.prisma.sheikh.update({
+      where: { id },
+      data: updateShiekhDto,
+    });
+    return updateUser;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} shiekh`;
+  async remove(id: number) {
+    const deleteUser = await this.prisma.sheikh.delete({
+      where: {
+        id,
+      },
+    });
+    return deleteUser;
   }
 }
