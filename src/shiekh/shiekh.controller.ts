@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ShiekhService } from './shiekh.service';
 import { CreateShiekhDto } from './dto/create-shiekh.dto';
 import { UpdateShiekhDto } from './dto/update-shiekh.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('shiekh')
+@ApiTags('shiekh')
 export class ShiekhController {
   constructor(private readonly shiekhService: ShiekhService) {}
 
