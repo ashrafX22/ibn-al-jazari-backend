@@ -8,10 +8,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model user {
   id      Int      @id @default(autoincrement())
   email   String   @unique
-  name    String?
+  name    String
   role    Role     @default(STUDENT)
   posts   Post[]
 }
@@ -22,7 +22,7 @@ model Post {
   updatedAt  DateTime   @updatedAt
   title      String
   published  Boolean    @default(false)
-  author     User       @relation(fields: [authorId], references: [id])
+  author     user       @relation(fields: [authorId], references: [id])
   authorId   Int
 }
 
