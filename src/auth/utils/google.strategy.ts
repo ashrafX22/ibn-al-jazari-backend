@@ -27,6 +27,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         });
         console.log('Validate');
         console.log(user);
-        // return user || null;
+        return user || null;
     }
 }

@@ -12,18 +12,18 @@ export class AuthService {
         console.log(name)
         console.log(email)
 
-        // return await this.prisma.sheikh.upsert({
-        //     where: {
-        //         email: email,
-        //     },
-        //     create: {
-        //         email: email,
-        //         name: name,
-        //     },
-        //     update: {
-        //         name: name,
-        //     },
-        // });
+        return await this.prisma.sheikh.upsert({
+            where: {
+                email: email,
+            },
+            create: {
+                email: email,
+                name: name,
+            },
+            update: {
+                name: name,
+            },
+        });
     }
 
     async getAll() {
