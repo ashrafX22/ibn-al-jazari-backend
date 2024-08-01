@@ -8,14 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model sheikh {
-  id   Int  @id @default(autoincrement())
-  name String
-  email String
-  password String
-  token String
-}
-
 model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
