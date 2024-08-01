@@ -12,6 +12,7 @@ model user {
   id      Int      @id @default(autoincrement())
   email   String   @unique
   name    String
+  password String
   role    Role     @default(STUDENT)
   posts   Post[]
 }
