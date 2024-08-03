@@ -6,9 +6,6 @@ export class UserEntity {
   email: string;
   role: Role;
 
-  @Exclude()
-  password: string;
-
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }

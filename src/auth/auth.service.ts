@@ -1,24 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreateShiekhDto } from 'src/shiekh/dto/create-shiekh.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
     constructor(private prisma: PrismaService) { }
 
-    async validateSheikh(createSheikhDto: CreateShiekhDto) {
-        const { name, email } = createSheikhDto;
+    async validateUser(createUserDto: CreateUserDto) {
+        const { name, email, role } = createUserDto;
 
         console.log(name)
         console.log(email)
+        console.log(role)
 
-        return await this.prisma.sheikh.upsert({
+        return await this.prisma.user.upsert({
             where: {
                 email: email,
             },
             create: {
                 email: email,
                 name: name,
+                role: role
             },
             update: {
                 name: name,
@@ -27,6 +29,6 @@ export class AuthService {
     }
 
     async getAll() {
-        return await this.prisma.sheikh.findMany();
+        return await this.prisma.user.findMany();
     }
 }

@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsStrongPassword,
 } from 'class-validator';
 import { Role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
@@ -17,10 +16,6 @@ export class CreateUserDto {
   @IsEmail()
   @ApiProperty()
   email: string;
-
-  @IsStrongPassword()
-  @ApiProperty()
-  password: string;
 
   @IsEnum(Role)
   @IsNotEmpty()
