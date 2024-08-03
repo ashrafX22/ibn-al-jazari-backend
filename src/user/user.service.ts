@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Role } from '@prisma/client';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -14,14 +14,14 @@ export class UserService {
     return User;
   }
 
-  async findAll() {
+  async findAll(): Promise<UserEntity[]> {
     const users = await this.prisma.user.findMany();
-    return users;
+    return users.map((user) => new UserEntity(user));
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    return user;
+    return new UserEntity(user);
   }
 
   async update(id: number, data: UpdateUserDto) {
