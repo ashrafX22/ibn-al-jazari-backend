@@ -16,7 +16,7 @@ export class UserService {
 
   async upsert(createUserDto: CreateUserDto) {
     const { name, email, role } = createUserDto;
-
+    console.log("user service");
     return this.prisma.user.upsert({
       where: {
         email: email,

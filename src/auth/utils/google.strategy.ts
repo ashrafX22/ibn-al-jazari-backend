@@ -20,6 +20,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(accessToken: string, refreshToken: string, profile: Profile) {
+        console.log('strategy');
         console.log(accessToken);
         console.log(refreshToken);
         console.log(profile);
@@ -29,8 +30,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
             // TODO: try to omit this field or set it from frontend
             role: Role.SHEIKH
         });
-        console.log('Validate');
+        console.log("strategy")
         console.log(user);
-        return user || null;
+        return user;
     }
 }
