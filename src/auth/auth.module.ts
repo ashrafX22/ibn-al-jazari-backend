@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { SessionSerializer } from './utils/serializer';
 
 @Module({
   imports: [PrismaModule],
@@ -14,6 +15,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
       useClass: AuthService,
     },
     GoogleStrategy,
+    SessionSerializer
   ],
 })
 export class AuthModule { }

@@ -28,6 +28,16 @@ export class AuthService {
         });
     }
 
+    // TODO: this should not be here, it should be inside user service
+    async get(id: number) {
+        return await this.prisma.user.findUnique({
+            where: {
+                id: id
+            }
+        });
+    }
+
+    // TODO: this should not be here, it should be inside user service
     async getAll() {
         return await this.prisma.user.findMany();
     }
