@@ -16,4 +16,17 @@ export class AuthController {
   handleRedirect(@Req() req: Request, @Res() res: Response) {
     res.redirect(`http://localhost:4200?user=${JSON.stringify(req.user)}`);
   }
+
+  @Get('status')
+  status(@Req() req: Request) {
+    console.log(req.user);
+    return req.user;
+  }
+
+  @Get('logout')
+  logout(@Req() req: Request, @Res() res: Response) {
+    req.logout(() => {
+      res.redirect('http://localhost:4200');
+    });
+  }
 }
