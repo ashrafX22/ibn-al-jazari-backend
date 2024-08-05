@@ -1,32 +1,44 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { GoogleAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
-  handleLogin() { }
+  login() { }
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  handleRedirect(@Req() req: Request, @Res() res: Response) {
-    res.redirect(`http://localhost:4200?user=${JSON.stringify(req.user)}`);
+  redirect(@Res() res: Response) {
+    // TODO: set the redirection url to the frontend
+    res.redirect('');
   }
 
-  @Get('status')
-  status(@Req() req: Request) {
-    console.log(req.user);
+  // only returns the user information
+  // retrieves the user from req which is set by Passport after successful authentication
+  @Get('user')
+  getUser(@Req() req: Request) {
     return req.user;
   }
 
   @Get('logout')
   logout(@Req() req: Request, @Res() res: Response) {
+    // TODO: set logout redirection url to the frontend
     req.logout(() => {
-      res.redirect('http://localhost:4200');
+      res.redirect('');
     });
   }
+
+
+  // similar to getUser
+  // returns the information of the whole session
+  // accesses redis directly
+  // @Get('')
+  // getAuthSession(@Session() session: Record<string, any>) {
+  //   console.log(session);
+  //   console.log(session.id);
+  //   return session.passport.user;
+  // }
 }
