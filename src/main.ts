@@ -15,7 +15,7 @@ async function bootstrap() {
 
   // TODO: set origin
   app.enableCors({
-    origin: '',
+    origin: process.env.ORIGIN,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -33,7 +33,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // sessions
-
   // redis cloud
   const redisClient = createClient({
     password: process.env.REDIS_PASSWORD,
@@ -42,17 +41,7 @@ async function bootstrap() {
       port: +process.env.REDIS_PORT,
     }
   });
-
-  // redis local
-  // const redisClient = createClient({ url: `redis://${process.env.REDIS_URL || '127.0.0.1:6379'}`, legacyMode: true });
-
-  // redisClient.on('error', (err) => console.error('Redis Client Error', err));
-  // await redisClient.connect();
-  // redisClient.on('ready', () => {
-  //   console.log('Redis client connected');
-  // });
   redisClient.connect().catch(console.error);
-  // const redisStore = new RedisStore(session);
 
   app.use(
     session({

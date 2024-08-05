@@ -13,7 +13,7 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   redirect(@Res() res: Response) {
     // TODO: set the redirection url to the frontend
-    res.redirect('');
+    res.redirect(process.env.ORIGIN);
   }
 
   // only returns the user information
@@ -27,7 +27,7 @@ export class AuthController {
   logout(@Req() req: Request, @Res() res: Response) {
     // TODO: set logout redirection url to the frontend
     req.logout(() => {
-      res.redirect('');
+      res.redirect(process.env.ORIGIN);
     });
   }
 
