@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,7 +7,13 @@ import { UserEntity } from './entities/user.entity';
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+
   async create(data: CreateUserDto) {
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (userExists)
+      throw new HttpException('email allrady exists', HttpStatus.CONFLICT);
     const User = await this.prisma.user.create({
       data,
     });
@@ -21,6 +27,8 @@ export class UserService {
 
   async findOne(id: number): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user)
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     return new UserEntity(user);
   }
 
@@ -33,6 +41,7 @@ export class UserService {
   }
 
   async remove(id: number) {
+    await this.findOne(id);
     const deleteUser = await this.prisma.user.delete({
       where: {
         id,
