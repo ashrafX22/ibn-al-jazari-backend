@@ -6,12 +6,30 @@ import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
   async create(data: CreateUserDto) {
     const User = await this.prisma.user.create({
       data,
     });
     return User;
+  }
+
+  async upsert(createUserDto: CreateUserDto) {
+    const { name, email, role } = createUserDto;
+    console.log("user service");
+    return this.prisma.user.upsert({
+      where: {
+        email: email,
+      },
+      create: {
+        email: email,
+        name: name,
+        role: role
+      },
+      update: {
+        name: name,
+      },
+    });
   }
 
   async findAll(): Promise<UserEntity[]> {
