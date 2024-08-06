@@ -6,7 +6,7 @@ import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(data: CreateUserDto) {
     const userExists = await this.prisma.user.findUnique({
@@ -21,7 +21,7 @@ export class UserService {
   }
 
   async upsert(createUserDto: CreateUserDto) {
-    const { name, email, role } = createUserDto;
+    const { name, email, role, accessToken } = createUserDto;
     console.log('user service');
     return this.prisma.user.upsert({
       where: {
@@ -31,6 +31,7 @@ export class UserService {
         email: email,
         name: name,
         role: role,
+        accessToken: accessToken,
       },
       update: {
         name: name,
@@ -45,8 +46,8 @@ export class UserService {
 
   async findOne(id: number): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user)
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    // if (!user)
+    //   throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     return new UserEntity(user);
   }
 

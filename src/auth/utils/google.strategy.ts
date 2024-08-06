@@ -15,7 +15,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: 'http://localhost:3000/api/auth/google/redirect',
-            scope: ['profile', 'email'],
+            scope: ['profile', 'email', 'https://www.googleapis.com/auth/calendar'],
         });
     }
 
@@ -28,7 +28,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
             email: profile.emails[0].value,
             name: profile.displayName,
             // TODO: try to omit this field or set it from frontend
-            role: Role.SHEIKH
+            role: Role.SHEIKH,
+            accessToken: accessToken
         });
         console.log("strategy")
         console.log(user);

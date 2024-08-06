@@ -22,7 +22,7 @@ import { UserEntity } from './entities/user.entity';
 @UsePipes(new ValidationPipe())
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
