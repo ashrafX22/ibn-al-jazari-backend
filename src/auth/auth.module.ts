@@ -6,6 +6,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { SessionSerializer } from './utils/session.serializer';
 import { UserService } from 'src/user/user.service';
 import { PassportModule } from '@nestjs/passport';
+import { AuthenticatedGuard, RolesGuard } from './utils/guards';
 
 @Module({
   imports: [PrismaModule, PassportModule.register({ session: true })],
@@ -16,6 +17,8 @@ import { PassportModule } from '@nestjs/passport';
       provide: 'AUTH_SERVICE',
       useClass: AuthService,
     },
+    AuthenticatedGuard,
+    RolesGuard,
     UserService,
     GoogleStrategy,
     SessionSerializer
