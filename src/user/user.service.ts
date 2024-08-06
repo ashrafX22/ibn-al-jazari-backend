@@ -20,6 +20,24 @@ export class UserService {
     return User;
   }
 
+  async upsert(createUserDto: CreateUserDto) {
+    const { name, email, role } = createUserDto;
+    console.log('user service');
+    return this.prisma.user.upsert({
+      where: {
+        email: email,
+      },
+      create: {
+        email: email,
+        name: name,
+        role: role,
+      },
+      update: {
+        name: name,
+      },
+    });
+  }
+
   async findAll(): Promise<UserEntity[]> {
     const users = await this.prisma.user.findMany();
     return users.map((user) => new UserEntity(user));
