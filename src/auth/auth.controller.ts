@@ -1,5 +1,5 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { GoogleAuthGuard } from './utils/guards';
+import { AuthenticatedGuard, GoogleAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, loginSwaggerDoc, logoutSwaggerDoc, redirectSwaggerDoc } from './auth.swagger-doc';
@@ -30,6 +30,7 @@ export class AuthController {
   }
 
   @logoutSwaggerDoc()
+  @UseGuards(AuthenticatedGuard)
   @Get('logout')
   logout(@Req() req: Request, @Res() res: Response) {
     // TODO: set logout redirection url to the frontend
