@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,16 +7,140 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String
-  role    Role     @default(STUDENT)
+model Student {
+  id                  Int                   @id @default(autoincrement())
+  email               String                @unique
+  name                String
+  password            String
+  role                Role                  @default(STUDENT)
+  gender              Gender
+  age                 Int
+  access_token        String
+  refrish_token       String
+  updatedAt           DateTime              @updatedAt
+  createdAt           DateTime              @default(now())
+  Payment             Payment[]
+  ClassroomOnStudents ClassroomOnStudents[]
+  MeetingOnStudents   MeetingOnStudents[]
+}
+
+model Teacher {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  email               String                @unique
+  password            String
+  gender              Gender
+  age                 Int
+  summary             String                @default("")
+  access_token        String
+  refrish_token       String
+  proficiency_level   Role                  @default(SHEIKH)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  Classroom           Classroom[]
+  ClassroomOnTeachers ClassroomOnTeachers[]
+  MeetingOnTeachers   MeetingOnTeachers[]
+}
+
+model Classroom {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique
+  subject             String
+  teacherId           Int
+  teacher             Teacher               @relation(fields: [teacherId], references: [id])
+  createdAt           DateTime              @default(now())
+  Payment             Payment[]
+  Meeting             Meeting[]
+  ClassroomOnStudents ClassroomOnStudents[]
+  ClassroomOnTeachers ClassroomOnTeachers[]
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  student       Student       @relation(fields: [student_id], references: [id])
+  student_id    Int
+  class_room    Classroom     @relation(fields: [classroom_id], references: [id])
+  classroom_id  Int
+  amount        Float
+  status        PaymentStatus
+  paymentDate   DateTime      @default(now())
+  paymentMethod PaymentMethod
+}
+
+model Meeting {
+  id                Int                 @id @default(autoincrement())
+  class             Classroom           @relation(fields: [classroom_id], references: [id])
+  classroom_id      Int
+  scheduledDate     DateTime
+  meetingLink       String
+  duration          Int
+  createdAt         DateTime            @default(now())
+  startsAt          DateTime            @updatedAt
+  MeetingOnStudents MeetingOnStudents[]
+  MeetingOnTeachers MeetingOnTeachers[]
+}
+
+model ClassroomOnStudents {
+  studentId   Int
+  classroomId Int
+
+  Student   Student   @relation(fields: [studentId], references: [id])
+  Classroom Classroom @relation(fields: [classroomId], references: [id])
+
+  @@id([studentId, classroomId])
+}
+
+model ClassroomOnTeachers {
+  teacherId   Int
+  classroomId Int
+
+  Teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  Classroom Classroom @relation(fields: [classroomId], references: [id])
+
+  @@id([teacherId, classroomId])
+}
+
+model MeetingOnStudents {
+  studentId Int
+  meetingId Int
+
+  Student Student @relation(fields: [studentId], references: [id])
+  Meeting Meeting @relation(fields: [meetingId], references: [id])
+
+  @@id([studentId, meetingId])
+}
+
+model MeetingOnTeachers {
+  teacherId Int
+  meetingId Int
+
+  Teacher Teacher @relation(fields: [teacherId], references: [id])
+  Meeting Meeting @relation(fields: [meetingId], references: [id])
+
+  @@id([teacherId, meetingId])
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
 
 enum Role {
   STUDENT
   SHEIKH
-  ASSISTANT
+  EXPERIT
   ADMIN
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  PAYPAL
+  BITCOIN
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }
