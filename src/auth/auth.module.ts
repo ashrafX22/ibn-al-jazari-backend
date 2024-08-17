@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { SessionSerializer } from './utils/session.serializer';
-import { UserService } from 'src/user/user.service';
+import { StudentService } from 'src/student/student.service';
 import { PassportModule } from '@nestjs/passport';
 import { TeacherService } from 'src/teacher/teacher.service';
 
@@ -17,7 +17,7 @@ import { TeacherService } from 'src/teacher/teacher.service';
       provide: 'AUTH_SERVICE',
       useClass: AuthService,
     },
-    UserService,
+    StudentService,
     TeacherService,
     GoogleStrategy,
     SessionSerializer

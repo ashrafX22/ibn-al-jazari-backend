@@ -24,7 +24,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         console.log(refreshToken);
         console.log(profile);
         try {
-            const user = await this.authService.googleLogin({
+            const student = await this.authService.googleLogin({
                 email: profile.emails[0].value,
                 name: profile.displayName,
                 access_token: accessToken,
@@ -33,8 +33,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
                 age: 39,
             });
             console.log('strategy');
-            console.log(user);
-            done(null, user);
+            console.log(student);
+            done(null, student);
         } catch (err) {
             done(err, false);
         }

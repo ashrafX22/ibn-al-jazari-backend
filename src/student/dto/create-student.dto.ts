@@ -9,7 +9,7 @@ import {
 import { Gender, Role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class CreateStudentDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsAlpha()

@@ -8,7 +8,7 @@ import {
   logoutSwaggerDoc,
   redirectSwaggerDoc,
 } from './auth.swagger-doc';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { CreateStudentDto } from 'src/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 
 @ApiTags('auth')
@@ -17,8 +17,8 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   // @Post('local/register')
-  // localRegister(createUserDto: CreateUserDto) {
-  //   return this.authService.localRegister(createUserDto);
+  // localRegister(createStudentDto: CreateStudentDto) {
+  //   return this.authService.localRegister(createStudentDto);
   // }
 
   @loginSwaggerDoc()
@@ -38,7 +38,7 @@ export class AuthController {
   // retrieves the user from req which is set by Passport after successful authentication
   @getUserSwaggerDoc()
   @Get('user')
-  getUser(@Req() req: Request) {
+  getStudent(@Req() req: Request) {
     return req.user;
   }
 
@@ -51,13 +51,13 @@ export class AuthController {
     });
   }
 
-  // similar to getUser
+  // similar to getStudent
   // returns the information of the whole session
   // accesses redis directly
   // @Get('')
   // getAuthSession(@Session() session: Record<string, any>) {
   //   console.log(session);
   //   console.log(session.id);
-  //   return session.passport.user;
+  //   return session.passport.student;
   // }
 }

@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Student {
   id            Int          @id @default(autoincrement())
   email         String       @unique
   name          String
@@ -20,7 +20,7 @@ model User {
   updated_at    DateTime     @updatedAt
   Payment       Payment[]
   Enrollment    Enrollment[]
-  // MeetingOnUsers MeetingOnUsers[]
+  // MeetingOnStudents MeetingOnStudents[]
 }
 
 model Teacher {
@@ -59,14 +59,14 @@ model Classroom {
 }
 
 model Enrollment {
-  UserId      Int
+  StudentId   Int
   classroomId Int
   timestamp   DateTime
 
-  User      User      @relation(fields: [UserId], references: [id])
+  Student   Student   @relation(fields: [StudentId], references: [id])
   Classroom Classroom @relation(fields: [classroomId], references: [id])
 
-  @@id([UserId, classroomId])
+  @@id([StudentId, classroomId])
 }
 
 model Subject {
@@ -86,20 +86,20 @@ model Meeting {
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
   class        Classroom @relation(fields: [classroom_id], references: [id])
-  // MeetingOnUsers    MeetingOnUsers[]
+  // MeetingOnStudents    MeetingOnStudents[]
   // MeetingOnTeachers MeetingOnTeachers[]
 }
 
 model Payment {
   id                       Int           @id @default(autoincrement())
-  user_id                  Int
+  student_id               Int
   classroom_id             Int
   payment_gateway_order_id String
   amount                   Float
   status                   PaymentStatus
   timestamp                DateTime      @default(now())
   paymentMethod            PaymentMethod
-  User                     User          @relation(fields: [user_id], references: [id])
+  Student                  Student       @relation(fields: [student_id], references: [id])
   Classroom                Classroom     @relation(fields: [classroom_id], references: [id])
 }
 
@@ -124,14 +124,14 @@ model TeachersPayment {
 //   @@id([teacherId, classroomId])
 // }
 
-// model MeetingOnUsers {
-//   UserId    String
+// model MeetingOnStudents {
+//   StudentId    String
 //   meetingId Int
 //
-//   User    User    @relation(fields: [UserId], references: [id])
+//   Student    Student    @relation(fields: [StudentId], references: [id])
 //   Meeting Meeting @relation(fields: [meetingId], references: [id])
 //
-//   @@id([UserId, meetingId])
+//   @@id([StudentId, meetingId])
 // }
 
 // model MeetingOnTeachers {
