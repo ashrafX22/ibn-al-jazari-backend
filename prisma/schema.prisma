@@ -16,8 +16,8 @@ model User {
   age           Int
   access_token  String
   refresh_token String
-  updated_at    DateTime     @default(now())
   created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
   Payment       Payment[]
   Enrollment    Enrollment[]
   // MeetingOnUsers MeetingOnUsers[]
@@ -35,7 +35,7 @@ model Teacher {
   refresh_token     String
   proficiency_level Role        @default(SHEIKH)
   created_at        DateTime    @default(now())
-  updated_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
   Classroom         Classroom[]
   // MeetingOnTeachers MeetingOnTeachers[]
 
@@ -49,8 +49,8 @@ model Classroom {
   teacher_id Int
   start_time DateTime
   end_time   DateTime
-  updated_at DateTime     @default(now())
   created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
   Meeting    Meeting[]
   Enrollment Enrollment[]
   teacher    Teacher      @relation(fields: [teacher_id], references: [id])
@@ -73,8 +73,8 @@ model Subject {
   id         Int      @id @default(autoincrement())
   name       String   @unique
   price      Float
-  updated_at DateTime @default(now())
   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Meeting {
@@ -84,7 +84,7 @@ model Meeting {
   start_time   DateTime
   // end_time   DateTime
   created_at   DateTime  @default(now())
-  updated_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
   class        Classroom @relation(fields: [classroom_id], references: [id])
   // MeetingOnUsers    MeetingOnUsers[]
   // MeetingOnTeachers MeetingOnTeachers[]

@@ -9,17 +9,27 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(data: CreateUserDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
+    return await this.prisma.user.create({
+      data,
     });
+  }
 
-    if (!user) {
-      return await this.prisma.user.create({
-        data,
-      });
-    }
-
-    return user;
+  async upsert(createUserDto: CreateUserDto) {
+    const { name, email, access_token, refresh_token } = createUserDto;
+    console.log('user service');
+    return this.prisma.user.upsert({
+      where: {
+        email: email,
+      },
+      create: {
+        ...createUserDto
+      },
+      update: {
+        name: name,
+        access_token: access_token,
+        refresh_token: refresh_token
+      },
+    });
   }
 
   async findAll(): Promise<UserEntity[]> {

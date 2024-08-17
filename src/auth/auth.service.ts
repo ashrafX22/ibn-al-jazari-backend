@@ -8,7 +8,7 @@ export class AuthService {
 
   async validateUser(createUserDto: CreateUserDto) {
     console.log('auth service');
-    return await this.userService.create(createUserDto);
+    return await this.userService.upsert(createUserDto);
   }
 
   async get(id: number) {
