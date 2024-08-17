@@ -21,7 +21,7 @@ export class CreateUserDto {
 
   @IsStrongPassword()
   @ApiProperty()
-  password: string;
+  password?: string;
 
   @IsNotEmpty()
   @ApiProperty()
