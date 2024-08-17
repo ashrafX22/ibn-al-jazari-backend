@@ -18,10 +18,6 @@ export class CreateUserDto {
   @ApiProperty()
   email: string;
 
-  @IsEnum(Role)
-  @ApiProperty()
-  role: Role;
-
   @IsStrongPassword()
   @ApiProperty()
   password: string;

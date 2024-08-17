@@ -11,7 +11,7 @@ model User {
   id            Int          @id @default(autoincrement())
   email         String       @unique
   name          String
-  password      String // hashed
+  password      String       @default("google") // hashed
   gender        Gender
   age           Int
   access_token  String
@@ -27,7 +27,7 @@ model Teacher {
   id                Int         @id @default(autoincrement())
   name              String
   email             String      @unique
-  password          String
+  password          String      @default("google") // hashed
   gender            Gender
   age               Int
   summary           String      @default("")
@@ -113,6 +113,7 @@ model TeachersPayment {
   paymentMethod            PaymentMethod
   Teacher                  Teacher       @relation(fields: [teacher_id], references: [id])
 }
+
 // model ClassroomOnTeachers {
 //   teacherId   String
 //   classroomId Int

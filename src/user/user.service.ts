@@ -6,41 +6,20 @@ import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(data: CreateUserDto) {
-    const userExists = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
-    if (userExists)
-      throw new HttpException('email allrady exists', HttpStatus.CONFLICT);
-    const User = await this.prisma.user.create({
-      data,
-    });
-    return User;
-  }
 
-  async upsert(createUserDto: CreateUserDto) {
-    const { name, email, password, gender, access_token, refresh_token, age } =
-      createUserDto;
-    console.log('user service');
-    return this.prisma.user.upsert({
-      where: {
-        email: email,
-      },
-      create: {
-        name: name,
-        email: email,
-        password: password,
-        gender: gender,
-        age: age,
-        access_token: access_token,
-        refresh_token: refresh_token,
-      },
-      update: {
-        name: name,
-      },
-    });
+    if (!user) {
+      return await this.prisma.user.create({
+        data,
+      });
+    }
+
+    return user;
   }
 
   async findAll(): Promise<UserEntity[]> {
@@ -48,14 +27,14 @@ export class UserService {
     return users.map((user) => new UserEntity(user));
   }
 
-  async findOne(id: string): Promise<UserEntity> {
+  async findOne(id: number): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user)
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     return user;
   }
 
-  async update(id: string, data: UpdateUserDto) {
+  async update(id: number, data: UpdateUserDto) {
     const updateUser = await this.prisma.user.update({
       where: { id },
       data,
@@ -63,7 +42,7 @@ export class UserService {
     return updateUser;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     await this.findOne(id);
     const deleteUser = await this.prisma.user.delete({
       where: {

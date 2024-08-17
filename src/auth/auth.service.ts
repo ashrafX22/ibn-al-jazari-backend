@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { UUID } from 'crypto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
   async validateUser(createUserDto: CreateUserDto) {
     console.log('auth service');
-    return await this.userService.upsert(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
-  async get(id: string) {
+  async get(id: number) {
     return await this.userService.findOne(id);
   }
 }
