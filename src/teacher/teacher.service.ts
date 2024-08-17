@@ -44,8 +44,8 @@ export class TeacherService {
 
   async findByEmail(email: string) {
     const teacher = await this.prisma.teacher.findUnique({ where: { email } });
-    if (!teacher)
-      throw new HttpException('Teacher not found', HttpStatus.BAD_REQUEST);
+    // if (!teacher)
+    //   throw new HttpException('Teacher not found', HttpStatus.BAD_REQUEST);
     return teacher;
   }
 

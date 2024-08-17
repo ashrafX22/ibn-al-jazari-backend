@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { GoogleAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
@@ -8,14 +8,23 @@ import {
   logoutSwaggerDoc,
   redirectSwaggerDoc,
 } from './auth.swagger-doc';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { AuthService } from './auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  constructor(private authService: AuthService) { }
+
+  // @Post('local/register')
+  // localRegister(createUserDto: CreateUserDto) {
+  //   return this.authService.localRegister(createUserDto);
+  // }
+
   @loginSwaggerDoc()
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
-  login() {}
+  login() { }
 
   @redirectSwaggerDoc()
   @UseGuards(GoogleAuthGuard)

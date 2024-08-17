@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy } from 'passport-google-oauth20';
+import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
 import { Role, Gender } from '@prisma/client';
 
@@ -18,22 +18,25 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(accessToken: string, refreshToken: string, profile: Profile) {
+    async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) {
         console.log('strategy');
         console.log(accessToken);
         console.log(refreshToken);
         console.log(profile);
-        const user = await this.authService.validateUser({
-            email: profile.emails[0].value,
-            name: profile.displayName,
-            access_token: accessToken,
-            refresh_token: 'refreshToken',
-            gender: Gender.MALE,
-            age: 39,
-            password: '*#&RBY*DY*(@Vbvsvdf7wbt9@&#()*76',
-        });
-        console.log('strategy');
-        console.log(user);
-        return user;
+        try {
+            const user = await this.authService.googleLogin({
+                email: profile.emails[0].value,
+                name: profile.displayName,
+                access_token: accessToken,
+                refresh_token: 'refreshToken',
+                gender: Gender.MALE,
+                age: 39,
+            });
+            console.log('strategy');
+            console.log(user);
+            done(null, user);
+        } catch (err) {
+            done(err, false);
+        }
     }
 }
