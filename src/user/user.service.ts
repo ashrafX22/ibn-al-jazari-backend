@@ -21,16 +21,21 @@ export class UserService {
   }
 
   async upsert(createUserDto: CreateUserDto) {
-    const { name, email, role } = createUserDto;
+    const { name, email, password, gender, access_token, refresh_token, age } =
+      createUserDto;
     console.log('user service');
     return this.prisma.user.upsert({
       where: {
         email: email,
       },
       create: {
-        email: email,
         name: name,
-        role: role,
+        email: email,
+        password: password,
+        gender: gender,
+        age: age,
+        access_token: access_token,
+        refresh_token: refresh_token,
       },
       update: {
         name: name,
@@ -43,14 +48,14 @@ export class UserService {
     return users.map((user) => new UserEntity(user));
   }
 
-  async findOne(id: number): Promise<UserEntity> {
+  async findOne(id: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user)
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-    return new UserEntity(user);
+    return user;
   }
 
-  async update(id: number, data: UpdateUserDto) {
+  async update(id: string, data: UpdateUserDto) {
     const updateUser = await this.prisma.user.update({
       where: { id },
       data,
@@ -58,7 +63,7 @@ export class UserService {
     return updateUser;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.findOne(id);
     const deleteUser = await this.prisma.user.delete({
       where: {

@@ -7,118 +7,141 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Student {
-  id                  Int                   @id @default(autoincrement())
-  email               String                @unique
-  name                String
-  password            String
-  role                Role                  @default(STUDENT)
-  gender              Gender
-  age                 Int
-  access_token        String
-  refrish_token       String
-  updatedAt           DateTime              @updatedAt
-  createdAt           DateTime              @default(now())
-  Payment             Payment[]
-  ClassroomOnStudents ClassroomOnStudents[]
-  MeetingOnStudents   MeetingOnStudents[]
+model User {
+  id            Int          @id @default(autoincrement())
+  email         String       @unique
+  name          String
+  password      String // hashed
+  gender        Gender
+  age           Int
+  access_token  String
+  refresh_token String
+  updated_at    DateTime     @default(now())
+  created_at    DateTime     @default(now())
+  Payment       Payment[]
+  Enrollment    Enrollment[]
+  // MeetingOnUsers MeetingOnUsers[]
 }
 
 model Teacher {
-  id                  Int                   @id @default(autoincrement())
-  name                String
-  email               String                @unique
-  password            String
-  gender              Gender
-  age                 Int
-  summary             String                @default("")
-  access_token        String
-  refrish_token       String
-  proficiency_level   Role                  @default(SHEIKH)
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  Classroom           Classroom[]
-  ClassroomOnTeachers ClassroomOnTeachers[]
-  MeetingOnTeachers   MeetingOnTeachers[]
+  id                Int         @id @default(autoincrement())
+  name              String
+  email             String      @unique
+  password          String
+  gender            Gender
+  age               Int
+  summary           String      @default("")
+  access_token      String
+  refresh_token     String
+  proficiency_level Role        @default(SHEIKH)
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @default(now())
+  Classroom         Classroom[]
+  // MeetingOnTeachers MeetingOnTeachers[]
+
+  TeachersPayment TeachersPayment[]
 }
 
 model Classroom {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @unique
-  subject             String
-  teacherId           Int
-  teacher             Teacher               @relation(fields: [teacherId], references: [id])
-  createdAt           DateTime              @default(now())
-  Payment             Payment[]
-  Meeting             Meeting[]
-  ClassroomOnStudents ClassroomOnStudents[]
-  ClassroomOnTeachers ClassroomOnTeachers[]
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  subject_id Int
+  teacher_id Int
+  start_time DateTime
+  end_time   DateTime
+  updated_at DateTime     @default(now())
+  created_at DateTime     @default(now())
+  Meeting    Meeting[]
+  Enrollment Enrollment[]
+  teacher    Teacher      @relation(fields: [teacher_id], references: [id])
+
+  Payment Payment[]
 }
 
-model Payment {
-  id            Int           @id @default(autoincrement())
-  student       Student       @relation(fields: [student_id], references: [id])
-  student_id    Int
-  class_room    Classroom     @relation(fields: [classroom_id], references: [id])
-  classroom_id  Int
-  amount        Float
-  status        PaymentStatus
-  paymentDate   DateTime      @default(now())
-  paymentMethod PaymentMethod
+model Enrollment {
+  UserId      Int
+  classroomId Int
+  timestamp   DateTime
+
+  User      User      @relation(fields: [UserId], references: [id])
+  Classroom Classroom @relation(fields: [classroomId], references: [id])
+
+  @@id([UserId, classroomId])
+}
+
+model Subject {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  price      Float
+  updated_at DateTime @default(now())
+  created_at DateTime @default(now())
 }
 
 model Meeting {
-  id                Int                 @id @default(autoincrement())
-  class             Classroom           @relation(fields: [classroom_id], references: [id])
-  classroom_id      Int
-  scheduledDate     DateTime
-  meetingLink       String
-  duration          Int
-  createdAt         DateTime            @default(now())
-  startsAt          DateTime            @updatedAt
-  MeetingOnStudents MeetingOnStudents[]
-  MeetingOnTeachers MeetingOnTeachers[]
+  id           Int       @id @default(autoincrement())
+  classroom_id Int
+  link         String
+  start_time   DateTime
+  // end_time   DateTime
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now())
+  class        Classroom @relation(fields: [classroom_id], references: [id])
+  // MeetingOnUsers    MeetingOnUsers[]
+  // MeetingOnTeachers MeetingOnTeachers[]
 }
 
-model ClassroomOnStudents {
-  studentId   Int
-  classroomId Int
-
-  Student   Student   @relation(fields: [studentId], references: [id])
-  Classroom Classroom @relation(fields: [classroomId], references: [id])
-
-  @@id([studentId, classroomId])
+model Payment {
+  id                       Int           @id @default(autoincrement())
+  user_id                  Int
+  classroom_id             Int
+  payment_gateway_order_id String
+  amount                   Float
+  status                   PaymentStatus
+  timestamp                DateTime      @default(now())
+  paymentMethod            PaymentMethod
+  User                     User          @relation(fields: [user_id], references: [id])
+  Classroom                Classroom     @relation(fields: [classroom_id], references: [id])
 }
 
-model ClassroomOnTeachers {
-  teacherId   Int
-  classroomId Int
-
-  Teacher   Teacher   @relation(fields: [teacherId], references: [id])
-  Classroom Classroom @relation(fields: [classroomId], references: [id])
-
-  @@id([teacherId, classroomId])
+model TeachersPayment {
+  id                       Int           @id @default(autoincrement())
+  teacher_id               Int
+  payment_gateway_order_id String
+  amount                   Float
+  status                   PaymentStatus
+  timestamp                DateTime      @default(now())
+  paymentMethod            PaymentMethod
+  Teacher                  Teacher       @relation(fields: [teacher_id], references: [id])
 }
+// model ClassroomOnTeachers {
+//   teacherId   String
+//   classroomId Int
+//
+//   Teacher   Teacher   @relation(fields: [teacherId], references: [id])
+//   Classroom Classroom @relation(fields: [classroomId], references: [id])
+//
+//   @@id([teacherId, classroomId])
+// }
 
-model MeetingOnStudents {
-  studentId Int
-  meetingId Int
+// model MeetingOnUsers {
+//   UserId    String
+//   meetingId Int
+//
+//   User    User    @relation(fields: [UserId], references: [id])
+//   Meeting Meeting @relation(fields: [meetingId], references: [id])
+//
+//   @@id([UserId, meetingId])
+// }
 
-  Student Student @relation(fields: [studentId], references: [id])
-  Meeting Meeting @relation(fields: [meetingId], references: [id])
-
-  @@id([studentId, meetingId])
-}
-
-model MeetingOnTeachers {
-  teacherId Int
-  meetingId Int
-
-  Teacher Teacher @relation(fields: [teacherId], references: [id])
-  Meeting Meeting @relation(fields: [meetingId], references: [id])
-
-  @@id([teacherId, meetingId])
-}
+// model MeetingOnTeachers {
+//   teacherId String
+//   meetingId Int
+//
+//   Teacher Teacher @relation(fields: [teacherId], references: [id])
+//   Meeting Meeting @relation(fields: [meetingId], references: [id])
+//
+//   @@id([teacherId, meetingId])
+// }
 
 enum Gender {
   MALE
@@ -126,9 +149,8 @@ enum Gender {
 }
 
 enum Role {
-  STUDENT
-  SHEIKH
-  EXPERIT
+  SHEIKH // TODO:find descriptive name
+  EXPERT
   ADMIN
 }
 
@@ -136,11 +158,11 @@ enum PaymentMethod {
   CREDIT_CARD
   PAYPAL
   BITCOIN
-  WALLET
+  MOBILE_WALLET
 }
 
 enum PaymentStatus {
   PENDING
-  COMPLETED
+  SUCCESSFUL
   FAILED
 }

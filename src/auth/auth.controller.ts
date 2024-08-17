@@ -2,16 +2,20 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { GoogleAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
-import { getUserSwaggerDoc, loginSwaggerDoc, logoutSwaggerDoc, redirectSwaggerDoc } from './auth.swagger-doc';
+import {
+  getUserSwaggerDoc,
+  loginSwaggerDoc,
+  logoutSwaggerDoc,
+  redirectSwaggerDoc,
+} from './auth.swagger-doc';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-
   @loginSwaggerDoc()
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
-  login() { }
+  login() {}
 
   @redirectSwaggerDoc()
   @UseGuards(GoogleAuthGuard)
@@ -37,7 +41,6 @@ export class AuthController {
       res.redirect(process.env.ORIGIN);
     });
   }
-
 
   // similar to getUser
   // returns the information of the whole session
