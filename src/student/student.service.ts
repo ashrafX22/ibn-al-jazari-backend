@@ -3,23 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from '../models//entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { calculateAge } from 'utils/date-utils';
 
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-  ) { }
+  ) {}
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     const student = this.studentRepository.create({
       common: {
+        userName: createStudentDto.userName,
         email: createStudentDto.email,
         name: createStudentDto.name,
         password: createStudentDto.password,
         gender: createStudentDto.gender,
-        age: createStudentDto.age,
+        phoneNumber: createStudentDto.phoneNumber,
+        dateOfBirth: createStudentDto.dateOfBirth,
+        age: calculateAge(createStudentDto.dateOfBirth),
         access_token: createStudentDto.access_token,
         refresh_token: createStudentDto.refresh_token,
       },
@@ -44,8 +48,8 @@ export class StudentService {
     return await this.studentRepository.findOne({
       where: {
         common: {
-          email
-        }
+          email,
+        },
       },
     });
   }
@@ -59,7 +63,7 @@ export class StudentService {
       common: {
         name: updateStudentDto.name,
         gender: updateStudentDto.gender,
-        age: updateStudentDto.age,
+
         access_token: updateStudentDto.access_token,
         refresh_token: updateStudentDto.refresh_token,
       },

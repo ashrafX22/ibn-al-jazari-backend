@@ -1,49 +1,14 @@
-import {
-  IsAlpha,
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsStrongPassword,
-} from 'class-validator';
-import { Gender } from 'src/models/enums/gender.enum';
+import { IsEnum, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from 'src/models/enums/role.enum';
+import { CreateStudentDto } from './../../student/dto/create-student.dto';
 
-export class CreateTeacherDto {
-  @IsNotEmpty()
+export class CreateTeacherDto extends CreateStudentDto {
   @ApiProperty()
-  @IsAlpha()
-  name: string;
-
-  @IsEmail()
-  @ApiProperty()
-  email: string;
-
-  @IsStrongPassword()
-  @ApiProperty()
-  password?: string = 'google';
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsEnum(Gender)
-  gender: Gender;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty()
-  age: number;
-
-  @ApiProperty()
-  access_token: string;
-
-  @ApiProperty()
-  refresh_token: string;
-
   @IsString()
   summary: string;
 
+  @ApiProperty()
   @IsEnum(Role)
   proficiency_level: Role;
 }

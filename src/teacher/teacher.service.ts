@@ -3,23 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './../models/entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
+import { calculateAge } from 'utils/date-utils';
 
 @Injectable()
 export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-  ) { }
+  ) {}
 
   // Create a new teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
     const teacher = this.teacherRepository.create({
       common: {
+        userName: createTeacherDto.userName,
         email: createTeacherDto.email,
         name: createTeacherDto.name,
         password: createTeacherDto.password,
         gender: createTeacherDto.gender,
-        age: createTeacherDto.age,
+        phoneNumber: createTeacherDto.phoneNumber,
+        dateOfBirth: createTeacherDto.dateOfBirth,
+        age: calculateAge(createTeacherDto.dateOfBirth),
         access_token: createTeacherDto.access_token,
         refresh_token: createTeacherDto.refresh_token,
       },
@@ -46,8 +50,8 @@ export class TeacherService {
     return await this.teacherRepository.findOne({
       where: {
         common: {
-          email
-        }
+          email,
+        },
       },
     });
   }
@@ -60,7 +64,6 @@ export class TeacherService {
     await this.teacherRepository.update(id, {
       common: {
         name: updateTeacherDto.name,
-        age: updateTeacherDto.age,
         access_token: updateTeacherDto.access_token,
         refresh_token: updateTeacherDto.refresh_token,
       },

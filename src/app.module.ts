@@ -21,19 +21,10 @@ import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      entities: [
-        Student,
-        Teacher,
-        Classroom,
-        Enrollment,
-        Subject,
-        Meeting,
-        Payment,
-        TeachersPayment,
-      ], // 'models/entities/*.entity{.ts,.js}'
+      entities: ['models/entities/*.entity{.ts,.js}'],
       // migrations: ['migrations/*{.ts,.js}'],
       synchronize: true, // Set to false in production
-      logging: true,
+      // logging: true,
     }),
     TypeOrmModule.forFeature([
       Student,

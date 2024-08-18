@@ -5,7 +5,7 @@ import { GoogleStrategy } from './utils/google.strategy';
 import { SessionSerializer } from './utils/session.serializer';
 import { PassportModule } from '@nestjs/passport';
 import { AuthenticatedGuard, RolesGuard } from './utils/guards';
-import { User } from 'src/models/entities/user.entity';
+import { User } from 'src/models/baseUser';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Teacher } from 'src/models/entities/teacher.entity';
 import { Student } from 'src/models/entities/student.entity';
@@ -13,7 +13,10 @@ import { StudentService } from 'src/student/student.service';
 import { TeacherService } from 'src/teacher/teacher.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Student, Teacher]), PassportModule.register({ session: true })],
+  imports: [
+    TypeOrmModule.forFeature([User, Student, Teacher]),
+    PassportModule.register({ session: true }),
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,
@@ -26,7 +29,7 @@ import { TeacherService } from 'src/teacher/teacher.service';
     GoogleStrategy,
     SessionSerializer,
     StudentService,
-    TeacherService
+    TeacherService,
   ],
 })
-export class AuthModule { }
+export class AuthModule {}
