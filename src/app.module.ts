@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { GoogleMeetModule } from './google-meet/google-meet.module';
+// import { AuthModule } from './auth/auth.module';
+// import { GoogleMeetModule } from './google-meet/google-meet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/models/entities/user.entity';
 import { Student } from 'src/models/entities/student.entity';
@@ -14,7 +14,7 @@ import { Subject } from 'src/models/entities/subject.entity';
 import { Meeting } from 'src/models/entities/meeting.entity';
 import { Payment } from 'src/models/entities/payment.entity';
 import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
-
+import { TeacherModule } from './teacher/teacher.module';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
       host: 'localhost' || process.env.DB_HOST,
       port: 5432 || +process.env.DB_PORT,
       username: 'postgres' || process.env.DB_USER,
-      password:  process.env.DB_PASSWORD || 'password',
+      password: process.env.DB_PASSWORD || 'password',
       database: 'ibn-al-jazari-db' || process.env.DB_NAME,
       entities: [
         User,
@@ -53,9 +53,10 @@ import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
     ]),
     UserModule,
     AuthModule,
-    GoogleMeetModule
+    GoogleMeetModule,
+    TeacherModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
