@@ -9,7 +9,7 @@ export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-  ) {}
+  ) { }
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
@@ -37,6 +37,16 @@ export class StudentService {
   async findOne(id: number): Promise<Student> {
     return await this.studentRepository.findOne({
       where: { id },
+    });
+  }
+
+  async findByEmail(email: string): Promise<Student> {
+    return await this.studentRepository.findOne({
+      where: {
+        common: {
+          email
+        }
+      },
     });
   }
 

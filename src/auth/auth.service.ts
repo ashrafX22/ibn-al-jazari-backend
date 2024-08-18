@@ -1,32 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStudentDto } from 'src/user/dto/create-student.dto';
-import { CreateTeacherDto } from 'src/user/dto/create-teacher.dto';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UserService } from 'src/user/user.service';
+import { StudentService } from 'src/student/student.service';
+import { TeacherService } from 'src/teacher/teacher.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService) { }
+    constructor(private studentService: StudentService, private teacherService: TeacherService) { }
 
-    async validateUser(createStudent: CreateStudentDto) {
+    async validateUser(email: string) {
         console.log("auth service")
-        // todo: talseem
-        return await this.userService.createStudent(createStudent);
+        const student = await this.teacherService.findByEmail(email);
+        const teacher = await this.studentService.findByEmail(email);
+
+        if (!student && !teacher) return null;
+        return student || teacher;
     }
 
-    // async validateUser(createTeacherDto: CreateTeacherDto) {
-    //     console.log("auth service")
-    //     // todo: talseem
-    //     return await this.userService.createTeacher(createTeacherDto);
-    // }
-
-    // async validateUser(createUserDto: CreateUserDto) {
-    //     console.log("auth service")
-    //     // todo: talseem
-    //     return await this.userService.createStudent(createUserDto);
-    // }
-
     async get(id: number) {
-        return await this.userService.findStudent(id);
+        const student = await this.studentService.findOne(id);
+        const teacher = await this.teacherService.findOne(id);
+
+        if (!student && !teacher) return null;
+        return student || teacher;
     }
 }
