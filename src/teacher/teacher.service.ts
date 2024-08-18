@@ -17,7 +17,7 @@ export class TeacherService {
       common: {
         email: createTeacherDto.email,
         name: createTeacherDto.name,
-        password: createTeacherDto.password, // default password
+        password: createTeacherDto.password,
         gender: createTeacherDto.gender,
         age: createTeacherDto.age,
         access_token: createTeacherDto.access_token,
@@ -49,16 +49,12 @@ export class TeacherService {
   ): Promise<Teacher> {
     await this.teacherRepository.update(id, {
       common: {
-        email: updateTeacherDto.email,
         name: updateTeacherDto.name,
-        password: updateTeacherDto.password,
-        gender: updateTeacherDto.gender,
         age: updateTeacherDto.age,
         access_token: updateTeacherDto.access_token,
         refresh_token: updateTeacherDto.refresh_token,
       },
       summary: updateTeacherDto.summary,
-      proficiency_level: updateTeacherDto.proficiency_level,
     });
     return this.findOne(id);
   }

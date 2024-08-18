@@ -15,6 +15,7 @@ import { Meeting } from 'src/models/entities/meeting.entity';
 import { Payment } from 'src/models/entities/payment.entity';
 import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
 import { TeacherModule } from './teacher/teacher.module';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
@@ -52,9 +53,10 @@ import { TeacherModule } from './teacher/teacher.module';
       TeachersPayment,
     ]),
     UserModule,
-    AuthModule,
-    GoogleMeetModule,
+    // AuthModule,
+    // GoogleMeetModule,
     TeacherModule,
+    StudentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
