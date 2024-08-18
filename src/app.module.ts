@@ -14,6 +14,8 @@ import { Subject } from 'src/models/entities/subject.entity';
 import { Meeting } from 'src/models/entities/meeting.entity';
 import { Payment } from 'src/models/entities/payment.entity';
 import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
+
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -21,7 +23,7 @@ import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
       host: 'localhost' || process.env.DB_HOST,
       port: 5432 || +process.env.DB_PORT,
       username: 'postgres' || process.env.DB_USER,
-      password: 'postgres' || process.env.DB_PASSWORD,
+      password:  process.env.DB_PASSWORD || 'password',
       database: 'ibn-al-jazari-db' || process.env.DB_NAME,
       entities: [
         User,

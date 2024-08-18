@@ -1,16 +1,12 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  TableInheritance,
+
 } from 'typeorm';
 import { Gender } from '../enums/gender.enum';
 
-export abstract class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class User {
 
   @Column({ unique: true })
   email: string;
