@@ -33,8 +33,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
             // TODO: try to omit this field or set it from frontend
             gender: Gender.MALE,
             age: 39,
-            summary: "",
-            proficiency_level: Role.SHEIKH,
         });
         console.log("strategy")
         console.log(user);

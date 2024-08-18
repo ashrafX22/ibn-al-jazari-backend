@@ -4,7 +4,7 @@ import { Classroom } from './classroom.entity';
 import { TeachersPayment } from './teacher-payment.entity';
 import { Role } from '../enums/role.enum';
 
-@ChildEntity()
+@Entity()
 export class Teacher extends User {
     @Column({ default: '' })
     summary: string;

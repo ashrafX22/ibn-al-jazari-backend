@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CreateStudentDto } from 'src/user/dto/create-student.dto';
 import { CreateTeacherDto } from 'src/user/dto/create-teacher.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
@@ -7,11 +8,17 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
     constructor(private userService: UserService) { }
 
-    async validateUser(createTeacherDto: CreateTeacherDto) {
+    async validateUser(createStudent: CreateStudentDto) {
         console.log("auth service")
         // todo: talseem
-        return await this.userService.createTeacher(createTeacherDto);
+        return await this.userService.createStudent(createStudent);
     }
+
+    // async validateUser(createTeacherDto: CreateTeacherDto) {
+    //     console.log("auth service")
+    //     // todo: talseem
+    //     return await this.userService.createTeacher(createTeacherDto);
+    // }
 
     // async validateUser(createUserDto: CreateUserDto) {
     //     console.log("auth service")
@@ -20,6 +27,6 @@ export class AuthService {
     // }
 
     async get(id: number) {
-        return await this.userService.findOne(id);
+        return await this.userService.findStudent(id);
     }
 }

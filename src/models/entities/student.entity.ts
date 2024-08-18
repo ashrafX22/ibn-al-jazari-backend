@@ -3,7 +3,7 @@ import { User } from './user.entity';
 import { Payment } from './payment.entity';
 import { Enrollment } from './enrollment.entity';
 
-@ChildEntity()
+@Entity()
 export class Student extends User {
     @OneToMany(() => Payment, (payment) => payment.student)
     payments: Payment[];

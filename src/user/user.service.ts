@@ -25,10 +25,10 @@ export class UserService {
   ) { }
 
   // Create a new User
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const student = this.userRepository.create(createUserDto);
-    return this.userRepository.save(student);
-  }
+  // async createUser(createUserDto: CreateUserDto): Promise<User> {
+  //   const student = this.userRepository.create(createUserDto);
+  //   return this.userRepository.save(student);
+  // }
 
   // Create a new student
   async createStudent(createStudentDto: CreateStudentDto): Promise<Student> {
@@ -43,14 +43,24 @@ export class UserService {
   }
 
   // Find a user by ID
-  async findOne(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id } });
+  // async findOne(id: number): Promise<User> {
+  //   return this.userRepository.findOne({ where: { id } });
+  // }
+
+  // Find a student by ID
+  async findStudent(id: number): Promise<Student> {
+    return this.studentRepository.findOne({ where: { id } });
+  }
+
+  // Find a teacher by ID
+  async findSTeacher(id: number): Promise<Teacher> {
+    return this.teacherRepository.findOne({ where: { id } });
   }
 
   // Find all users
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
+  // async findAll(): Promise<User[]> {
+  //   return this.userRepository.find();
+  // }
 
   // Find all students
   async findAllStudents(): Promise<Student[]> {
@@ -63,10 +73,10 @@ export class UserService {
   }
 
   // Update a user
-  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.userRepository.update(id, updateUserDto);
-    return this.userRepository.findOne({ where: { id } });
-  }
+  // async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  //   await this.userRepository.update(id, updateUserDto);
+  //   return this.userRepository.findOne({ where: { id } });
+  // }
 
   // Update a student
   async updateStudent(id: number, updateStudentDto: UpdateStudentDto): Promise<Student> {
@@ -81,73 +91,7 @@ export class UserService {
   }
 
   // Delete a user (student or teacher)
-  async deleteUser(id: number): Promise<void> {
-    await this.userRepository.delete(id);
-  }
+  // async deleteUser(id: number): Promise<void> {
+  //   await this.userRepository.delete(id);
+  // }
 }
-
-/* old
-async create(data: CreateUserDto) {
-const userExists = await this.prisma.user.findUnique({
-  where: { email: data.email },
-});
-if (userExists)
-  throw new HttpException('email allrady exists', HttpStatus.CONFLICT);
-const User = await this.prisma.user.create({
-  data,
-});
-return User;
-}
-
-async upsert(createUserDto: CreateUserDto) {
-const { name, email, role, accessToken } = createUserDto;
-console.log('user service');
-return this.prisma.user.upsert({
-  where: {
-    email: email,
-  },
-  create: {
-    email: email,
-    name: name,
-    role: role,
-    accessToken: accessToken,
-  },
-  update: {
-    name: name,
-    accessToken: accessToken,
-  },
-});
-}
-
-async findAll(): Promise < UserEntity[] > {
-const users = await this.prisma.user.findMany();
-return users.map((user) => new UserEntity(user));
-}
-
-async findOne(id: number): Promise < UserEntity > {
-const user = await this.prisma.user.findUnique({ where: { id } });
-// if (!user)
-//   throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-return new UserEntity(user);
-}
-
-async update(id: number, data: UpdateUserDto) {
-const updateUser = await this.prisma.user.update({
-  where: { id },
-  data,
-});
-return updateUser;
-}
-
-async remove(id: number) {
-await this.findOne(id);
-const deleteUser = await this.prisma.user.delete({
-  where: {
-    id,
-  },
-});
-return deleteUser;
-}
-}
-
-*/
