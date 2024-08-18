@@ -9,7 +9,7 @@ export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-  ) {}
+  ) { }
 
   // Create a new teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
@@ -39,6 +39,16 @@ export class TeacherService {
   async findOne(id: number): Promise<Teacher> {
     return await this.teacherRepository.findOne({
       where: { id },
+    });
+  }
+
+  async findByEmail(email: string): Promise<Teacher> {
+    return await this.teacherRepository.findOne({
+      where: {
+        common: {
+          email
+        }
+      },
     });
   }
 
