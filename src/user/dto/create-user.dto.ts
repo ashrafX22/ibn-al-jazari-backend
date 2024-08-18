@@ -3,27 +3,39 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
+  IsStrongPassword,
 } from 'class-validator';
-import { Role } from '@prisma/client';
+import { Gender } from 'src/models/enums/gender.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @IsNotEmpty()
-  @IsAlpha()
   @ApiProperty()
+  @IsAlpha()
   name: string;
 
   @IsEmail()
   @ApiProperty()
   email: string;
 
-  @IsEnum(Role)
-  @IsNotEmpty()
+  // @IsStrongPassword()
   @ApiProperty()
-  role: Role;
+  password?: string;
 
   @IsNotEmpty()
-  @IsAlpha()
   @ApiProperty()
-  accessToken: string;
+  @IsEnum(Gender)
+  gender: Gender;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  age: number;
+
+  @ApiProperty()
+  access_token: string;
+
+  @ApiProperty()
+  refresh_token: string;
 }

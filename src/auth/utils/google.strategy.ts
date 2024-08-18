@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
-import { Role } from '@prisma/client';
+import { Gender } from 'src/models/enums/gender.enum';
+import { Role } from 'src/models/enums/role.enum';
 
 
 @Injectable()
@@ -27,9 +28,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         const user = await this.authService.validateUser({
             email: profile.emails[0].value,
             name: profile.displayName,
+            access_token: accessToken,
+            refresh_token: 'refreshToken',
             // TODO: try to omit this field or set it from frontend
-            role: Role.SHEIKH,
-            accessToken: accessToken
+            gender: Gender.MALE,
+            age: 39,
+            summary: "",
+            proficiency_level: Role.SHEIKH,
         });
         console.log("strategy")
         console.log(user);

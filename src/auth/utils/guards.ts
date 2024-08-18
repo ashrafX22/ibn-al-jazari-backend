@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { Role } from '@prisma/client';
 import { ROLES_KEY } from './roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {

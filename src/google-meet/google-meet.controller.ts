@@ -4,9 +4,9 @@ import { Request } from 'express'
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
 import { AuthenticatedGuard, RolesGuard } from 'src/auth/utils/guards';
 import { Roles } from 'src/auth/utils/roles.decorator';
-import { Role } from '@prisma/client';
 import { createMeetingSwaggerDoc } from './google-meet.swagger-doc';
 import { ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/models/enums/role.enum';
 
 @ApiTags('google-meet')
 @Controller('google-meet')
