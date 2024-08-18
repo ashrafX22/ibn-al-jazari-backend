@@ -5,7 +5,6 @@ import { UserModule } from './user/user.module';
 // import { AuthModule } from './auth/auth.module';
 // import { GoogleMeetModule } from './google-meet/google-meet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/models/entities/user.entity';
 import { Student } from 'src/models/entities/student.entity';
 import { Teacher } from 'src/models/entities/teacher.entity';
 import { Classroom } from 'src/models/entities/classroom.entity';
@@ -16,18 +15,14 @@ import { Payment } from 'src/models/entities/payment.entity';
 import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
 import { TeacherModule } from './teacher/teacher.module';
 import { StudentModule } from './student/student.module';
-
+import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost' || process.env.DB_HOST,
-      port: 5432 || +process.env.DB_PORT,
-      username: 'postgres' || process.env.DB_USER,
-      password: process.env.DB_PASSWORD || 'password',
-      database: 'ibn-al-jazari-db' || process.env.DB_NAME,
+      url: process.env.DATABASE_URL,
       entities: [
-        User,
         Student,
         Teacher,
         Classroom,
@@ -42,7 +37,6 @@ import { StudentModule } from './student/student.module';
       logging: true,
     }),
     TypeOrmModule.forFeature([
-      User,
       Student,
       Teacher,
       Classroom,
