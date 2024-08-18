@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './../models/entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
+import { IUser } from 'src/user/user.service';
 
 @Injectable()
-export class TeacherService {
+export class TeacherService implements IUser {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
@@ -42,7 +43,7 @@ export class TeacherService {
     });
   }
 
-  async findByEmail(email: string): Promise<Teacher> {
+  async findByEmail(email: string): Promise<Teacher | null> {
     return await this.teacherRepository.findOne({
       where: {
         common: {
@@ -56,7 +57,7 @@ export class TeacherService {
   async update(
     id: number,
     updateTeacherDto: Partial<CreateTeacherDto>,
-  ): Promise<Teacher> {
+  ): Promise<Teacher | null> {
     await this.teacherRepository.update(id, {
       common: {
         name: updateTeacherDto.name,

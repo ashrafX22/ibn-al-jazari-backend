@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Student } from '../models//entities/student.entity';
+import { Student } from '../models/entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { IUser } from 'src/user/user.service';
 
 @Injectable()
-export class StudentService {
+export class StudentService implements IUser {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
@@ -40,7 +41,7 @@ export class StudentService {
     });
   }
 
-  async findByEmail(email: string): Promise<Student> {
+  async findByEmail(email: string): Promise<Student | null> {
     return await this.studentRepository.findOne({
       where: {
         common: {
@@ -54,14 +55,10 @@ export class StudentService {
   async update(
     id: number,
     updateStudentDto: Partial<CreateStudentDto>,
-  ): Promise<Student> {
+  ): Promise<Student | null> {
     await this.studentRepository.update(id, {
       common: {
-        name: updateStudentDto.name,
-        gender: updateStudentDto.gender,
-        age: updateStudentDto.age,
-        access_token: updateStudentDto.access_token,
-        refresh_token: updateStudentDto.refresh_token,
+        ...updateStudentDto
       },
     });
     return this.findOne(id);
