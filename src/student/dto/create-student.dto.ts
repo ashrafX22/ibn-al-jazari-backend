@@ -6,13 +6,19 @@ import {
   IsStrongPassword,
   IsEnum,
   IsNumber,
+  IsDate,
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';
 
 export class CreateStudentDto {
   @IsNotEmpty()
-  @ApiProperty()
   @IsAlpha()
+  @ApiProperty()
+  username: string;
+
+  @IsNotEmpty()
+  @IsAlpha()
+  @ApiProperty()
   name: string;
 
   @IsEmail()
@@ -24,18 +30,22 @@ export class CreateStudentDto {
   password?: string = 'google';
 
   @IsNotEmpty()
-  @ApiProperty()
   @IsEnum(Gender)
+  @ApiProperty()
   gender: Gender;
 
   @IsNotEmpty()
-  @IsNumber()
   @ApiProperty()
-  age: number;
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  @IsDate()
+  @ApiProperty()
+  dateOfBirth: Date;
 
   @ApiProperty()
-  access_token: string = '';
+  accessToken: string = '';
 
   @ApiProperty()
-  refresh_token: string = '';
+  refreshToken: string = '';
 }

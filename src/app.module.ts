@@ -31,8 +31,9 @@ import { UserModule } from './user/user.module';
         Meeting,
         Payment,
         TeachersPayment,
-      ], // 'models/entities/*.entity{.ts,.js}'
-      // migrations: ['migrations/*{.ts,.js}'],
+      ],
+      migrations: [__dirname + '/migrations/*{.ts,.js}'],
+      migrationsRun: true,
       synchronize: true, // Set to false in production
       logging: true,
     }),

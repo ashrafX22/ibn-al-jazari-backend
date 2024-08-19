@@ -9,19 +9,21 @@ export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-  ) { }
+  ) {}
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     const student = this.studentRepository.create({
       common: {
+        username: createStudentDto.username,
         email: createStudentDto.email,
         name: createStudentDto.name,
         password: createStudentDto.password,
         gender: createStudentDto.gender,
-        age: createStudentDto.age,
-        access_token: createStudentDto.access_token,
-        refresh_token: createStudentDto.refresh_token,
+        phoneNumber: createStudentDto.phoneNumber,
+        dateOfBirth: createStudentDto.dateOfBirth,
+        accessToken: createStudentDto.accessToken,
+        refreshToken: createStudentDto.refreshToken,
       },
     });
 
@@ -44,8 +46,8 @@ export class StudentService {
     return await this.studentRepository.findOne({
       where: {
         common: {
-          email
-        }
+          email,
+        },
       },
     });
   }
@@ -57,7 +59,7 @@ export class StudentService {
   ): Promise<Student | null> {
     await this.studentRepository.update(id, {
       common: {
-        ...updateStudentDto
+        ...updateStudentDto,
       },
     });
     return this.findOne(id);
