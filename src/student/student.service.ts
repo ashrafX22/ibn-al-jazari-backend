@@ -23,7 +23,6 @@ export class StudentService {
         gender: createStudentDto.gender,
         phoneNumber: createStudentDto.phoneNumber,
         dateOfBirth: createStudentDto.dateOfBirth,
-        age: calculateAge(createStudentDto.dateOfBirth),
         accessToken: createStudentDto.accessToken,
         refreshRoken: createStudentDto.refreshRoken,
       },
