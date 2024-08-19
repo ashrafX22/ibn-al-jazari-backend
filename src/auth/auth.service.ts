@@ -1,38 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { StudentService } from 'src/student/student.service';
-import { TeacherService } from 'src/teacher/teacher.service';
-import { IUser } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private studentService: StudentService, private teacherService: TeacherService) { }
+    constructor(private userService: UserService) { }
 
-    async validateUser(access_token: string, refresh_token: string, email: string) {
+    async validateUser(email: string, password: string): Promise<any> {
+        const user = await this.userService.findByEmail(email);
+
+        if (user && user.common.password === password) {
+            const { common, ...specific } = user;
+            const { password, ...general } = common;
+
+            return {
+                ...specific,
+                common: general
+            };
+        }
+
+        return null;
+    }
+
+    async googleLogin(access_token: string, refresh_token: string, email: string) {
         console.log("auth service")
-        const services: IUser[] = [this.studentService, this.teacherService];
 
-        for (const service of services) {
-            const user = await service.findByEmail(email);
-            if (user) {
-                await service.update(
-                    user.id,
-                    {
-                        access_token,
-                        refresh_token: refresh_token || ''
-                    }
-                );
-                return user;
-            }
+        const user = await this.userService.findByEmail(email);
+        if (user) {
+            await this.userService.update(
+                user.id,
+                {
+                    access_token,
+                    refresh_token: refresh_token || ''
+                }
+            );
+            return user;
         }
 
         return null;
     }
 
     async get(id: number) {
-        const student = await this.studentService.findOne(id);
-        const teacher = await this.teacherService.findOne(id);
-
-        if (!student && !teacher) return null;
-        return student || teacher;
+        return this.userService.findOne(id);
     }
 }

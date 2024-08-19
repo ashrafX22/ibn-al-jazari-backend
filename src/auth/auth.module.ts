@@ -11,6 +11,8 @@ import { Teacher } from 'src/models/entities/teacher.entity';
 import { Student } from 'src/models/entities/student.entity';
 import { StudentService } from 'src/student/student.service';
 import { TeacherService } from 'src/teacher/teacher.service';
+import { LocalStrategy } from './utils/local.strategy';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Student, Teacher]), PassportModule.register({ session: true })],
@@ -21,8 +23,10 @@ import { TeacherService } from 'src/teacher/teacher.service';
       provide: 'AUTH_SERVICE',
       useClass: AuthService,
     },
+    UserService,
     AuthenticatedGuard,
     RolesGuard,
+    LocalStrategy,
     GoogleStrategy,
     SessionSerializer,
     StudentService,
