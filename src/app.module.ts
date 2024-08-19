@@ -15,6 +15,7 @@ import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
 import { TeacherModule } from './teacher/teacher.module';
 import { StudentModule } from './student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -45,12 +46,13 @@ import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
       Payment,
       TeachersPayment,
     ]),
-    AuthModule,
-    GoogleMeetModule,
+    UserModule,
     TeacherModule,
     StudentModule,
+    AuthModule,
+    GoogleMeetModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
