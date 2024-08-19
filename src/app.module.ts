@@ -31,6 +31,8 @@ import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
         Payment,
         TeachersPayment,
       ],
+      migrations: [__dirname + '/migrations/*{.ts,.js}'],
+      migrationsRun: true,
       synchronize: true, // Set to false in production
       logging: true,
     }),

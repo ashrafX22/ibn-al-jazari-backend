@@ -47,5 +47,5 @@ export class CreateStudentDto {
   accessToken: string = '';
 
   @ApiProperty()
-  refreshRoken: string = '';
+  refreshToken: string = '';
 }

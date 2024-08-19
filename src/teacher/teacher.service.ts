@@ -24,7 +24,7 @@ export class TeacherService {
         phoneNumber: createTeacherDto.phoneNumber,
         dateOfBirth: createTeacherDto.dateOfBirth,
         accessToken: createTeacherDto.accessToken,
-        refreshRoken: createTeacherDto.refreshRoken,
+        refreshToken: createTeacherDto.refreshToken,
       },
       summary: createTeacherDto.summary,
       proficiency_level: createTeacherDto.proficiency_level,
@@ -64,7 +64,7 @@ export class TeacherService {
       common: {
         name: updateTeacherDto.name,
         accessToken: updateTeacherDto.accessToken,
-        refreshRoken: updateTeacherDto.refreshRoken,
+        refreshToken: updateTeacherDto.refreshToken,
       },
       summary: updateTeacherDto.summary,
     });

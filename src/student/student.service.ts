@@ -24,7 +24,7 @@ export class StudentService {
         phoneNumber: createStudentDto.phoneNumber,
         dateOfBirth: createStudentDto.dateOfBirth,
         accessToken: createStudentDto.accessToken,
-        refreshRoken: createStudentDto.refreshRoken,
+        refreshToken: createStudentDto.refreshToken,
       },
     });
 
@@ -64,7 +64,7 @@ export class StudentService {
         gender: updateStudentDto.gender,
 
         accessToken: updateStudentDto.accessToken,
-        refreshRoken: updateStudentDto.refreshRoken,
+        refreshToken: updateStudentDto.refreshToken,
       },
     });
     return this.findOne(id);

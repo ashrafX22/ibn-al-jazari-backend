@@ -28,13 +28,10 @@ export class User {
   dateOfBirth: Date;
 
   @Column()
-  age: number;
-
-  @Column()
   accessToken: string;
 
   @Column()
-  refreshRoken: string;
+  refreshToken: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
