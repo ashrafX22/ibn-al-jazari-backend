@@ -1,18 +1,26 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthenticatedGuard, GoogleAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, loginSwaggerDoc, logoutSwaggerDoc, redirectSwaggerDoc } from './auth.swagger-doc';
 import { AuthGuard } from '@nestjs/passport';
+import { CreateStudentDto } from 'src/student/dto/create-student.dto';
+import { AuthService } from './auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  constructor(private authService: AuthService) { }
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
   async login(@Req() req: Request) {
     return req.user;
+  }
+
+  @Post('register')
+  async register(@Body() createStudentDto: CreateStudentDto) {
+    return await this.authService.register(createStudentDto);
   }
 
   @loginSwaggerDoc()
