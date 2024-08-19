@@ -7,7 +7,7 @@ import { Gender } from './enums/gender.enum';
 
 export class User {
   @Column({ unique: true, nullable: true })
-  userName: string;
+  username: string;
 
   @Column({ unique: true })
   email: string;
@@ -21,20 +21,20 @@ export class User {
   @Column()
   gender: Gender;
 
-  @Column({ default: '00000000' })
+  @Column()
   phoneNumber: string;
 
-  @Column({ default: '2024-08-18T22:06:04.033Z' })
+  @Column()
   dateOfBirth: Date;
 
   @Column()
   age: number;
 
   @Column()
-  access_token: string;
+  accessToken: string;
 
   @Column()
-  refresh_token: string;
+  refreshRoken: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
