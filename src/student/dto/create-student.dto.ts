@@ -5,7 +5,6 @@ import {
   IsEmail,
   IsStrongPassword,
   IsEnum,
-  IsNumber,
   IsDate,
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';

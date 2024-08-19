@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from '../models/entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { StudentInitDto } from './dto/student-init.dto';
+import { StudentFollowDto } from './dto/student-follow.dto';
 
 @Injectable()
 export class StudentService {
@@ -13,25 +15,32 @@ export class StudentService {
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
-
-    const { username, email, name, password,
-      gender, phoneNumber, dateOfBirth, accessToken, refreshToken } = createStudentDto;
-
     const student = this.studentRepository.create({
       common: {
-        username: username,
-        email: email,
-        name: name,
-        password: password,
-        gender: gender,
-        phoneNumber: phoneNumber,
-        dateOfBirth: dateOfBirth,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        ...createStudentDto
       },
     });
 
     return await this.studentRepository.save(student);
+  }
+
+  async studentInit(studentInitDto: StudentInitDto) {
+    const student = this.studentRepository.create({
+      common: {
+        ...studentInitDto
+      },
+    });
+
+    return await this.studentRepository.save(student);
+  }
+
+  async studentFollow(id: number, studentFollowDto: StudentFollowDto) {
+    await this.studentRepository.update(id, {
+      common: {
+        ...studentFollowDto,
+      },
+    });
+    return this.findOne(id);
   }
 
   // Find all students

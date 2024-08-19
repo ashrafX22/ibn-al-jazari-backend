@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthenticatedGuard, GoogleAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { getUserSwaggerDoc, loginSwaggerDoc, logoutSwaggerDoc, redirectSwaggerDo
 import { AuthGuard } from '@nestjs/passport';
 import { CreateStudentDto } from 'src/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
+import { StudentFollowDto } from 'src/student/dto/student-follow.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -20,7 +21,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(createStudentDto);
+    return await this.authService.localRegister(createStudentDto);
   }
 
   @loginSwaggerDoc()
@@ -34,6 +35,12 @@ export class AuthController {
   googleRedirect(@Res() res: Response) {
     // TODO: set the redirection url to the frontend
     res.redirect(process.env.ORIGIN);
+    // TODO: return the user
+  }
+
+  @Patch('google/follow/:id')
+  async googleFollow(@Param('id') id: string, @Body() studentFollowDto: StudentFollowDto) {
+    return this.authService.googleFollow(+id, studentFollowDto);
   }
 
   // only returns the user information
