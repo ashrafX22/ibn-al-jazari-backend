@@ -16,7 +16,7 @@ export class StudentService {
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     const student = this.studentRepository.create({
       common: {
-        userName: createStudentDto.userName,
+        username: createStudentDto.username,
         email: createStudentDto.email,
         name: createStudentDto.name,
         password: createStudentDto.password,
@@ -24,8 +24,8 @@ export class StudentService {
         phoneNumber: createStudentDto.phoneNumber,
         dateOfBirth: createStudentDto.dateOfBirth,
         age: calculateAge(createStudentDto.dateOfBirth),
-        access_token: createStudentDto.access_token,
-        refresh_token: createStudentDto.refresh_token,
+        accessToken: createStudentDto.accessToken,
+        refreshRoken: createStudentDto.refreshRoken,
       },
     });
 
@@ -64,8 +64,8 @@ export class StudentService {
         name: updateStudentDto.name,
         gender: updateStudentDto.gender,
 
-        access_token: updateStudentDto.access_token,
-        refresh_token: updateStudentDto.refresh_token,
+        accessToken: updateStudentDto.accessToken,
+        refreshRoken: updateStudentDto.refreshRoken,
       },
     });
     return this.findOne(id);

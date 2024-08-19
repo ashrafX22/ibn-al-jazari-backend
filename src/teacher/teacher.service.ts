@@ -16,16 +16,15 @@ export class TeacherService {
   async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
     const teacher = this.teacherRepository.create({
       common: {
-        userName: createTeacherDto.userName,
+        username: createTeacherDto.username,
         email: createTeacherDto.email,
         name: createTeacherDto.name,
         password: createTeacherDto.password,
         gender: createTeacherDto.gender,
         phoneNumber: createTeacherDto.phoneNumber,
         dateOfBirth: createTeacherDto.dateOfBirth,
-        age: calculateAge(createTeacherDto.dateOfBirth),
-        access_token: createTeacherDto.access_token,
-        refresh_token: createTeacherDto.refresh_token,
+        accessToken: createTeacherDto.accessToken,
+        refreshRoken: createTeacherDto.refreshRoken,
       },
       summary: createTeacherDto.summary,
       proficiency_level: createTeacherDto.proficiency_level,
@@ -64,8 +63,8 @@ export class TeacherService {
     await this.teacherRepository.update(id, {
       common: {
         name: updateTeacherDto.name,
-        access_token: updateTeacherDto.access_token,
-        refresh_token: updateTeacherDto.refresh_token,
+        accessToken: updateTeacherDto.accessToken,
+        refreshRoken: updateTeacherDto.refreshRoken,
       },
       summary: updateTeacherDto.summary,
     });
