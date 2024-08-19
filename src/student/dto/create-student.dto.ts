@@ -14,7 +14,7 @@ export class CreateStudentDto {
   @IsNotEmpty()
   @IsAlpha()
   @ApiProperty()
-  userName: string;
+  username: string;
 
   @IsNotEmpty()
   @IsAlpha()
@@ -44,8 +44,8 @@ export class CreateStudentDto {
   dateOfBirth: Date;
 
   @ApiProperty()
-  access_token: string = '';
+  accessToken: string = '';
 
   @ApiProperty()
-  refresh_token: string = '';
+  refreshRoken: string = '';
 }
