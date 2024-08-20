@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'passport';
 import { CreateStudentDto } from 'src/student/dto/create-student.dto';
-import { StudentFollowDto } from 'src/student/dto/student-follow.dto';
 import { StudentService } from 'src/student/student.service';
 import { UserService } from 'src/user/user.service';
 
@@ -26,8 +25,8 @@ export class AuthService {
     return null;
   }
 
-  async localRegister(createStudentDto: CreateStudentDto) {
-    this.studentService.create(createStudentDto);
+  async register(createStudentDto: CreateStudentDto) {
+    return await this.studentService.create(createStudentDto);
   }
 
   async googleAuth(accessToken: string, refreshToken: string, profile: Profile) {
@@ -50,20 +49,15 @@ export class AuthService {
     }
     // register student only
     else {
-      result = await this.studentService.studentInit({
+      result = {
         accessToken,
         refreshToken,
         email,
-      });
-
-      result = { ...result, isNew: true };
+        isNew: true
+      };
     }
 
     return result;
-  }
-
-  async googleFollow(id: number, studentFollowDto: StudentFollowDto) {
-    return await this.studentService.studentFollow(id, studentFollowDto);
   }
 
   async getUser(id: number) {
