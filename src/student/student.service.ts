@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from '../models/entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { StudentEntity } from './entities/student.entity';
 
 @Injectable()
 export class StudentService {
@@ -31,38 +32,64 @@ export class StudentService {
   }
 
   // Find all students
-  async findAll(): Promise<Student[]> {
-    return await this.studentRepository.find();
+  async findAll(): Promise<StudentEntity[]> {
+    const students = await this.studentRepository.find();
+    return students.map(
+      (student) =>
+        new StudentEntity({
+          id: student.id,
+          ...student.common,
+        }),
+    );
   }
 
   // Find a student by ID
-  async findOne(id: number): Promise<Student> {
-    return await this.studentRepository.findOne({
-      where: { id },
+  async findById(id: number): Promise<StudentEntity> {
+    const student = await this.studentRepository.findOneBy({ id });
+    const { common, ...rest } = student;
+    return new StudentEntity({
+      ...common,
+      ...rest,
     });
   }
 
-  async findByEmail(email: string): Promise<Student | null> {
-    return await this.studentRepository.findOne({
-      where: {
-        common: {
-          email,
-        },
+  async findByEmail(email: string): Promise<StudentEntity | null> {
+    const student = await this.studentRepository.findOneBy({
+      common: {
+        email,
       },
+    });
+    const { common, ...rest } = student;
+    return new StudentEntity({
+      ...common,
+      ...rest,
     });
   }
 
   // Update a student's information
   async update(
     id: number,
-    updateStudentDto: Partial<CreateStudentDto>,
-  ): Promise<Student | null> {
-    await this.studentRepository.update(id, {
+    updateTeacherDto: Partial<CreateStudentDto>,
+  ): Promise<StudentEntity | null> {
+    const result = await this.studentRepository.update(id, {
       common: {
-        ...updateStudentDto,
+        name: updateTeacherDto.name,
+        accessToken: updateTeacherDto.accessToken,
+        refreshToken: updateTeacherDto.refreshToken,
       },
     });
-    return this.findOne(id);
+
+    if (result.affected === 1) {
+      const updatedTeacher = await this.studentRepository.findOneBy({ id });
+      if (updatedTeacher) {
+        return new StudentEntity({
+          id: updatedTeacher.id,
+          ...updatedTeacher.common,
+        });
+      }
+    }
+
+    return null;
   }
 
   // Delete a student by ID

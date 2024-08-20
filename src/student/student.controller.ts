@@ -6,12 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Controller('student')
+@UseInterceptors(ClassSerializerInterceptor)
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
@@ -27,7 +30,11 @@ export class StudentController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.studentService.findOne(+id);
+    return this.studentService.findById(+id);
+  }
+  @Get('email/:email')
+  findOneByEmail(@Param('email') email: string) {
+    return this.studentService.findByEmail(email);
   }
 
   @Patch(':id')
