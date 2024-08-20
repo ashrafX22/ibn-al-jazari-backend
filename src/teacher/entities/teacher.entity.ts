@@ -5,7 +5,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 export class TeacherEntity extends UserEntity {
   id: number;
   summary: string;
-  proficiency_level: Role;
+  proficiencyLevel: Role;
 
   constructor(partial: Partial<TeacherEntity>) {
     super(partial);

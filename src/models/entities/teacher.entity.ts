@@ -16,7 +16,7 @@ export class Teacher {
   summary: string;
 
   @Column({ default: Role.SHEIKH })
-  proficiency_level: Role;
+  proficiencyLevel: Role;
 
   @OneToMany(() => Classroom, (classroom) => classroom.teacher)
   classrooms: Classroom[];

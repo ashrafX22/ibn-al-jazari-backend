@@ -27,7 +27,7 @@ export class TeacherService {
         refreshToken: createTeacherDto.refreshToken,
       },
       summary: createTeacherDto.summary,
-      proficiency_level: createTeacherDto.proficiency_level,
+      proficiencyLevel: createTeacherDto.proficiencyLevel,
     });
 
     return await this.teacherRepository.save(teacher);
@@ -42,7 +42,7 @@ export class TeacherService {
           id: teacher.id,
           ...teacher.common,
           summary: teacher.summary,
-          proficiency_level: teacher.proficiency_level,
+          proficiencyLevel: teacher.proficiencyLevel,
         }),
     );
   }
@@ -91,7 +91,7 @@ export class TeacherService {
           id: updatedTeacher.id,
           ...updatedTeacher.common,
           summary: updatedTeacher.summary,
-          proficiency_level: updatedTeacher.proficiency_level,
+          proficiencyLevel: updatedTeacher.proficiencyLevel,
         });
       }
     }
