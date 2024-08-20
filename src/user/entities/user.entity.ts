@@ -1,4 +1,5 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
+import { calculateAge } from 'utils/date-utils';
 
 export class UserEntity {
   username: string;
@@ -7,11 +8,18 @@ export class UserEntity {
   dateOfBirth: Date;
   phoneNumber: string;
   gender: string;
-  accessToken: string;
-  refreshToken: string;
 
   @Exclude()
   password: string;
+  @Exclude()
+  accessToken: string;
+  @Exclude()
+  refreshToken: string;
+
+  @Expose()
+  get age(): number {
+    return calculateAge(this.dateOfBirth);
+  }
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

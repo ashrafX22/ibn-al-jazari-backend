@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
 import { TeacherService } from './teacher.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 
 @Controller('teacher')
+@UseInterceptors(ClassSerializerInterceptor)
 export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
 
@@ -18,8 +29,14 @@ export class TeacherController {
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   findOne(@Param('id') id: string) {
-    return this.teacherService.findOne(+id);
+    return this.teacherService.findById(+id);
+  }
+
+  @Get('email/:email')
+  findOneByEmail(@Param('email') email: string) {
+    return this.teacherService.findByEmail(email);
   }
 
   @Patch(':id')

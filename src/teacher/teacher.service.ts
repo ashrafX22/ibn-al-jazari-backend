@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './../models/entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
-import { calculateAge } from 'utils/date-utils';
+import { TeacherEntity } from './entities/teacher.entity';
 
 @Injectable()
 export class TeacherService {
@@ -34,24 +34,39 @@ export class TeacherService {
   }
 
   // Find all teachers
-  async findAll(): Promise<Teacher[]> {
-    return await this.teacherRepository.find();
+  async findAll(): Promise<TeacherEntity[]> {
+    const teachers = await this.teacherRepository.find();
+    return teachers.map(
+      (teacher) =>
+        new TeacherEntity({
+          id: teacher.id,
+          ...teacher.common,
+          summary: teacher.summary,
+          proficiency_level: teacher.proficiency_level,
+        }),
+    );
   }
 
   // Find a teacher by ID
-  async findOne(id: number): Promise<Teacher> {
-    return await this.teacherRepository.findOne({
-      where: { id },
+  async findById(id: number): Promise<TeacherEntity> {
+    const teacher = await this.teacherRepository.findOneBy({ id });
+    const { common, ...rest } = teacher;
+    return new TeacherEntity({
+      ...common,
+      ...rest,
     });
   }
 
-  async findByEmail(email: string): Promise<Teacher | null> {
-    return await this.teacherRepository.findOne({
-      where: {
-        common: {
-          email,
-        },
+  async findByEmail(email: string): Promise<TeacherEntity | null> {
+    const teacher = await this.teacherRepository.findOneBy({
+      common: {
+        email,
       },
+    });
+    const { common, ...rest } = teacher;
+    return new TeacherEntity({
+      ...common,
+      ...rest,
     });
   }
 
@@ -59,8 +74,8 @@ export class TeacherService {
   async update(
     id: number,
     updateTeacherDto: Partial<CreateTeacherDto>,
-  ): Promise<Teacher | null> {
-    await this.teacherRepository.update(id, {
+  ): Promise<TeacherEntity | null> {
+    const result = await this.teacherRepository.update(id, {
       common: {
         name: updateTeacherDto.name,
         accessToken: updateTeacherDto.accessToken,
@@ -68,7 +83,20 @@ export class TeacherService {
       },
       summary: updateTeacherDto.summary,
     });
-    return this.findOne(id);
+
+    if (result.affected === 1) {
+      const updatedTeacher = await this.teacherRepository.findOneBy({ id });
+      if (updatedTeacher) {
+        return new TeacherEntity({
+          id: updatedTeacher.id,
+          ...updatedTeacher.common,
+          summary: updatedTeacher.summary,
+          proficiency_level: updatedTeacher.proficiency_level,
+        });
+      }
+    }
+
+    return null;
   }
 
   // Delete a teacher by ID
