@@ -5,6 +5,17 @@ import { ROLES_KEY } from './roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
 
 @Injectable()
+export class LocalAuthGuard extends AuthGuard('local') {
+    async canActivate(context: ExecutionContext) {
+        console.log("LocalAuthGuard");
+        const activate = (await super.canActivate(context)) as boolean;
+        const request = context.switchToHttp().getRequest();
+        await super.logIn(request);
+        return activate;
+    }
+}
+
+@Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
     async canActivate(context: ExecutionContext) {
         console.log("GoogleAuthGuard");

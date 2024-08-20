@@ -10,21 +10,13 @@ export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-  ) {}
+  ) { }
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
     const student = this.studentRepository.create({
       common: {
-        username: createStudentDto.username,
-        email: createStudentDto.email,
-        name: createStudentDto.name,
-        password: createStudentDto.password,
-        gender: createStudentDto.gender,
-        phoneNumber: createStudentDto.phoneNumber,
-        dateOfBirth: createStudentDto.dateOfBirth,
-        accessToken: createStudentDto.accessToken,
-        refreshToken: createStudentDto.refreshToken,
+        ...createStudentDto
       },
     });
 
