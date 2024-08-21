@@ -90,6 +90,7 @@ export class TeacherService {
     const result = await this.teacherRepository.update(id, {
       common: {
         name: updateTeacherDto.name || teacher.common.name,
+        phoneNumber: updateTeacherDto.phoneNumber || teacher.common.phoneNumber,
         accessToken: updateTeacherDto.accessToken || teacher.common.accessToken,
         refreshToken:
           updateTeacherDto.refreshToken || teacher.common.refreshToken,
