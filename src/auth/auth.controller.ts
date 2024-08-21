@@ -52,8 +52,11 @@ export class AuthController {
   // @UseGuards(AuthGuard('google'))
   @UseGuards(GoogleAuthGuard)
   @Get('google/redirect')
-  googleRedirect(@Res() res: Response) {
-    res.redirect(process.env.ORIGIN);
+  googleRedirect(@Session() session: Record<string, any>, @Res() res: Response) {
+    const queryParams = new URLSearchParams({
+      isNew: session.passport.user?.isNew?.toString(),
+    });
+    res.redirect(`${process.env.ORIGIN}?${queryParams.toString()}`);
   }
 
   @googleRegisterSwaggerDoc()

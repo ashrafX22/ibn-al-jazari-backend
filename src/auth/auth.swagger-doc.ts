@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CreateStudentDto } from 'src/student/dto/create-student.dto';
+import { CreateUserDto } from 'src/user/dto/create.user.dto';
 
 export function LocalRegisterSwaggerDoc() {
     return applyDecorators(
@@ -65,7 +66,19 @@ export function googleRedirectSwaggerDoc() {
             description: "Logs the user(teacher or student) in if it exists in the database. Otherwise, saves Google profile info in the session.\
             The frontend should call google/register to complete the registration process of ONLY students."
         }),
-        ApiResponse({ status: 302, description: 'Redirects to the frontend URL after successful authentication' }),
+        ApiResponse({
+            status: 200,
+            description: `Redirects to the frontend URL after successful authentication.`,
+            headers: {
+                isNew: {
+                    description: 'A query parameters that indicates whether the user is new and needs to complete the registration process',
+                    schema: {
+                        type: 'boolean',
+                        example: true,
+                    },
+                },
+            },
+        }),
         ApiResponse({ status: 401, description: 'Unauthorized' })
     );
 }
