@@ -11,11 +11,6 @@ import {
 import { Gender } from 'src/models/enums/gender.enum';
 
 export class CreateUserDto {
-  @IsNotEmpty()
-  @IsAlpha()
-  @ApiProperty()
-  username: string;
-
   @IsUrl()
   @ApiProperty()
   profilePicture?: string;

@@ -6,9 +6,6 @@ import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Gender } from './enums/gender.enum';
 
 export class User {
-  @Column({ unique: true, nullable: true })
-  username: string;
-
   @Column({ unique: true })
   email: string;
 

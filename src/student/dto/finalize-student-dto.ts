@@ -12,11 +12,6 @@ export class FinalizeStudentDto {
     @IsNotEmpty()
     @IsAlpha()
     @ApiProperty()
-    username: string;
-
-    @IsNotEmpty()
-    @IsAlpha()
-    @ApiProperty()
     name: string;
 
     @IsStrongPassword()
