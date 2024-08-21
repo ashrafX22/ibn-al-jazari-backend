@@ -36,7 +36,7 @@ export function findAllTeachersSwaggerDoc() {
     ApiResponse({
       status: 200,
       description: 'A list of teachers',
-      type: [CreateTeacherDto],
+      type: [TeacherEntity],
     }),
     ApiResponse({ status: 500, description: 'Internal Server Error' }),
   );
@@ -58,7 +58,7 @@ export function findTeacherByIdSwaggerDoc() {
     ApiResponse({
       status: 200,
       description: 'The teacher object',
-      type: CreateTeacherDto,
+      type: TeacherEntity,
     }),
     ApiResponse({ status: 404, description: 'Teacher not found' }),
     ApiResponse({ status: 500, description: 'Internal Server Error' }),
@@ -81,7 +81,7 @@ export function findTeacherByEmailSwaggerDoc() {
     ApiResponse({
       status: 200,
       description: 'The teacher object',
-      type: CreateTeacherDto,
+      type: TeacherEntity,
     }),
     ApiResponse({ status: 404, description: 'Teacher not found' }),
     ApiResponse({ status: 500, description: 'Internal Server Error' }),
@@ -108,7 +108,7 @@ export function updateTeacherSwaggerDoc() {
     ApiResponse({
       status: 200,
       description: 'The updated teacher object',
-      type: CreateTeacherDto,
+      type: TeacherEntity,
     }),
     ApiResponse({ status: 400, description: 'Invalid data' }),
     ApiResponse({ status: 404, description: 'Teacher not found' }),
