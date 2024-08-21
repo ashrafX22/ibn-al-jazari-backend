@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from './../models/entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { TeacherEntity } from './entities/teacher.entity';
+import { UpdateTeacherDto } from './dto/update-teacher.dto';
 
 @Injectable()
 export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-  ) { }
+  ) {}
 
   // Create a new teacher
-  async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
+  async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
     const teacher = this.teacherRepository.create({
       common: {
         username: createTeacherDto.username,
@@ -29,8 +30,11 @@ export class TeacherService {
       summary: createTeacherDto.summary,
       proficiencyLevel: createTeacherDto.proficiencyLevel,
     });
-
-    return await this.teacherRepository.save(teacher);
+    const { common, ...rest } = teacher;
+    return new TeacherEntity({
+      ...common,
+      ...rest,
+    });
   }
 
   // Find all teachers
@@ -50,6 +54,8 @@ export class TeacherService {
   // Find a teacher by ID
   async findById(id: number): Promise<TeacherEntity> {
     const teacher = await this.teacherRepository.findOneBy({ id });
+    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
     const { common, ...rest } = teacher;
     return new TeacherEntity({
       ...common,
@@ -63,7 +69,8 @@ export class TeacherService {
         email,
       },
     });
-    if (!teacher) return null;
+    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
     const { common, ...rest } = teacher;
     return new TeacherEntity({
       ...common,
@@ -74,15 +81,20 @@ export class TeacherService {
   // Update a teacher's information
   async update(
     id: number,
-    updateTeacherDto: Partial<CreateTeacherDto>,
+    updateTeacherDto: UpdateTeacherDto,
   ): Promise<TeacherEntity | null> {
+    const teacher = await this.teacherRepository.findOneBy({ id });
+
+    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
     const result = await this.teacherRepository.update(id, {
       common: {
-        name: updateTeacherDto.name,
-        accessToken: updateTeacherDto.accessToken,
-        refreshToken: updateTeacherDto.refreshToken,
+        name: updateTeacherDto.name || teacher.common.name,
+        accessToken: updateTeacherDto.accessToken || teacher.common.accessToken,
+        refreshToken:
+          updateTeacherDto.refreshToken || teacher.common.refreshToken,
       },
-      summary: updateTeacherDto.summary,
+      summary: updateTeacherDto.summary || teacher.summary,
     });
 
     if (result.affected === 1) {
@@ -102,6 +114,8 @@ export class TeacherService {
 
   // Delete a teacher by ID
   async remove(id: number): Promise<void> {
+    const teacher = await this.teacherRepository.findOneBy({ id });
+    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     await this.teacherRepository.delete(id);
   }
 }
