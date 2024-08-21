@@ -12,11 +12,13 @@ import {
 import { TeacherService } from './teacher.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('teacher')
 @Controller('teacher')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TeacherController {
-  constructor(private readonly teacherService: TeacherService) {}
+  constructor(private readonly teacherService: TeacherService) { }
 
   @Post()
   create(@Body() createTeacherDto: CreateTeacherDto) {
