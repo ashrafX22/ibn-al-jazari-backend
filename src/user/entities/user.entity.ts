@@ -2,7 +2,6 @@ import { Exclude, Expose } from 'class-transformer';
 import { calculateAge } from 'src/shared/utils/calculate-age.util';
 
 export class UserEntity {
-  username: string;
   name: string;
   email: string;
   dateOfBirth: Date;

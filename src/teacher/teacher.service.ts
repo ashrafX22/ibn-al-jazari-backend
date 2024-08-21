@@ -16,7 +16,6 @@ export class TeacherService {
   async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
     const teacher = this.teacherRepository.create({
       common: {
-        username: createTeacherDto.username,
         email: createTeacherDto.email,
         name: createTeacherDto.name,
         password: createTeacherDto.password,
