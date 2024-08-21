@@ -1,19 +1,22 @@
-import { Body, Controller, Get, Post, Req, Res, Session, UseGuards } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, InternalServerErrorException, Post, Req, Res, Session, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthenticatedGuard, GoogleAuthGuard, LocalAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, loginSwaggerDoc, logoutSwaggerDoc, redirectSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
+import { FinalizeStudentDto } from 'src/student/dto/finalize-student-dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
 
-  @Post('register')
-  async register(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(createStudentDto);
+  @Post('local/register')
+  async localRegister(@Body() createStudentDto: CreateStudentDto) {
+    return await this.authService.localRegister(createStudentDto);
   }
 
   // pass username and password in a json object
@@ -30,6 +33,7 @@ export class AuthController {
   // - redirects to the googleRedirect endpoint
   @loginSwaggerDoc()
   // using AuthGuard('google') directly does not serialize the user nor return a session id
+  // @UseGuards(AuthGuard('google'))
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
   googleLogin() { }
@@ -42,10 +46,27 @@ export class AuthController {
   // - user is deserialized (saved to req.user) upon subsequent requests
   @redirectSwaggerDoc()
   // using AuthGuard('google') directly does not serialize the user nor return a session id
+  // @UseGuards(AuthGuard('google'))
   @UseGuards(GoogleAuthGuard)
   @Get('google/redirect')
   googleRedirect(@Res() res: Response) {
     res.redirect(process.env.ORIGIN);
+  }
+
+  @Post('google/register')
+  async googleRegister(@Req() req: Request, @Session() session: Record<string, any>, @Body() finalizeStudentDto: FinalizeStudentDto) {
+    console.log("google register");
+    console.log("passport session", session.passport);
+
+    const initStudentDto = {
+      email: session.passport.user['email'],
+      accessToken: session.passport.user['accessToken'],
+      refreshToken: session.passport.user['refreshToken'],
+    }
+
+    const student = await this.authService.googleRegister(initStudentDto, finalizeStudentDto);
+
+    return student;
   }
 
   // has access to the information of the whole session
@@ -54,6 +75,7 @@ export class AuthController {
   // call this to retrieve user initial info returned from google
   @Get('session/user')
   getSessionUser(@Session() session: Record<string, any>) {
+    console.log("session/user endpoint");
     console.log(session);
     console.log(session.id);
     return session.passport.user;

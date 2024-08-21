@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'passport';
 import { CreateStudentDto } from 'src/student/dto/create-student.dto';
+import { FinalizeStudentDto } from 'src/student/dto/finalize-student-dto';
+import { InitStudentDto } from 'src/student/dto/init-student.dto';
 import { StudentService } from 'src/student/student.service';
 import { UserService } from 'src/user/user.service';
 
@@ -8,24 +10,19 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
   constructor(private userService: UserService, private studentService: StudentService) { }
 
-  // login
+  // local login
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
+    console.log("user", user);
+    console.log("user password", user.password);
 
-    if (user && user.common.password === password) {
-      const { common, ...specific } = user;
-      const { password, ...general } = common;
-
-      return {
-        ...specific,
-        common: general,
-      };
-    }
+    if (user && user.password === password)
+      return user;
 
     return null;
   }
 
-  async register(createStudentDto: CreateStudentDto) {
+  async localRegister(createStudentDto: CreateStudentDto) {
     return await this.studentService.create(createStudentDto);
   }
 
@@ -60,7 +57,15 @@ export class AuthService {
     return result;
   }
 
-  async getUser(id: number) {
-    return this.userService.findOne(id);
+  async googleRegister(initStudentDto: InitStudentDto, finalizeStudentDto: FinalizeStudentDto) {
+    console.log('initStudentDto', initStudentDto);
+    console.log('finalizeStudentDto', finalizeStudentDto);
+    const createStudentDto = { ...initStudentDto, ...finalizeStudentDto };
+    console.log('createStudentDto', createStudentDto);
+    return await this.studentService.create(createStudentDto);
+  }
+
+  async getUser(email: string) {
+    return this.userService.findByEmail(email);
   }
 }
