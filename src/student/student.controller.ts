@@ -29,11 +29,11 @@ export class StudentController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findById(@Param('id') id: string) {
     return this.studentService.findById(+id);
   }
   @Get('email/:email')
-  findOneByEmail(@Param('email') email: string) {
+  findByEmail(@Param('email') email: string) {
     return this.studentService.findByEmail(email);
   }
 

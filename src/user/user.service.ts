@@ -2,17 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { StudentService } from 'src/student/student.service';
 import { TeacherService } from 'src/teacher/teacher.service';
 import { UpdateUserDto, User } from './user.type';
+import { TeacherEntity } from 'src/teacher/entities/teacher.entity';
+import { StudentEntity } from 'src/student/entities/student.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     private studentService: StudentService,
     private teacherService: TeacherService,
-  ) {}
+  ) { }
 
   services = [this.studentService, this.teacherService];
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<(TeacherEntity | StudentEntity)[]> {
     let result = [];
     for (const service of this.services) {
       result = [...result, await service.findAll()];
@@ -20,7 +22,7 @@ export class UserService {
     return result;
   }
 
-  async findOne(id: number): Promise<User> {
+  async findById(id: number): Promise<TeacherEntity | StudentEntity> {
     let result = null;
     for (const service of this.services)
       result = (await service.findById(id)) || result;
@@ -28,7 +30,7 @@ export class UserService {
     return result;
   }
 
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<TeacherEntity | StudentEntity> {
     console.log('user findByEmail');
     let result = null;
     for (const service of this.services)

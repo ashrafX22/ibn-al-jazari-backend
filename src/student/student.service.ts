@@ -13,14 +13,14 @@ export class StudentService {
   ) { }
 
   // Create a new student
-  async create(createStudentDto: CreateStudentDto): Promise<Student> {
+  async create(createStudentDto: CreateStudentDto): Promise<StudentEntity> {
     const student = this.studentRepository.create({
       common: {
         ...createStudentDto
       },
     });
 
-    return await this.studentRepository.save(student);
+    return new StudentEntity(await this.studentRepository.save(student));
   }
 
   // Find all students
@@ -51,6 +51,7 @@ export class StudentService {
         email,
       },
     });
+    if (!student) return null;
     const { common, ...rest } = student;
     return new StudentEntity({
       ...common,
@@ -61,22 +62,20 @@ export class StudentService {
   // Update a student's information
   async update(
     id: number,
-    updateTeacherDto: Partial<CreateStudentDto>,
+    updateStudentDto: Partial<CreateStudentDto>,
   ): Promise<StudentEntity | null> {
     const result = await this.studentRepository.update(id, {
       common: {
-        name: updateTeacherDto.name,
-        accessToken: updateTeacherDto.accessToken,
-        refreshToken: updateTeacherDto.refreshToken,
+        ...updateStudentDto
       },
     });
 
     if (result.affected === 1) {
-      const updatedTeacher = await this.studentRepository.findOneBy({ id });
-      if (updatedTeacher) {
+      const updatedStudent = await this.studentRepository.findOneBy({ id });
+      if (updatedStudent) {
         return new StudentEntity({
-          id: updatedTeacher.id,
-          ...updatedTeacher.common,
+          id: updatedStudent.id,
+          ...updatedStudent.common,
         });
       }
     }

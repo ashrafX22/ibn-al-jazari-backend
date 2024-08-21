@@ -30,7 +30,7 @@ export class TeacherController {
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id') id: string) {
+  findById(@Param('id') id: string) {
     return this.teacherService.findById(+id);
   }
 

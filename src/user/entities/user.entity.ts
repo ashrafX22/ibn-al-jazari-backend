@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { calculateAge } from 'utils/date-utils';
+import { calculateAge } from 'src/shared/utils/calculate-age.util';
 
 export class UserEntity {
   username: string;

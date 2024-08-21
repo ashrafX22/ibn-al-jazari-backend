@@ -10,16 +10,15 @@ import {
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';
 
-export class CreateUsertDto {
+export class CreateUserDto {
   @IsNotEmpty()
   @IsAlpha()
   @ApiProperty()
   username: string;
 
-  @IsNotEmpty()
   @IsUrl()
   @ApiProperty()
-  profilePicture: string;
+  profilePicture?: string;
 
   @IsNotEmpty()
   @IsAlpha()
