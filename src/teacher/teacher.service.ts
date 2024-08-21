@@ -10,7 +10,7 @@ export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-  ) {}
+  ) { }
 
   // Create a new teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
@@ -63,6 +63,7 @@ export class TeacherService {
         email,
       },
     });
+    if (!teacher) return null;
     const { common, ...rest } = teacher;
     return new TeacherEntity({
       ...common,
