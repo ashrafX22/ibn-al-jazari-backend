@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Teacher } from './../models/entities/teacher.entity';
+import { Teacher } from '../../models/entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { TeacherEntity } from './entities/teacher.entity';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
@@ -11,7 +11,7 @@ export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-  ) {}
+  ) { }
 
   // Create a new teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {

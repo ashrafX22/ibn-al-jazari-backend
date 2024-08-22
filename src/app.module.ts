@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { GoogleMeetModule } from './google-meet/google-meet.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { GoogleMeetModule } from './modules/google-meet/google-meet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from 'src/models/entities/student.entity';
 import { Teacher } from 'src/models/entities/teacher.entity';
@@ -12,10 +12,10 @@ import { Subject } from 'src/models/entities/subject.entity';
 import { Meeting } from 'src/models/entities/meeting.entity';
 import { Payment } from 'src/models/entities/payment.entity';
 import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
-import { TeacherModule } from './teacher/teacher.module';
-import { StudentModule } from './student/student.module';
+import { TeacherModule } from './modules/teacher/teacher.module';
+import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
-import { UserModule } from './user/user.module';
+import { UserModule } from './modules/user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),

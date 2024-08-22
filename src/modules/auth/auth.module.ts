@@ -9,10 +9,10 @@ import { User } from 'src/models/baseUser';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Teacher } from 'src/models/entities/teacher.entity';
 import { Student } from 'src/models/entities/student.entity';
-import { StudentService } from 'src/student/student.service';
-import { TeacherService } from 'src/teacher/teacher.service';
+import { StudentService } from 'src/modules/student/student.service';
+import { TeacherService } from 'src/modules/teacher/teacher.service';
 import { LocalStrategy } from './utils/local.strategy';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/modules/user/user.service';
 
 @Module({
   imports: [
@@ -36,4 +36,4 @@ import { UserService } from 'src/user/user.service';
     TeacherService,
   ],
 })
-export class AuthModule {}
+export class AuthModule { }

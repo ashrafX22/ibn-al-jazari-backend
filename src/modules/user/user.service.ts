@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { StudentService } from 'src/student/student.service';
-import { TeacherService } from 'src/teacher/teacher.service';
+import { StudentService } from 'src/modules/student/student.service';
+import { TeacherService } from 'src/modules/teacher/teacher.service';
 import { UpdateUserDto, User } from './user.type';
-import { TeacherEntity } from 'src/teacher/entities/teacher.entity';
-import { StudentEntity } from 'src/student/entities/student.entity';
+import { TeacherEntity } from 'src/modules/teacher/entities/teacher.entity';
+import { StudentEntity } from 'src/modules/student/entities/student.entity';
 
 @Injectable()
 export class UserService {

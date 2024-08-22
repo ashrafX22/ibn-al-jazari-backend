@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Student } from '../models/entities/student.entity';
+import { Student } from '../../models/entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentEntity } from './entities/student.entity';
 
@@ -10,7 +10,7 @@ export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-  ) {}
+  ) { }
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<StudentEntity> {

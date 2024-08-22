@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'passport';
-import { CreateStudentDto } from 'src/student/dto/create-student.dto';
-import { FinalizeStudentDto } from 'src/student/dto/finalize-student-dto';
-import { InitStudentDto } from 'src/student/dto/init-student.dto';
-import { StudentService } from 'src/student/student.service';
-import { UserService } from 'src/user/user.service';
+import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
+import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
+import { InitStudentDto } from 'src/modules/student/dto/init-student.dto';
+import { StudentService } from 'src/modules/student/student.service';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class AuthService {

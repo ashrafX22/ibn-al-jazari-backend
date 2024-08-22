@@ -2,8 +2,8 @@ import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { GoogleMeetService } from './google-meet.service';
 import { Request } from 'express'
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
-import { AuthenticatedGuard, RolesGuard } from 'src/auth/utils/guards';
-import { Roles } from 'src/auth/utils/roles.decorator';
+import { AuthenticatedGuard, RolesGuard } from 'src/modules/auth/utils/guards';
+import { Roles } from 'src/modules/auth/utils/roles.decorator';
 import { createMeetingSwaggerDoc } from './google-meet.swagger-doc';
 import { ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/models/enums/role.enum';

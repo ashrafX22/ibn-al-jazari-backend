@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { CreateStudentDto } from 'src/student/dto/create-student.dto';
-import { CreateUserDto } from 'src/user/dto/create.user.dto';
+import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
+import { CreateUserDto } from 'src/modules/user/dto/create.user.dto';
 
 export function LocalRegisterSwaggerDoc() {
   return applyDecorators(

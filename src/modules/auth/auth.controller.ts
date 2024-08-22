@@ -3,9 +3,9 @@ import { AuthenticatedGuard, GoogleAuthGuard, LocalAuthGuard } from './utils/gua
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, googleLoginSwaggerDoc as googleLoginSwaggerDoc, logoutSwaggerDoc, googleRedirectSwaggerDoc as googleRedirectSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc, getSessionUserSwaggerDoc } from './auth.swagger-doc';
-import { CreateStudentDto } from 'src/student/dto/create-student.dto';
+import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
-import { FinalizeStudentDto } from 'src/student/dto/finalize-student-dto';
+import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
