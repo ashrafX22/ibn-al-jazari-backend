@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from '../../models/entities/teacher.entity';
@@ -15,25 +15,37 @@ export class TeacherService {
 
   // Create a new teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
-    const teacher = this.teacherRepository.create({
-      common: {
-        email: createTeacherDto.email,
-        name: createTeacherDto.name,
-        password: createTeacherDto.password,
-        gender: createTeacherDto.gender,
-        phoneNumber: createTeacherDto.phoneNumber,
-        dateOfBirth: createTeacherDto.dateOfBirth,
-        accessToken: createTeacherDto.accessToken,
-        refreshToken: createTeacherDto.refreshToken,
-      },
-      summary: createTeacherDto.summary,
-      proficiencyLevel: createTeacherDto.proficiencyLevel,
-    });
-    const { common, ...rest } = teacher;
-    return new TeacherEntity({
-      ...common,
-      ...rest,
-    });
+
+    const { email, name, password, gender, phoneNumber, dateOfBirth,
+      accessToken, refreshToken, summary, experience } = createTeacherDto;
+
+    try {
+      const teacher = this.teacherRepository.create({
+        common: {
+          email,
+          name,
+          password,
+          gender,
+          phoneNumber,
+          dateOfBirth,
+          accessToken,
+          refreshToken,
+        },
+        summary,
+        experience
+      });
+
+      const { common, ...rest } = teacher;
+      return new TeacherEntity({
+        ...common,
+        ...rest,
+      });
+    } catch (error) {
+      if (error.code === '23505')
+        throw new ConflictException(error.detail);
+      else
+        throw new InternalServerErrorException(error.detail);
+    }
   }
 
   // Find all teachers
@@ -45,7 +57,7 @@ export class TeacherService {
           id: teacher.id,
           ...teacher.common,
           summary: teacher.summary,
-          proficiencyLevel: teacher.proficiencyLevel,
+          experience: teacher.experience,
         }),
     );
   }
@@ -53,7 +65,8 @@ export class TeacherService {
   // Find a teacher by ID
   async findById(id: number): Promise<TeacherEntity> {
     const teacher = await this.teacherRepository.findOneBy({ id });
-    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!teacher) return null;
 
     const { common, ...rest } = teacher;
     return new TeacherEntity({
@@ -68,7 +81,8 @@ export class TeacherService {
         email,
       },
     });
-    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!teacher) return null;
 
     const { common, ...rest } = teacher;
     return new TeacherEntity({
@@ -84,7 +98,7 @@ export class TeacherService {
   ): Promise<TeacherEntity | null> {
     const teacher = await this.teacherRepository.findOneBy({ id });
 
-    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+    if (!teacher) return null;
 
     const result = await this.teacherRepository.update(id, {
       common: {
@@ -104,7 +118,7 @@ export class TeacherService {
           id: updatedTeacher.id,
           ...updatedTeacher.common,
           summary: updatedTeacher.summary,
-          proficiencyLevel: updatedTeacher.proficiencyLevel,
+          experience: updatedTeacher.experience,
         });
       }
     }
@@ -115,7 +129,9 @@ export class TeacherService {
   // Delete a teacher by ID
   async remove(id: number): Promise<void> {
     const teacher = await this.teacherRepository.findOneBy({ id });
-    if (!teacher) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!teacher) return null;
+
     await this.teacherRepository.delete(id);
   }
 }

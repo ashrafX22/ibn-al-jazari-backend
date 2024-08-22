@@ -56,6 +56,7 @@ export function localLoginSwaggerDoc() {
         'The user has been authenticated and a session id is successfully created.',
     }),
     ApiResponse({ status: 401, description: 'Unauthorized' }),
+    ApiResponse({ status: 404, description: 'User not found' }),
   );
 }
 

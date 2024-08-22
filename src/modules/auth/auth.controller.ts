@@ -1,16 +1,15 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, InternalServerErrorException, Post, Req, Res, Session, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, Session, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthenticatedGuard, GoogleAuthGuard, LocalAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
-import { getUserSwaggerDoc, googleLoginSwaggerDoc as googleLoginSwaggerDoc, logoutSwaggerDoc, googleRedirectSwaggerDoc as googleRedirectSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc, getSessionUserSwaggerDoc } from './auth.swagger-doc';
+import { getUserSwaggerDoc, googleLoginSwaggerDoc, logoutSwaggerDoc, googleRedirectSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc, getSessionUserSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private authService: AuthService) { }
 
@@ -25,9 +24,9 @@ export class AuthController {
   // using AuthGuard('local') directly does not serialize the user nor return a session id
   @UseGuards(LocalAuthGuard)
   @Post('local/login')
-  async localLogin(@Req() req: Request) {
+  async localLogin(@Session() session: Record<string, any>, @Req() req: Request) {
     console.log("local login", req.user);
-    return req.user;
+    return { sessionId: session.id };
   }
 
   // google auth steps
@@ -39,7 +38,7 @@ export class AuthController {
   // @UseGuards(AuthGuard('google'))
   @UseGuards(GoogleAuthGuard)
   @Get('google/login')
-  googleLogin() { }
+  googleAuth() { }
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
@@ -54,6 +53,7 @@ export class AuthController {
   @Get('google/redirect')
   googleRedirect(@Session() session: Record<string, any>, @Res() res: Response) {
     const queryParams = new URLSearchParams({
+      sessionId: session.id,
       isNew: session.passport.user?.isNew?.toString(),
     });
     res.redirect(`${process.env.ORIGIN}?${queryParams.toString()}`);
@@ -61,7 +61,7 @@ export class AuthController {
 
   @googleRegisterSwaggerDoc()
   @Post('google/register')
-  async googleRegister(@Req() req: Request, @Session() session: Record<string, any>, @Body() finalizeStudentDto: FinalizeStudentDto) {
+  async googleRegister(@Session() session: Record<string, any>, @Body() finalizeStudentDto: FinalizeStudentDto) {
     console.log("google register");
     console.log("passport session", session.passport);
 

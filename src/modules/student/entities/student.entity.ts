@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { SuperUserEntity } from 'src/modules/user/entities/user.entity';
 
-export class StudentEntity extends UserEntity {
+export class StudentEntity extends SuperUserEntity {
   @ApiProperty()
   id: number;
   constructor(partial: Partial<StudentEntity>) {

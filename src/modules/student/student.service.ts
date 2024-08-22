@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from '../../models/entities/student.entity';
@@ -14,13 +14,21 @@ export class StudentService {
 
   // Create a new student
   async create(createStudentDto: CreateStudentDto): Promise<StudentEntity> {
-    const student = this.studentRepository.create({
-      common: {
-        ...createStudentDto,
-      },
-    });
+    try {
+      const student = this.studentRepository.create({
+        common: {
+          ...createStudentDto,
+        },
+      });
 
-    return new StudentEntity(await this.studentRepository.save(student));
+      return new StudentEntity(await this.studentRepository.save(student));
+    } catch (error) {
+      console.log("create catch");
+      if (error.code === '23505')
+        throw new ConflictException(error.detail);
+      else
+        throw new InternalServerErrorException(error.detail);
+    }
   }
 
   // Find all students
@@ -38,7 +46,9 @@ export class StudentService {
   // Find a student by ID
   async findById(id: number): Promise<StudentEntity> {
     const student = await this.studentRepository.findOneBy({ id });
-    if (!student) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!student) return null;
+
     const { common, ...rest } = student;
     return new StudentEntity({
       ...common,
@@ -52,7 +62,8 @@ export class StudentService {
         email,
       },
     });
-    if (!student) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!student) return null;
 
     const { common, ...rest } = student;
     return new StudentEntity({
@@ -67,7 +78,9 @@ export class StudentService {
     updateStudentDto: Partial<CreateStudentDto>,
   ): Promise<StudentEntity | null> {
     const student = await this.studentRepository.findOneBy({ id });
-    if (!student) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!student) return null;
+
     const result = await this.studentRepository.update(id, {
       common: {
         name: updateStudentDto.name || student.common.name,
@@ -77,15 +90,16 @@ export class StudentService {
           updateStudentDto.refreshToken || student.common.accessToken,
       },
     });
-    console.log(result.affected);
+
     if (result.affected === 1) {
       const updatedStudent = await this.studentRepository.findOneBy({ id });
-      if (updatedStudent) {
-        return new StudentEntity({
-          id: updatedStudent.id,
-          ...updatedStudent.common,
-        });
-      }
+
+      if (!updatedStudent) return null;
+
+      return new StudentEntity({
+        id: updatedStudent.id,
+        ...updatedStudent.common,
+      });
     }
 
     return null;
@@ -94,7 +108,9 @@ export class StudentService {
   // Delete a student by ID
   async remove(id: number): Promise<void> {
     const student = await this.studentRepository.findOneBy({ id });
-    if (!student) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+
+    if (!student) return null;
+
     await this.studentRepository.delete(id);
   }
 }

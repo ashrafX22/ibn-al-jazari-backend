@@ -4,17 +4,17 @@ import { Role } from 'src/models/enums/role.enum';
 import { CreateUserDto } from './../../user/dto/create.user.dto';
 
 export class CreateTeacherDto extends CreateUserDto {
-  @ApiProperty({
-    description: "URL of the user's profile picture",
-    example: 'https://example.com/profile-picture.jpg',
-  })
   @IsString()
+  @ApiProperty({
+    description: "a summary about the teacher",
+    example: '',
+  })
   summary: string;
 
   @IsEnum(Role)
   @ApiProperty({
-    description: "URL of the user's profile picture",
-    example: 'https://example.com/profile-picture.jpg',
+    description: "The ",
+    example: 'SENIOR',
   })
-  proficiencyLevel: Role;
+  experience: Role;
 }

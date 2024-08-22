@@ -5,12 +5,21 @@ import {
 
 export class InitStudentDto {
     @IsEmail()
-    @ApiProperty()
+    @ApiProperty({
+        description: 'The email address of the user',
+        example: 'john.doe@example.com',
+    })
     email: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'Access token for the user',
+        example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    })
     accessToken: string = '';
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'Refresh token for the user',
+        example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    })
     refreshToken: string = '';
 }

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { StudentService } from 'src/modules/student/student.service';
 import { TeacherService } from 'src/modules/teacher/teacher.service';
-import { UpdateUserDto, User } from './user.type';
-import { TeacherEntity } from 'src/modules/teacher/entities/teacher.entity';
-import { StudentEntity } from 'src/modules/student/entities/student.entity';
+import { UnionUserEntity, UpdateUserDto } from './types/user.type';
 
 @Injectable()
 export class UserService {
@@ -14,25 +12,28 @@ export class UserService {
 
   services = [this.studentService, this.teacherService];
 
-  async findAll(): Promise<(TeacherEntity | StudentEntity)[]> {
+  async findAll(): Promise<UnionUserEntity[]> {
     let result = [];
-    for (const service of this.services) {
+
+    for (const service of this.services)
       result = [...result, await service.findAll()];
-    }
+
     return result;
   }
 
-  async findById(id: number): Promise<TeacherEntity | StudentEntity> {
+  async findById(id: number): Promise<UnionUserEntity> {
     let result = null;
+
     for (const service of this.services)
       result = (await service.findById(id)) || result;
 
     return result;
   }
 
-  async findByEmail(email: string): Promise<TeacherEntity | StudentEntity> {
+  async findByEmail(email: string): Promise<UnionUserEntity> {
     console.log('user findByEmail');
     let result = null;
+
     for (const service of this.services)
       result = (await service.findByEmail(email)) || result;
 
@@ -44,6 +45,7 @@ export class UserService {
     updateUserDto: Partial<UpdateUserDto>,
   ): Promise<UpdateUserDto> {
     let result = null;
+
     for (const service of this.services)
       result = (await service.update(id, updateUserDto)) || result;
 

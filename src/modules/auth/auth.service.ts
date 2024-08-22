@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Profile } from 'passport';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
@@ -6,20 +6,22 @@ import { InitStudentDto } from 'src/modules/student/dto/init-student.dto';
 import { StudentService } from 'src/modules/student/student.service';
 import { UserService } from 'src/modules/user/user.service';
 
+
 @Injectable()
 export class AuthService {
   constructor(private userService: UserService, private studentService: StudentService) { }
 
-  // local login
-  async validateUser(email: string, password: string): Promise<any> {
+  async localLogin(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
     console.log("user", user);
     console.log("user password", user.password);
 
-    if (user && user.password === password)
-      return user;
+    if (!user) throw new NotFoundException('user not found');
 
-    return null;
+    if (user.password === password)
+      return user;
+    else
+      throw new UnauthorizedException('invalid credintials');
   }
 
   async localRegister(createStudentDto: CreateStudentDto) {
@@ -34,6 +36,7 @@ export class AuthService {
 
     // login teacher or student
     const user = await this.userService.findByEmail(email);
+
     let result = null;
 
     if (user) {
@@ -66,6 +69,10 @@ export class AuthService {
   }
 
   async getUser(email: string) {
-    return this.userService.findByEmail(email);
+    const user = this.userService.findByEmail(email);
+
+    if (!user) throw new NotFoundException('user not found');
+
+    return user;
   }
 }

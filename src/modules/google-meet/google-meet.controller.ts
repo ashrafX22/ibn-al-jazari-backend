@@ -14,7 +14,7 @@ export class GoogleMeetController {
   constructor(private readonly googleMeetService: GoogleMeetService) { }
 
   @createMeetingSwaggerDoc()
-  @Roles(Role.SHEIKH)
+  @Roles(Role.SENIOR)
   @UseGuards(AuthenticatedGuard, RolesGuard)
   @Post('create')
   async createMeeting(@Req() req: Request, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {

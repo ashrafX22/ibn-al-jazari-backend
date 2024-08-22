@@ -1,16 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsNotEmpty,
-  IsAlpha,
   IsEmail,
   IsStrongPassword,
   IsEnum,
-  IsDate,
   IsUrl,
+  IsPhoneNumber,
+  IsDateString,
+  IsOptional,
+  IsString,
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';
 
 export class CreateUserDto {
+  @IsOptional()
   @IsUrl()
   @ApiProperty({
     description: "URL of the user's profile picture",
@@ -19,8 +21,7 @@ export class CreateUserDto {
   })
   profilePicture?: string;
 
-  @IsNotEmpty()
-  @IsAlpha()
+  @IsString()
   @ApiProperty({
     description: 'The full name of the user',
     example: 'John Doe',
@@ -34,6 +35,7 @@ export class CreateUserDto {
   })
   email: string;
 
+  @IsOptional()
   @IsStrongPassword()
   @ApiProperty({
     description:
@@ -42,23 +44,21 @@ export class CreateUserDto {
   })
   password?: string = 'google';
 
-  @IsNotEmpty()
   @IsEnum(Gender)
   @ApiProperty({
     description: 'The gender of the user',
-    example: 'Male',
+    example: 'MALE',
   })
   gender: Gender;
 
-  @IsNotEmpty()
+  @IsPhoneNumber()
   @ApiProperty({
     description: 'The phone number of the user',
     example: '+1234567890',
   })
   phoneNumber: string;
 
-  @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   @ApiProperty({
     description: 'The date of birth of the user',
     example: '1990-01-01',

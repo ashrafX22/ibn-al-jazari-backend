@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { calculateAge } from 'src/shared/utils/calculate-age.util';
 
-export class UserEntity {
+export class SuperUserEntity {
   @ApiProperty()
   name: string;
   @ApiProperty()
@@ -32,7 +32,7 @@ export class UserEntity {
     return calculateAge(this.dateOfBirth);
   }
 
-  constructor(partial: Partial<UserEntity>) {
+  constructor(partial: Partial<SuperUserEntity>) {
     Object.assign(this, partial);
   }
 }

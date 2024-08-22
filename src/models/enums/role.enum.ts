@@ -1,5 +1,5 @@
 export enum Role {
-    SHEIKH = 'SHEIKH',
-    EXPERT = 'EXPERT',
+    JUNIOR = 'JUNIOR',
+    SENIOR = 'SENIOR',
     ADMIN = 'ADMIN',
 }
