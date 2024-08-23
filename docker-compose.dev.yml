@@ -2,15 +2,16 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     environment:
       - PORT=3000
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/ibn-al-jazari-db?schema=public
-      - NODE_ENV=deploy
+      - NODE_ENV=development
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - db
     restart: always

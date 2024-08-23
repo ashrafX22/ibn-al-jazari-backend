@@ -1,15 +1,20 @@
-FROM node:18
+# Use an official Node.js runtime as a parent image
+FROM node:18-alpine
 
+# Set the working directory inside the container
 WORKDIR /usr/src/app
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
+# Install development dependencies (including typescript)
 RUN npm install
 
+# Copy the rest of the application code
 COPY . .
 
-# RUN npx prisma generate
-
+# Expose the application port
 EXPOSE 3000
 
+# Start the application in watch mode
 CMD ["npm", "run", "start:dev"]
