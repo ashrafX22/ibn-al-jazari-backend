@@ -11,7 +11,7 @@ export class GoogleMeetService {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      'http://localhost:3000/api/auth/google/callback',
+      `${process.env.BACKEND_URL}/api/auth/google/callback` // 'http://localhost:3000/api/auth/google/callback',
       // TODO: test it with this url: 'http://localhost:3000/api/auth/google/redirect'
     );
   }
