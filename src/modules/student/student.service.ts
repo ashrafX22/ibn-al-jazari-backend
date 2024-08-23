@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from '../../models/entities/student.entity';
@@ -9,7 +9,7 @@ import { StudentEntity } from './entities/student.entity';
 export class StudentService {
   constructor(
     @InjectRepository(Student)
-    private readonly studentRepository: Repository<Student>,
+    private readonly studentRepository: Repository<Student>
   ) { }
 
   // Create a new student
@@ -21,7 +21,14 @@ export class StudentService {
         },
       });
 
-      return new StudentEntity(await this.studentRepository.save(student));
+      await this.studentRepository.save(student);
+
+      const { common, ...rest } = student;
+
+      return new StudentEntity({
+        ...common,
+        ...rest,
+      });
     } catch (error) {
       console.log("create catch");
       if (error.code === '23505')

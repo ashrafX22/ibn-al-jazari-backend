@@ -35,6 +35,8 @@ export class TeacherService {
         experience
       });
 
+      await this.teacherRepository.save(teacher);
+
       const { common, ...rest } = teacher;
       return new TeacherEntity({
         ...common,
