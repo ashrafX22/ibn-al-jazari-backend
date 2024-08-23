@@ -18,7 +18,7 @@ export class User {
   @Column()
   gender: Gender;
 
-  @Column()
+  @Column({ unique: true })
   phoneNumber: string;
 
   @Column()
