@@ -19,14 +19,12 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-
     .setTitle('ibn al-jazari docs')
-
     .setDescription('The  API description')
-
     .setVersion('0.1')
-
+    .addBearerAuth()
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
