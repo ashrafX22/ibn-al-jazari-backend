@@ -39,38 +39,44 @@ export class AuthService {
     return await this.studentService.create(createStudentDto);
   }
 
-  async googleAuth(accessToken: string, refreshToken: string, profile: Profile) {
+  async googleLogin(email: string) {
+    const user = await this.userService.findByEmail(email);
+    if (user)
+      return { role: user.role, jwt: this.jwtService.sign({ email: user.email, role: user.role }) };
+    else
+      throw new NotFoundException('User not found');
+
     console.log('auth service');
 
-    const email = profile.emails[0].value;
-    refreshToken = refreshToken || '';
+    // const email = profile.emails[0].value;
+    // refreshToken = refreshToken || '';
 
-    // login teacher or student
-    const user = await this.userService.findByEmail(email);
+    // // login teacher or student
+    // const user = await this.userService.findByEmail(email);
 
-    let result = null;
+    // let result = null;
 
-    if (user) {
-      result = await this.userService.update(user.id, {
-        accessToken,
-        refreshToken,
-      });
+    // if (user) {
+    //   result = await this.userService.update(user.id, {
+    //     accessToken,
+    //     refreshToken,
+    //   });
 
-      console.log('google auth update user', result);
+    //   console.log('google auth update user', result);
 
-      result = { ...result, isNew: false };
-    }
-    // register student only
-    else {
-      result = {
-        accessToken,
-        refreshToken,
-        email,
-        isNew: true
-      };
-    }
+    //   result = { ...result, isNew: false };
+    // }
+    // // register student only
+    // else {
+    //   result = {
+    //     accessToken,
+    //     refreshToken,
+    //     email,
+    //     isNew: true
+    //   };
+    // }
 
-    return result;
+    // return result;
   }
 
   async googleRegister(initStudentDto: InitStudentDto, finalizeStudentDto: FinalizeStudentDto) {
