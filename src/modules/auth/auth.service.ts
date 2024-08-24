@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Profile } from 'passport';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
@@ -9,12 +9,14 @@ import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private studentService: StudentService) { }
+  constructor(
+    private userService: UserService,
+    private studentService: StudentService
+  ) { }
 
   async localLogin(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
     console.log("user", user);
-    console.log("user password", user.password);
 
     if (!user) throw new NotFoundException('user not found');
 
@@ -44,6 +46,8 @@ export class AuthService {
         accessToken,
         refreshToken,
       });
+
+      console.log('google auth update user', result);
 
       result = { ...result, isNew: false };
     }
