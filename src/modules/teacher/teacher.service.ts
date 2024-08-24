@@ -1,10 +1,11 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Teacher } from '../../models/entities/teacher.entity';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { TeacherEntity } from './entities/teacher.entity';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { flattenObject } from 'src/shared/utils/flatten-object.util';
 
 @Injectable()
 export class TeacherService {
@@ -37,11 +38,7 @@ export class TeacherService {
 
       await this.teacherRepository.save(teacher);
 
-      const { common, ...rest } = teacher;
-      return new TeacherEntity({
-        ...common,
-        ...rest,
-      });
+      return new TeacherEntity(flattenObject(teacher));
     } catch (error) {
       if (error.code === '23505')
         throw new ConflictException(error.detail);
@@ -55,12 +52,7 @@ export class TeacherService {
     const teachers = await this.teacherRepository.find();
     return teachers.map(
       (teacher) =>
-        new TeacherEntity({
-          id: teacher.id,
-          ...teacher.common,
-          summary: teacher.summary,
-          experience: teacher.experience,
-        }),
+        new TeacherEntity(flattenObject(teacher)),
     );
   }
 
@@ -70,11 +62,7 @@ export class TeacherService {
 
     if (!teacher) return null;
 
-    const { common, ...rest } = teacher;
-    return new TeacherEntity({
-      ...common,
-      ...rest,
-    });
+    return new TeacherEntity(flattenObject(teacher));
   }
 
   async findByEmail(email: string): Promise<TeacherEntity | null> {
@@ -86,11 +74,7 @@ export class TeacherService {
 
     if (!teacher) return null;
 
-    const { common, ...rest } = teacher;
-    return new TeacherEntity({
-      ...common,
-      ...rest,
-    });
+    return new TeacherEntity(flattenObject(teacher));
   }
 
   // Update a teacher's information
@@ -115,14 +99,10 @@ export class TeacherService {
 
     if (result.affected === 1) {
       const updatedTeacher = await this.teacherRepository.findOneBy({ id });
-      if (updatedTeacher) {
-        return new TeacherEntity({
-          id: updatedTeacher.id,
-          ...updatedTeacher.common,
-          summary: updatedTeacher.summary,
-          experience: updatedTeacher.experience,
-        });
-      }
+
+      if (!updatedTeacher) return null;
+
+      return new TeacherEntity(flattenObject(teacher));
     }
 
     return null;

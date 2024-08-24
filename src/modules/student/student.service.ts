@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Student } from '../../models/entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentEntity } from './entities/student.entity';
+import { flattenObject } from 'src/shared/utils/flatten-object.util';
 
 @Injectable()
 export class StudentService {
@@ -23,12 +24,11 @@ export class StudentService {
 
       await this.studentRepository.save(student);
 
-      const { common, ...rest } = student;
+      const studentEntity = new StudentEntity(flattenObject(student));
 
-      return new StudentEntity({
-        ...common,
-        ...rest,
-      });
+      console.log("create student", studentEntity);
+
+      return studentEntity;
     } catch (error) {
       console.log("create catch");
       if (error.code === '23505')
@@ -43,10 +43,7 @@ export class StudentService {
     const students = await this.studentRepository.find();
     return students.map(
       (student) =>
-        new StudentEntity({
-          id: student.id,
-          ...student.common,
-        }),
+        new StudentEntity(flattenObject(student)),
     );
   }
 
@@ -56,11 +53,7 @@ export class StudentService {
 
     if (!student) return null;
 
-    const { common, ...rest } = student;
-    return new StudentEntity({
-      ...common,
-      ...rest,
-    });
+    return new StudentEntity(flattenObject(student));
   }
 
   async findByEmail(email: string): Promise<StudentEntity | null> {
@@ -72,11 +65,9 @@ export class StudentService {
 
     if (!student) return null;
 
-    const { common, ...rest } = student;
-    return new StudentEntity({
-      ...common,
-      ...rest,
-    });
+    console.log("flattened", flattenObject(student));
+
+    return new StudentEntity(flattenObject(student));
   }
 
   // Update a student's information
@@ -85,6 +76,8 @@ export class StudentService {
     updateStudentDto: Partial<CreateStudentDto>,
   ): Promise<StudentEntity | null> {
     const student = await this.studentRepository.findOneBy({ id });
+
+    console.log("update student, current student", student);
 
     if (!student) return null;
 
@@ -103,10 +96,7 @@ export class StudentService {
 
       if (!updatedStudent) return null;
 
-      return new StudentEntity({
-        id: updatedStudent.id,
-        ...updatedStudent.common,
-      });
+      return new StudentEntity(flattenObject(student));
     }
 
     return null;
