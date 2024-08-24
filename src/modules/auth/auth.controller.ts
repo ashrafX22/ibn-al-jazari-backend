@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, Session, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, NotFoundException, Post, Req, Res, Session, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthenticatedGuard, GoogleAuthGuard, LocalAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
@@ -52,11 +52,19 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/redirect')
   googleRedirect(@Session() session: Record<string, any>, @Res() res: Response) {
-    const queryParams = new URLSearchParams({
-      sessionId: session.id,
-      isNew: session.passport.user?.isNew?.toString(),
-    });
-    res.redirect(`${process.env.ORIGIN}?${queryParams.toString()}`);
+    console.log("google redirect session", session.passport.user);
+    const isNew = session.passport.user?.isNew;
+    const role = session.passport.user?.role;
+    let redirectPage: string;
+
+    if (isNew)
+      redirectPage = "additional-info";
+    else
+      redirectPage = `${role}-home`;
+
+    const redirectUrl = `${process.env.ORIGIN}/${redirectPage}/${session.id}`;
+    console.log(redirectUrl);
+    res.redirect(redirectUrl);
   }
 
   @googleRegisterSwaggerDoc()
@@ -65,6 +73,9 @@ export class AuthController {
     console.log("google register");
     console.log("passport session", session.passport);
 
+    if (!session.passport || !session.passport.user)
+      throw new NotFoundException("user's google information not found");
+
     const initStudentDto = {
       email: session.passport.user['email'],
       accessToken: session.passport.user['accessToken'],
@@ -72,6 +83,10 @@ export class AuthController {
     }
 
     const student = await this.authService.googleRegister(initStudentDto, finalizeStudentDto);
+
+    session.passport.user.role = "student";
+    session.passport.user.isNew = "false";
+    console.log("updated sesssion", session.passport.user);
 
     return student;
   }
