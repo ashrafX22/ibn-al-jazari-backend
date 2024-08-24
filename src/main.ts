@@ -34,35 +34,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // sessions
-  // redis cloud
-  const redisClient = createClient({
-    password: process.env.REDIS_PASSWORD,
-    socket: {
-      host: process.env.REDIS_HOST,
-      port: +process.env.REDIS_PORT,
-    }
-  });
-  redisClient.connect().catch(console.error);
-
-  app.use(
-    session({
-      store: new RedisStore({
-        client: redisClient
-      }),
-      secret: process.env.SESSION_SECRET,
-      saveUninitialized: false,
-      resave: false,
-      cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-        secure: false,
-        httpOnly: true
-      },
-    }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
-
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT, () => {
     console.log(`app is running on port ${PORT}`);

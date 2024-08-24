@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
-import { SessionSerializer } from './utils/session.serializer';
 import { PassportModule } from '@nestjs/passport';
 import { AuthenticatedGuard, RolesGuard } from './utils/guards';
 import { User } from 'src/models/baseUser';
@@ -13,11 +12,18 @@ import { StudentService } from 'src/modules/student/student.service';
 import { TeacherService } from 'src/modules/teacher/teacher.service';
 import { LocalStrategy } from './utils/local.strategy';
 import { UserService } from 'src/modules/user/user.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forFeature([User, Student, Teacher]),
     PassportModule.register({ session: true }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '10s' },
+    }),
   ],
   controllers: [AuthController],
   providers: [
@@ -31,7 +37,6 @@ import { UserService } from 'src/modules/user/user.service';
     RolesGuard,
     LocalStrategy,
     GoogleStrategy,
-    SessionSerializer,
     StudentService,
     TeacherService,
   ],

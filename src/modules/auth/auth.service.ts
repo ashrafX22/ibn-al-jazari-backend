@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Profile } from 'passport';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
@@ -11,10 +12,11 @@ import { UserService } from 'src/modules/user/user.service';
 export class AuthService {
   constructor(
     private userService: UserService,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private jwtService: JwtService
   ) { }
 
-  async localLogin(email: string, password: string): Promise<any> {
+  async localValidateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
     console.log("user", user);
 
@@ -24,6 +26,13 @@ export class AuthService {
       return user;
     else
       throw new UnauthorizedException('invalid credintials');
+  }
+
+  async LocalLogin(user: any) {
+    const payload = { email: user.email, role: user.role };
+    return {
+      jwt: this.jwtService.sign(payload),
+    };
   }
 
   async localRegister(createStudentDto: CreateStudentDto) {
