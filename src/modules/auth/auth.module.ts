@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { GoogleLoginStrategy } from './utils/google.strategy';
+import { GoogleStrategy } from './utils/google.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AuthenticatedGuard, RolesGuard } from './utils/guards';
 import { User } from 'src/models/baseUser';
@@ -36,7 +36,7 @@ import { ConfigModule } from '@nestjs/config';
     AuthenticatedGuard,
     RolesGuard,
     LocalStrategy,
-    GoogleLoginStrategy,
+    GoogleStrategy,
     StudentService,
     TeacherService,
   ],

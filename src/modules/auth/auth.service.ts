@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Profile } from 'passport';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
 import { InitStudentDto } from 'src/modules/student/dto/init-student.dto';
@@ -39,52 +38,21 @@ export class AuthService {
     return await this.studentService.create(createStudentDto);
   }
 
-  async googleLogin(email: string) {
+  async googleAuth(email: string) {
     const user = await this.userService.findByEmail(email);
     if (user)
-      return { role: user.role, jwt: this.jwtService.sign({ email: user.email, role: user.role }) };
+      return { newAccount: false, role: user.role, jwt: this.jwtService.sign({ email: user.email, role: user.role }) };
     else
-      throw new NotFoundException('User not found');
-
-    console.log('auth service');
-
-    // const email = profile.emails[0].value;
-    // refreshToken = refreshToken || '';
-
-    // // login teacher or student
-    // const user = await this.userService.findByEmail(email);
-
-    // let result = null;
-
-    // if (user) {
-    //   result = await this.userService.update(user.id, {
-    //     accessToken,
-    //     refreshToken,
-    //   });
-
-    //   console.log('google auth update user', result);
-
-    //   result = { ...result, isNew: false };
-    // }
-    // // register student only
-    // else {
-    //   result = {
-    //     accessToken,
-    //     refreshToken,
-    //     email,
-    //     isNew: true
-    //   };
-    // }
-
-    // return result;
+      return { newAccount: true };
   }
 
-  async googleRegister(initStudentDto: InitStudentDto, finalizeStudentDto: FinalizeStudentDto) {
-    console.log('initStudentDto', initStudentDto);
-    console.log('finalizeStudentDto', finalizeStudentDto);
-    const createStudentDto = { ...initStudentDto, ...finalizeStudentDto };
-    console.log('createStudentDto', createStudentDto);
-    return await this.studentService.create(createStudentDto);
+  async googleRegister(createStudentDto: CreateStudentDto) {
+    const student = await this.studentService.create({
+      ...createStudentDto
+    });
+
+    const jwt = this.jwtService.sign({ email: student.email, role: student.role });
+    return { role: student.role, jwt: jwt };
   }
 
   async getUser(email: string) {

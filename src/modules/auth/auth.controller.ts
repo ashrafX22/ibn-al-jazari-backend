@@ -1,11 +1,9 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, NotFoundException, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { AuthenticatedGuard, JwtAuthGuard } from './utils/guards';
-import { Request, Response } from 'express';
+import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { JwtAuthGuard } from './utils/guards';
 import { ApiTags } from '@nestjs/swagger';
-import { getUserSwaggerDoc, googleLoginSwaggerDoc, logoutSwaggerDoc, googleRedirectSwaggerDoc as googleLoginCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc, getSessionUserSwaggerDoc } from './auth.swagger-doc';
+import { getUserSwaggerDoc, googleAuthSwaggerDoc, googleAuthCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
-import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
@@ -13,12 +11,6 @@ import { AuthGuard } from '@nestjs/passport';
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private authService: AuthService) { }
-
-  @LocalRegisterSwaggerDoc()
-  @Post('local/register')
-  async localRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.localRegister(createStudentDto);
-  }
 
   // pass username and password in a json object
   @localLoginSwaggerDoc()
@@ -29,73 +21,70 @@ export class AuthController {
     return this.authService.localLogin(req.user);
   }
 
+  @LocalRegisterSwaggerDoc()
+  @Post('local/register')
+  async localRegister(@Body() createStudentDto: CreateStudentDto) {
+    return await this.authService.localRegister(createStudentDto);
+  }
+
   // google auth steps
   // - google auth guard checks if the user is authenticated
   // - user authenticates if not authenticated
   // - redirects to the googleRedirect endpoint
-  @googleLoginSwaggerDoc()
-  @UseGuards(AuthGuard('google-login'))
-  @Get('google/login')
-  googleLogin() { }
+  @googleAuthSwaggerDoc()
+  @UseGuards(AuthGuard('google-auth'))
+  @Get('google')
+  googleAuth() { }
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
   // - google strategy validates the authenticated user
   // - user is saved to req.user upon subsequent requests
   // - redirection to the frontend
-  @googleLoginCallbackSwaggerDoc()
-  @UseGuards(AuthGuard('google-login'))
-  @Get('google/login/callback')
-  async googleLoginCallback(@Req() req, @Res() res) {
+  @googleAuthCallbackSwaggerDoc()
+  @UseGuards(AuthGuard('google-auth'))
+  @Get('google/callback')
+  async googleAuthCallback(@Req() req, @Res() res) {
     console.log("google login redirect");
-    try {
-      const { role, jwt } = await this.authService.googleLogin(req.user.email);
-      console.log(role, jwt);
-      return res.redirect(`${process.env.ORIGIN}/${role}-home}/${jwt}`);
-    } catch (error) {
-      return res.redirect(`${process.env.ORIGIN}/register`);
+
+    const result = await this.authService.googleAuth(req.user.email);
+    const { newAccount } = result;
+
+    // google login
+    if (!newAccount) {
+      const { role, jwt } = result;
+      const queryParams = new URLSearchParams({
+        jwt: jwt,
+      }).toString();
+      return res.redirect(`${process.env.ORIGIN}/${role}-home?${queryParams}`);
+    }
+    // google register
+    else {
+      const queryParams = new URLSearchParams({
+        email: req.user.email,
+        accessToken: req.user.accessToken,
+        refreshToken: req.user.refreshToken,
+      }).toString();
+      return res.redirect(`${process.env.ORIGIN}/additional-info?${queryParams}`);
     }
   }
 
-  // @googleRegisterSwaggerDoc()
-  // @Post('google/register')
-  // async googleRegister(@Session() session: Record<string, any>, @Body() finalizeStudentDto: FinalizeStudentDto) {
-  //   console.log("google register");
-  //   console.log("passport session", session.passport);
+  @googleRegisterSwaggerDoc()
+  @Post('/google/register')
+  async googleRegister(@Body() createStudentDto: CreateStudentDto, @Res() res) {
+    const { role, jwt } = await this.authService.googleRegister(createStudentDto);
 
-  //   if (!session.passport || !session.passport.user)
-  //     throw new NotFoundException("user's google information not found");
-
-  //   const initStudentDto = {
-  //     email: session.passport.user['email'],
-  //     accessToken: session.passport.user['accessToken'],
-  //     refreshToken: session.passport.user['refreshToken'],
-  //   }
-
-  //   const student = await this.authService.googleRegister(initStudentDto, finalizeStudentDto);
-
-  //   session.passport.user.role = "student";
-  //   session.passport.user.isNew = "false";
-  //   console.log("updated sesssion", session.passport.user);
-
-  //   return student;
-  // }
+    const queryParams = new URLSearchParams({
+      jwt: jwt,
+    }).toString();
+    return res.redirect(`${process.env.ORIGIN}/${role}-home?${queryParams}`);
+  }
 
   @getUserSwaggerDoc()
   @UseGuards(JwtAuthGuard)
   @Get('user')
-  getUser(@Req() req: Request) {
+  getUser(@Req() req) {
     console.log("req user", req.user);
     return req.user;
-  }
-
-  @logoutSwaggerDoc()
-  @UseGuards(AuthenticatedGuard)
-  @Get('logout')
-  logout(@Req() req: Request, @Res() res: Response) {
-    // TODO: set logout redirection url to the frontend
-    req.logout(() => {
-      res.redirect(process.env.ORIGIN);
-    });
   }
 }
