@@ -11,6 +11,9 @@ export class Student {
   @Column(() => User)
   common: User;
 
+  @Column({ default: 'student' })
+  role?: string;
+
   @OneToMany(() => Payment, (payment) => payment.student)
   payments: Payment[];
 

@@ -16,8 +16,7 @@ import { TeacherModule } from './modules/teacher/teacher.module';
 import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 import { UserModule } from './modules/user/user.module';
-import { DataSource } from 'typeorm';
-import { AppDataSource } from './shared/app.data-source'
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -58,10 +57,4 @@ import { AppDataSource } from './shared/app.data-source'
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements OnModuleInit {
-  constructor(private readonly dataSource: DataSource) { }
-
-  async onModuleInit() {
-    AppDataSource.dataSource = this.dataSource;
-  }
-}
+export class AppModule { }

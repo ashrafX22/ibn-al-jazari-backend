@@ -12,6 +12,9 @@ export class Teacher {
   @Column(() => User)
   common: User;
 
+  @Column({ default: 'teacher' })
+  role?: string;
+
   @Column({ default: '' })
   summary: string;
 
