@@ -1,11 +1,12 @@
 import { Body, ClassSerializerInterceptor, Controller, Get, NotFoundException, Post, Req, Res, Session, UseGuards, UseInterceptors } from '@nestjs/common';
-import { AuthenticatedGuard, GoogleAuthGuard, JwtAuthGuard, LocalAuthGuard } from './utils/guards';
+import { AuthenticatedGuard, GoogleAuthGuard, JwtAuthGuard } from './utils/guards';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, googleLoginSwaggerDoc, logoutSwaggerDoc, googleRedirectSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc, getSessionUserSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -21,12 +22,11 @@ export class AuthController {
 
   // pass username and password in a json object
   @localLoginSwaggerDoc()
-  // using AuthGuard('local') directly does not serialize the user nor return a session id
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(AuthGuard('local'))
   @Post('local/login')
   async localLogin(@Req() req: Request) {
     console.log("local login", req.user);
-    return this.authService.LocalLogin(req.user);
+    return this.authService.localLogin(req.user);
   }
 
   // google auth steps

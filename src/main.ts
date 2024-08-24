@@ -2,10 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as session from 'express-session';
-import * as passport from 'passport';
-import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
 import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();

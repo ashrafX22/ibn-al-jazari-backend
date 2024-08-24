@@ -28,7 +28,7 @@ export class AuthService {
       throw new UnauthorizedException('invalid credintials');
   }
 
-  async LocalLogin(user: any) {
+  async localLogin(user: any) {
     const payload = { email: user.email, role: user.role };
     return {
       jwt: this.jwtService.sign(payload),

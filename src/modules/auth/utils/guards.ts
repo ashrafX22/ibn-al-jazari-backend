@@ -36,9 +36,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 
 @Injectable()
-export class LocalAuthGuard extends AuthGuard('local') { }
-
-@Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
     async canActivate(context: ExecutionContext) {
         console.log("GoogleAuthGuard");
