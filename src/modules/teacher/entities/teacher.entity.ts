@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from 'src/models/enums/role.enum';
+import { Experience } from 'src/models/enums/experience.enum';
 import { SuperUserEntity } from 'src/modules/user/entities/user.entity';
 
 export class TeacherEntity extends SuperUserEntity {
@@ -11,7 +11,7 @@ export class TeacherEntity extends SuperUserEntity {
   summary: string;
 
   @ApiProperty()
-  experience: Role;
+  experience: Experience;
 
   constructor(partial: Partial<TeacherEntity>) {
     super(partial);

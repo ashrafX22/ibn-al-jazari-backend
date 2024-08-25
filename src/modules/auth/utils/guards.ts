@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ROLES_KEY } from './roles.decorator';
-import { Role } from 'src/models/enums/role.enum';
+import { Experience } from 'src/models/enums/experience.enum';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -49,7 +49,7 @@ export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) { }
 
     canActivate(context: ExecutionContext): boolean {
-        const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+        const requiredRoles = this.reflector.getAllAndOverride<Experience[]>(ROLES_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);

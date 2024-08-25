@@ -1,5 +1,4 @@
-export enum Role {
+export enum Experience {
     JUNIOR = 'JUNIOR',
     SENIOR = 'SENIOR',
-    ADMIN = 'ADMIN',
 }
