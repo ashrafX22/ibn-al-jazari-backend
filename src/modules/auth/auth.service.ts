@@ -1,20 +1,22 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { Profile } from 'passport';
+import { JwtService } from '@nestjs/jwt';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
-import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
-import { InitStudentDto } from 'src/modules/student/dto/init-student.dto';
 import { StudentService } from 'src/modules/student/student.service';
 import { UserService } from 'src/modules/user/user.service';
+import { TeacherEntity } from '../teacher/entities/teacher.entity';
+import { UnionUserEntity } from '../user/types/user.type';
+import { Jwt } from './utils/jwt.interface';
 
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private jwtService: JwtService
   ) { }
 
-  async localLogin(email: string, password: string): Promise<any> {
+  async localValidateUser(email: string, password: string): Promise<UnionUserEntity | NotFoundException | UnauthorizedException> {
     const user = await this.userService.findByEmail(email);
     console.log("user", user);
 
@@ -26,50 +28,39 @@ export class AuthService {
       throw new UnauthorizedException('invalid credintials');
   }
 
+  async localLogin(user: UnionUserEntity) {
+    const payload: Jwt = { email: user.email, role: user.role };
+    if (user instanceof TeacherEntity) payload.experience = user.experience;
+    return {
+      jwt: this.jwtService.sign(payload),
+    };
+  }
+
   async localRegister(createStudentDto: CreateStudentDto) {
     return await this.studentService.create(createStudentDto);
   }
 
-  async googleAuth(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log('auth service');
-
-    const email = profile.emails[0].value;
-    refreshToken = refreshToken || '';
-
-    // login teacher or student
+  async googleAuth(email: string) {
     const user = await this.userService.findByEmail(email);
-
-    let result = null;
-
     if (user) {
-      result = await this.userService.update(user.id, {
-        accessToken,
-        refreshToken,
-      });
-
-      console.log('google auth update user', result);
-
-      result = { ...result, isNew: false };
-    }
-    // register student only
-    else {
-      result = {
-        accessToken,
-        refreshToken,
-        email,
-        isNew: true
+      let payload: Jwt = { email: user.email, role: user.role };
+      if (user instanceof TeacherEntity) payload = { ...payload, experience: user.experience };
+      return {
+        newAccount: false, role: user.role, jwt: this.jwtService.sign(payload)
       };
     }
-
-    return result;
+    else
+      return { newAccount: true };
   }
 
-  async googleRegister(initStudentDto: InitStudentDto, finalizeStudentDto: FinalizeStudentDto) {
-    console.log('initStudentDto', initStudentDto);
-    console.log('finalizeStudentDto', finalizeStudentDto);
-    const createStudentDto = { ...initStudentDto, ...finalizeStudentDto };
-    console.log('createStudentDto', createStudentDto);
-    return await this.studentService.create(createStudentDto);
+  async googleRegister(createStudentDto: CreateStudentDto) {
+    const student = await this.studentService.create({
+      ...createStudentDto
+    });
+
+    const payload: Jwt = { email: student.email, role: student.role };
+    const jwt = this.jwtService.sign(payload);
+    return { jwt: jwt };
   }
 
   async getUser(email: string) {

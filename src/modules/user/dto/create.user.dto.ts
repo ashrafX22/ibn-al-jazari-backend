@@ -42,7 +42,7 @@ export class CreateUserDto {
       'The user\'s password. Set to "google" by default for Google authenticated users.',
     example: 'P@ssw0rd!',
   })
-  password?: string = 'google';
+  password?: string = 'G@@@@@g1e';
 
   @IsEnum(Gender)
   @ApiProperty({

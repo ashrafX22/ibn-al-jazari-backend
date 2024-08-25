@@ -1,6 +1,6 @@
 import { IsEnum, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from 'src/models/enums/role.enum';
+import { Experience } from 'src/models/enums/experience.enum';
 import { CreateUserDto } from './../../user/dto/create.user.dto';
 
 export class CreateTeacherDto extends CreateUserDto {
@@ -11,10 +11,10 @@ export class CreateTeacherDto extends CreateUserDto {
   })
   summary: string;
 
-  @IsEnum(Role)
+  @IsEnum(Experience)
   @ApiProperty({
     description: "The ",
     example: 'SENIOR',
   })
-  experience: Role;
+  experience: Experience;
 }

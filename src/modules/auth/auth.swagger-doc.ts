@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { CreateUserDto } from 'src/modules/user/dto/create.user.dto';
 
@@ -53,44 +53,66 @@ export function localLoginSwaggerDoc() {
     ApiResponse({
       status: 201,
       description:
-        'The user has been authenticated and a session id is successfully created.',
+        'The JWT token has been successfully created and returned.',
     }),
     ApiResponse({ status: 401, description: 'Unauthorized' }),
     ApiResponse({ status: 404, description: 'User not found' }),
   );
 }
 
-export function googleLoginSwaggerDoc() {
+export function googleAuthSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Initiates the login process for Google authentication.',
       description:
         'This endpoint is responsible for initiating the OAuth2 flow with Google. \
             It redirect the user to the Google login page to get Google profile info of the user. \
-            It automatically redirects to the google/redirect endpoint.',
+            It automatically redirects to the google/callback endpoint.',
+    }),
+    ApiResponse({
+      status: 302,
+      description: `Redirects to the google/callback endpoint.`,
+      headers: {
+        location: {
+          description: 'google/callback endpoint',
+          example: '/api/auth/google/callback'
+        },
+      },
     }),
   );
 }
 
-export function googleRedirectSwaggerDoc() {
+export function googleAuthCallbackSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary:
         'Figures out what happens when Google redirects to the backend after a successful authentication.',
       description:
-        'Logs the user(teacher or student) in if it exists in the database. Otherwise, saves Google profile info in the session.\
-            The frontend should call google/register to complete the registration process of ONLY students.',
+        'Logs the user(teacher or student) in if it exists in the database. Otherwise, returns Google profile info.\
+            The frontend should call google/register with the complete info to register ONLY students.',
     }),
     ApiResponse({
-      status: 200,
-      description: `Redirects to the frontend URL after successful authentication.`,
+      status: 301,
+      description: `If the user exists in the database, redirects to teacher home page or student home page after successful authentication.`,
       headers: {
-        isNew: {
-          description:
-            'A query parameters that indicates whether the user is new and needs to complete the registration process',
+        location: {
+          description: 'teacher home page or student home page with a jwt token as a query parameter',
           schema: {
-            type: 'boolean',
-            example: true,
+            type: 'string',
+            example: '/teacher-home?jwt=ey...',
+          },
+        },
+      },
+    }),
+    ApiResponse({
+      status: 302,
+      description: `If the user is new, redirects to the additional info page after successful authentication.`,
+      headers: {
+        location: {
+          description: 'teacher home page or student home page with with google info as query parameters',
+          schema: {
+            type: 'string',
+            example: '/additional-info?email=test@example.com&accessToken=...&refreshToken=...',
           },
         },
       },
@@ -102,44 +124,34 @@ export function googleRedirectSwaggerDoc() {
 export function googleRegisterSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
-      summary: 'Completes the Google registration process of the student',
+      summary: 'Handles Google registration process of a student',
     }),
     ApiResponse({
-      status: 201,
-      description: 'The student has been sucessfuly created',
+      status: 302,
+      description: `Redirects to the student home page after successful registration.`,
+      headers: {
+        location: {
+          description: 'student home page with a jwt token as a query parameter',
+          schema: {
+            type: 'string',
+            example: '/student-home?jwt=ey...',
+          },
+        },
+      },
     }),
+    ApiResponse({ status: 400, description: 'Bad Request' }),
     ApiResponse({ status: 500, description: 'Internal Server Error' }),
-  );
-}
-
-export function getSessionUserSwaggerDoc() {
-  return applyDecorators(
-    ApiOperation({
-      summary: 'Gets the user information stored inside the session',
-    }),
-    ApiResponse({
-      status: 200,
-      description: 'Returns the user information stored inside the session',
-    }),
-    ApiResponse({ status: 401, description: 'Unauthorized' }),
   );
 }
 
 export function getUserSwaggerDoc() {
   return applyDecorators(
-    ApiOperation({ summary: 'Gets the authenticated user' }),
-    ApiResponse({ status: 200, description: 'Returns the authenticated user' }),
-    ApiResponse({ status: 401, description: 'Unauthorized' }),
-  );
-}
-
-export function logoutSwaggerDoc() {
-  return applyDecorators(
-    ApiOperation({ summary: 'Log out the authenticated user' }),
-    ApiResponse({
-      status: 302,
-      description: 'Redirects to the frontend URL after successful logout',
+    ApiOperation({
+      summary: 'returns the authenticated user information extracted from JWT',
+      description: '`requires a JWT token in the Authorization header`',
     }),
+    ApiBearerAuth('JWT'),
+    ApiResponse({ status: 200, description: 'authenticated user information extracted from JWT' }),
     ApiResponse({ status: 401, description: 'Unauthorized' }),
   );
 }
