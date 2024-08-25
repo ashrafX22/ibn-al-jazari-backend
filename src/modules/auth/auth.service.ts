@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
-import { FinalizeStudentDto } from 'src/modules/student/dto/finalize-student-dto';
-import { InitStudentDto } from 'src/modules/student/dto/init-student.dto';
 import { StudentService } from 'src/modules/student/student.service';
 import { UserService } from 'src/modules/user/user.service';
+import { TeacherEntity } from '../teacher/entities/teacher.entity';
+import { UnionUserEntity } from '../user/types/user.type';
+import { Jwt } from './utils/jwt.interface';
 
 
 @Injectable()
@@ -15,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService
   ) { }
 
-  async localValidateUser(email: string, password: string): Promise<any> {
+  async localValidateUser(email: string, password: string): Promise<UnionUserEntity | NotFoundException | UnauthorizedException> {
     const user = await this.userService.findByEmail(email);
     console.log("user", user);
 
@@ -27,8 +28,9 @@ export class AuthService {
       throw new UnauthorizedException('invalid credintials');
   }
 
-  async localLogin(user: any) {
-    const payload = { email: user.email, role: user.role };
+  async localLogin(user: UnionUserEntity) {
+    const payload: Jwt = { email: user.email, role: user.role };
+    if (user instanceof TeacherEntity) payload.experience = user.experience;
     return {
       jwt: this.jwtService.sign(payload),
     };
@@ -40,8 +42,13 @@ export class AuthService {
 
   async googleAuth(email: string) {
     const user = await this.userService.findByEmail(email);
-    if (user)
-      return { newAccount: false, role: user.role, jwt: this.jwtService.sign({ email: user.email, role: user.role }) };
+    if (user) {
+      let payload: Jwt = { email: user.email, role: user.role };
+      if (user instanceof TeacherEntity) payload = { ...payload, experience: user.experience };
+      return {
+        newAccount: false, role: user.role, jwt: this.jwtService.sign(payload)
+      };
+    }
     else
       return { newAccount: true };
   }
@@ -51,7 +58,8 @@ export class AuthService {
       ...createStudentDto
     });
 
-    const jwt = this.jwtService.sign({ email: student.email, role: student.role });
+    const payload: Jwt = { email: student.email, role: student.role };
+    const jwt = this.jwtService.sign(payload);
     return { jwt: jwt };
   }
 

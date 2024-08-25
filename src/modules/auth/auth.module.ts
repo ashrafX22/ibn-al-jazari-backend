@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { AuthenticatedGuard, RolesGuard } from './utils/guards';
+import { RolesGuard } from './utils/guards';
 import { User } from 'src/models/baseUser';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Teacher } from 'src/models/entities/teacher.entity';
@@ -33,7 +33,6 @@ import { ConfigModule } from '@nestjs/config';
       useClass: AuthService,
     },
     UserService,
-    AuthenticatedGuard,
     RolesGuard,
     LocalStrategy,
     GoogleStrategy,
