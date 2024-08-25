@@ -1,12 +1,12 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { GoogleMeetService } from './google-meet.service';
-import { Request } from 'express'
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
-import { AuthenticatedGuard, RolesGuard } from 'src/modules/auth/utils/guards';
-import { Roles } from 'src/modules/auth/utils/roles.decorator';
+import { ExperienceGuard, JwtAuthGuard, RolesGuard } from 'src/modules/auth/utils/guards';
+import { Experiences, Roles } from 'src/modules/auth/utils/roles.decorator';
 import { createMeetingSwaggerDoc } from './google-meet.swagger-doc';
 import { ApiTags } from '@nestjs/swagger';
 import { Experience } from 'src/models/enums/experience.enum';
+import { Role } from 'src/models/enums/role.enum';
 
 @ApiTags('google-meet')
 @Controller('google-meet')
@@ -14,11 +14,11 @@ export class GoogleMeetController {
   constructor(private readonly googleMeetService: GoogleMeetService) { }
 
   @createMeetingSwaggerDoc()
-  @Roles(Experience.SENIOR)
-  @UseGuards(AuthenticatedGuard, RolesGuard)
+  @Experiences(Experience.SENIOR)
+  @Roles(Role.TEAHCER)
+  @UseGuards(JwtAuthGuard, RolesGuard, ExperienceGuard)
   @Post('create')
-  async createMeeting(@Req() req: Request, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
-    const accessToken = req.user['accessToken'];
+  async createMeeting(@Body('accessToken') accessToken: string, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
     const meeting = await this.googleMeetService.createMeeting(accessToken, createGoogleMeetDto);
     return meeting;
   }
