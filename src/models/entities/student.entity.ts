@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../baseUser';
 import { Payment } from './payment.entity';
 import { Enrollment } from './enrollment.entity';
+import { Role } from '../enums/role.enum';
 
 @Entity()
 export class Student {
@@ -11,8 +12,8 @@ export class Student {
   @Column(() => User)
   common: User;
 
-  @Column({ default: 'student' })
-  role?: string;
+  @Column({ default: Role.TEAHCER })
+  role?: Role;
 
   @OneToMany(() => Payment, (payment) => payment.student)
   payments: Payment[];

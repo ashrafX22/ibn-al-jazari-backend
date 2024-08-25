@@ -13,8 +13,6 @@ export class SuperUserEntity {
   phoneNumber: string;
   @ApiProperty()
   gender: string;
-  @ApiProperty()
-  role: string;
 
   @ApiProperty()
   profilePicture: string;
