@@ -43,10 +43,15 @@ export class AuthService {
   async googleAuth(email: string) {
     const user = await this.userService.findByEmail(email);
     if (user) {
-      let payload: Jwt = { email: user.email, role: user.role };
-      if (user instanceof TeacherEntity) payload = { ...payload, experience: user.experience };
+      let payload: Jwt = { email: user.email, role: user.role, googleAccessToken: user.accessToken };
+
+      if (user instanceof TeacherEntity)
+        payload = { ...payload, experience: user.experience };
+
       return {
-        newAccount: false, role: user.role, jwt: this.jwtService.sign(payload)
+        newAccount: false,
+        role: user.role,
+        jwt: this.jwtService.sign(payload)
       };
     }
     else
@@ -58,8 +63,14 @@ export class AuthService {
       ...createStudentDto
     });
 
-    const payload: Jwt = { email: student.email, role: student.role };
+    const payload: Jwt = {
+      email: student.email,
+      role: student.role,
+      googleAccessToken: student.accessToken
+    };
+
     const jwt = this.jwtService.sign(payload);
+
     return { jwt: jwt };
   }
 
