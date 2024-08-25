@@ -14,9 +14,9 @@ export class GoogleMeetController {
   constructor(private readonly googleMeetService: GoogleMeetService) { }
 
   @createMeetingSwaggerDoc()
-  @Experiences(Experience.SENIOR)
-  @Roles(Role.TEAHCER)
-  @UseGuards(JwtAuthGuard, RolesGuard, ExperienceGuard)
+  // @Experiences(Experience.SENIOR)
+  // @Roles(Role.TEAHCER)
+  @UseGuards(JwtAuthGuard) // , RolesGuard, ExperienceGuard
   @Post('create')
   async createMeeting(@Body('accessToken') accessToken: string, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
     const meeting = await this.googleMeetService.createMeeting(accessToken, createGoogleMeetDto);
