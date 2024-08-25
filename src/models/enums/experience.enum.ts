@@ -1,4 +1,4 @@
 export enum Experience {
-    JUNIOR = 'JUNIOR',
-    SENIOR = 'SENIOR',
+    JUNIOR = 'junior',
+    SENIOR = 'senior',
 }

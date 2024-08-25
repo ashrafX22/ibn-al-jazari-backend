@@ -1,6 +1,7 @@
 export enum PaymentMethod {
-    CREDIT_CARD = 'CREDIT_CARD',
-    PAYPAL = 'PAYPAL',
-    BITCOIN = 'BITCOIN',
-    MOBILE_WALLET = 'MOBILE_WALLET',
+    CREDIT_CARD = 'credit_card',
+    PAYPAL = 'paypal',
+    BITCOIN = 'bitcoin',
+    MOBILE_WALLET = 'mobile_wallet',
+    FAWRY = 'fawry'
 }
