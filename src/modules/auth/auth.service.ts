@@ -52,7 +52,7 @@ export class AuthService {
     });
 
     const jwt = this.jwtService.sign({ email: student.email, role: student.role });
-    return { role: student.role, jwt: jwt };
+    return { jwt: jwt };
   }
 
   async getUser(email: string) {

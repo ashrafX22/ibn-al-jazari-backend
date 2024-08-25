@@ -71,13 +71,8 @@ export class AuthController {
 
   @googleRegisterSwaggerDoc()
   @Post('/google/register')
-  async googleRegister(@Body() createStudentDto: CreateStudentDto, @Res() res) {
-    const { role, jwt } = await this.authService.googleRegister(createStudentDto);
-
-    const queryParams = new URLSearchParams({
-      jwt: jwt,
-    }).toString();
-    return res.redirect(`${process.env.ORIGIN}/${role}-home?${queryParams}`);
+  async googleRegister(@Body() createStudentDto: CreateStudentDto) {
+    return await this.authService.googleRegister(createStudentDto);
   }
 
   @getUserSwaggerDoc()
