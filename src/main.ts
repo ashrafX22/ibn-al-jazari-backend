@@ -6,12 +6,14 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
+import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ValidationPipe());
 
   // TODO: set origin
   app.enableCors({

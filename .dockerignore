@@ -1,0 +1,45 @@
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build artifacts
+dist
+*.js.map
+
+# Environment files
+.env
+.env.*.local
+
+# Docker-related files
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# Logs
+*.log
+logs
+*.log.*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Test coverage files
+coverage
+
+# Editor files
+.idea
+.vscode
+*.swp
+*.swo
+*.swn
+*.bak
+
+# Git-related files
+.git
+.gitignore
+
+# Temporary files
+tmp
+temp

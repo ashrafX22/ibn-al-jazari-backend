@@ -7,8 +7,8 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install the application dependencies
-RUN npm install --production
+# Install development dependencies (including typescript)
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
@@ -16,5 +16,5 @@ COPY . .
 # Expose the application port
 EXPOSE 3000
 
-# Start the NestJS app
-CMD ["npm", "run", "start:prod"]
+# Start the application in watch mode
+CMD ["npm", "run", "start:dev"]
