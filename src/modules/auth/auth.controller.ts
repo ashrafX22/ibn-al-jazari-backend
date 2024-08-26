@@ -1,5 +1,5 @@
 import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { JwtAuthGuard } from './utils/guards';
+import { GoogleAuthGuard, JwtAuthGuard } from './utils/guards';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, googleAuthSwaggerDoc, googleAuthCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
@@ -32,7 +32,7 @@ export class AuthController {
   // - user authenticates if not authenticated
   // - redirects to the googleRedirect endpoint
   @googleAuthSwaggerDoc()
-  @UseGuards(AuthGuard('google-auth'))
+  @UseGuards(GoogleAuthGuard)
   @Get('google')
   googleAuth() { }
 
@@ -42,7 +42,7 @@ export class AuthController {
   // - user is saved to req.user upon subsequent requests
   // - redirection to the frontend
   @googleAuthCallbackSwaggerDoc()
-  @UseGuards(AuthGuard('google-auth'))
+  @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleAuthCallback(@Req() req, @Res() res) {
     console.log("google login redirect");

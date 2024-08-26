@@ -19,6 +19,7 @@ export class GoogleMeetController {
   @UseGuards(JwtAuthGuard) // , RolesGuard, ExperienceGuard
   @Post('create')
   async createMeeting(@Req() req, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
+    console.log("create meeting", req.user);
     return await this.googleMeetService.createMeeting(req.user.email, req.user.googleAccessToken, createGoogleMeetDto);
   }
 }

@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { EXPERIENCES_KEY, ROLES_KEY } from './roles.decorator';
 import { Experience } from 'src/models/enums/experience.enum';
 import { Role } from 'src/models/enums/role.enum';
+import * as passport from 'passport';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') { }
@@ -24,6 +25,34 @@ export class RolesGuard implements CanActivate {
         console.log("RolesGuard");
         return requiredRoles.includes(user.role);
         return requiredRoles.some((role) => user.roles?.includes(role));
+    }
+}
+
+export class GoogleAuthGuard extends AuthGuard('google') {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const request = context.switchToHttp().getRequest();
+        const response = context.switchToHttp().getResponse();
+
+        console.log("google auth guard");
+
+        return new Promise((resolve, reject) => {
+            passport.authenticate('google', {
+                accessType: 'offline',
+                prompt: 'consent',
+            }, (err, user, info) => {
+                if (err) {
+                    console.error('Authentication Error:', err);
+                    return reject(false);
+                }
+                if (!user) {
+                    console.error('No user received from Google OAuth');
+                    return reject(false);
+                }
+                // Manually attach user to req.user
+                request.user = user;
+                resolve(true);
+            })(request, response);
+        });
     }
 }
 

@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './utils/google.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { ExperienceGuard, JwtAuthGuard, RolesGuard } from './utils/guards';
+import { ExperienceGuard, GoogleAuthGuard, JwtAuthGuard, RolesGuard } from './utils/guards';
 import { User } from 'src/models/baseUser';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Teacher } from 'src/models/entities/teacher.entity';
@@ -44,6 +44,7 @@ import { HttpModule } from '@nestjs/axios';
     JwtStrategy,
     LocalStrategy,
     GoogleStrategy,
+    GoogleAuthGuard
   ],
   exports: [AuthService]
 })

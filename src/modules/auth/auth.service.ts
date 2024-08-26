@@ -55,7 +55,9 @@ export class AuthService {
     const { email, googleAccessToken, googleRefreshToken } = googleInfo;
     const user = await this.userService.findByEmail(email);
     if (user) {
-      this.userService.update(user.id, { googleRefreshToken: googleRefreshToken });
+      console.log("same google refresh token?", user.googleRefreshToken === googleRefreshToken);
+      const result = await this.userService.update(user.id, { googleRefreshToken: googleRefreshToken });
+      console.log("same google refresh token after user update?", user.googleRefreshToken === result.googleRefreshToken);
 
       let payload: Jwt = { email: user.email, role: user.role, googleAccessToken: googleAccessToken };
 
@@ -89,12 +91,11 @@ export class AuthService {
   }
 
   async validateGoogleAccessToken(token: string): Promise<boolean> {
+    console.log("verify google token");
     try {
       const url = `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`;
 
       const response = await firstValueFrom(this.httpService.get(url));
-
-      console.log("verify google token", response);
 
       return response.status === 200;
     } catch (error) {
@@ -103,6 +104,8 @@ export class AuthService {
   }
 
   async refreshGoogleAccessToken(email: string): Promise<string> {
+    console.log("refreshGoogleAccessToken");
+
     const user = await this.userService.findByEmail(email);
 
     if (!user || !user.googleRefreshToken)
@@ -115,6 +118,8 @@ export class AuthService {
       refresh_token: user.googleRefreshToken,
       grant_type: 'refresh_token',
     });
+
+    console.log("refreshGoogleAccessToken refresh token", user.googleRefreshToken);
 
     try {
       const response = await firstValueFrom(

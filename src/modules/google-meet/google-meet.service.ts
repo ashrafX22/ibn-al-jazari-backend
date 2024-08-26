@@ -27,12 +27,16 @@ export class GoogleMeetService {
 
     let validGoogleAccessToken: string = googleAccessToken;
 
+    console.log("old google access token", validGoogleAccessToken);
+
     if (googleAccessToken) {
-      const isValidGoogleToken = await this.authService.validateGoogleAccessToken(googleAccessToken);
-      console.log("isValidGoogleToken", isValidGoogleToken);
-      if (!isValidGoogleToken)
+      const isValidGoogleAccessToken = await this.authService.validateGoogleAccessToken(googleAccessToken);
+      console.log("isValidGoogleAcessToken", isValidGoogleAccessToken);
+      if (!isValidGoogleAccessToken)
         validGoogleAccessToken = await this.authService.refreshGoogleAccessToken(email);
     }
+
+    console.log("new google access token", validGoogleAccessToken);
 
     this.oauth2Client.setCredentials({ access_token: validGoogleAccessToken });
     const calendar = google.calendar({
