@@ -20,6 +20,6 @@ export class GoogleMeetController {
   @Post('create')
   async createMeeting(@Req() req, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
     console.log("create meeting", req.user);
-    return await this.googleMeetService.createMeeting(req.user.email, req.user.googleAccessToken, createGoogleMeetDto);
+    return await this.googleMeetService.createMeeting(req.user, createGoogleMeetDto);
   }
 }

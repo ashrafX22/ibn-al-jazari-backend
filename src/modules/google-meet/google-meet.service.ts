@@ -3,12 +3,14 @@ import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
 import { AuthService } from '../auth/auth.service';
+import { Jwt } from '../auth/utils/jwt.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class GoogleMeetService {
   private oauth2Client: OAuth2Client;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private jwtService: JwtService) {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
@@ -17,12 +19,12 @@ export class GoogleMeetService {
   }
 
   async createMeeting(
-    email: string,
-    googleAccessToken: string,
+    decryptedJwt: Jwt,
     createGoogleMeetDto: CreateGoogleMeetDto,
   ) {
-
     console.log("create meeting");
+
+    const { email, role, experience, googleAccessToken } = decryptedJwt;
     console.log(googleAccessToken);
 
     let validGoogleAccessToken: string = googleAccessToken;
@@ -89,6 +91,17 @@ export class GoogleMeetService {
 
     console.log('meeting created:', response.data);
 
-    return response.data;
+    const payload: Jwt = {
+      email,
+      role,
+      experience,
+      googleAccessToken: validGoogleAccessToken
+    };
+
+    console.log(payload);
+
+    const jwt = this.jwtService.sign(payload);
+
+    return { jwt: jwt };
   }
 }

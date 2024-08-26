@@ -46,6 +46,6 @@ import { HttpModule } from '@nestjs/axios';
     GoogleStrategy,
     GoogleAuthGuard
   ],
-  exports: [AuthService]
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule { }
