@@ -46,8 +46,8 @@ export class AuthController {
   @Get('google/callback')
   async googleAuthCallback(@Req() req, @Res() res) {
     console.log("google login redirect");
-
-    const result = await this.authService.googleAuth(req.user.email);
+    console.log(req.user);
+    const result = await this.authService.googleAuth(req.user);
     const { newAccount } = result;
 
     // google login
@@ -62,8 +62,8 @@ export class AuthController {
     else {
       const queryParams = new URLSearchParams({
         email: req.user.email,
-        accessToken: req.user.accessToken,
-        refreshToken: req.user.refreshToken,
+        googleAccessToken: req.user.googleAccessToken,
+        googleRefreshToken: req.user.googleRefreshToken,
       }).toString();
       return res.redirect(`${process.env.ORIGIN}/additional-info?${queryParams}`);
     }

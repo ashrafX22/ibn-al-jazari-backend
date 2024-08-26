@@ -16,6 +16,14 @@ export class AuthService {
     private jwtService: JwtService
   ) { }
 
+  async getUser(email: string) {
+    const user = this.userService.findByEmail(email);
+
+    if (!user) throw new NotFoundException('user not found');
+
+    return user;
+  }
+
   async localValidateUser(email: string, password: string): Promise<UnionUserEntity | NotFoundException | UnauthorizedException> {
     const user = await this.userService.findByEmail(email);
     console.log("user", user);
@@ -40,10 +48,13 @@ export class AuthService {
     return await this.studentService.create(createStudentDto);
   }
 
-  async googleAuth(email: string) {
+  async googleAuth(googleInfo: any) {
+    const { email, googleAccessToken, googleRefreshToken } = googleInfo;
     const user = await this.userService.findByEmail(email);
     if (user) {
-      let payload: Jwt = { email: user.email, role: user.role, googleAccessToken: user.accessToken };
+      this.userService.update(user.id, { googleRefreshToken: googleRefreshToken });
+
+      let payload: Jwt = { email: user.email, role: user.role, googleAccessToken: googleAccessToken };
 
       if (user instanceof TeacherEntity)
         payload = { ...payload, experience: user.experience };
@@ -66,19 +77,11 @@ export class AuthService {
     const payload: Jwt = {
       email: student.email,
       role: student.role,
-      googleAccessToken: student.accessToken
+      googleAccessToken: createStudentDto.googleAccessToken
     };
 
     const jwt = this.jwtService.sign(payload);
 
     return { jwt: jwt };
-  }
-
-  async getUser(email: string) {
-    const user = this.userService.findByEmail(email);
-
-    if (!user) throw new NotFoundException('user not found');
-
-    return user;
   }
 }

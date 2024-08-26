@@ -20,10 +20,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google-auth') {
         console.log(profile);
         const user = {
             email: profile.emails[0].value,
-            accessToken,
-            refreshToken
+            googleAccessToken: accessToken,
+            googleRefreshToken: refreshToken
         };
-        console.log(user);
         done(null, user);
     }
 }
