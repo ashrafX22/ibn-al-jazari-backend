@@ -86,7 +86,7 @@ export class TeacherService {
 
     if (!teacher) return null;
 
-    const result = await this.teacherRepository.update(id, {
+    await this.teacherRepository.update(id, {
       common: {
         name: updateTeacherDto.name || teacher.common.name,
         phoneNumber: updateTeacherDto.phoneNumber || teacher.common.phoneNumber,
@@ -97,15 +97,9 @@ export class TeacherService {
       summary: updateTeacherDto.summary || teacher.summary,
     });
 
-    if (result.affected === 1) {
-      const updatedTeacher = await this.teacherRepository.findOneBy({ id });
+    const updatedTeacher = await this.teacherRepository.findOneBy({ id });
 
-      if (!updatedTeacher) return null;
-
-      return new TeacherEntity(flattenObject(teacher));
-    }
-
-    return null;
+    return new TeacherEntity(flattenObject(updatedTeacher));
   }
 
   // Delete a teacher by ID
