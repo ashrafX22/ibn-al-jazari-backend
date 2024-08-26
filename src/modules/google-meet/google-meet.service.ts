@@ -2,25 +2,39 @@ import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class GoogleMeetService {
   private oauth2Client: OAuth2Client;
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.BACKEND_URL}/api/auth/google/callback` // 'http://localhost:3000/api/auth/google/callback',
-      // TODO: test it with this url: 'http://localhost:3000/api/auth/google/redirect'
+      `${process.env.BACKEND_URL}/api/auth/google/callback`
     );
   }
 
   async createMeeting(
-    accessToken: string,
+    email: string,
+    googleAccessToken: string,
     createGoogleMeetDto: CreateGoogleMeetDto,
   ) {
-    this.oauth2Client.setCredentials({ access_token: accessToken });
+
+    console.log("create meeting");
+    console.log(googleAccessToken);
+
+    let validGoogleAccessToken: string = googleAccessToken;
+
+    if (googleAccessToken) {
+      const isValidGoogleToken = await this.authService.validateGoogleAccessToken(googleAccessToken);
+      console.log("isValidGoogleToken", isValidGoogleToken);
+      if (!isValidGoogleToken)
+        validGoogleAccessToken = await this.authService.refreshGoogleAccessToken(email);
+    }
+
+    this.oauth2Client.setCredentials({ access_token: validGoogleAccessToken });
     const calendar = google.calendar({
       version: 'v3',
       auth: this.oauth2Client,
