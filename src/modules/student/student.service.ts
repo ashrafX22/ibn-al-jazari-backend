@@ -85,9 +85,7 @@ export class StudentService {
       common: {
         name: updateStudentDto.name || student.common.name,
         phoneNumber: updateStudentDto.phoneNumber || student.common.phoneNumber,
-        accessToken: updateStudentDto.accessToken || student.common.accessToken,
-        refreshToken:
-          updateStudentDto.refreshToken || student.common.accessToken,
+        googleRefreshToken: updateStudentDto.googleRefreshToken || student.common.googleRefreshToken,
       },
     });
 

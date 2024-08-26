@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { GoogleMeetService } from './google-meet.service';
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
 import { ExperienceGuard, JwtAuthGuard, RolesGuard } from 'src/modules/auth/utils/guards';
@@ -14,12 +14,12 @@ export class GoogleMeetController {
   constructor(private readonly googleMeetService: GoogleMeetService) { }
 
   @createMeetingSwaggerDoc()
-  @Experiences(Experience.SENIOR)
-  @Roles(Role.TEAHCER)
-  @UseGuards(JwtAuthGuard, RolesGuard, ExperienceGuard)
+  // @Experiences(Experience.SENIOR)
+  // @Roles(Role.TEAHCER)
+  @UseGuards(JwtAuthGuard) // , RolesGuard, ExperienceGuard
   @Post('create')
-  async createMeeting(@Body('accessToken') accessToken: string, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
-    const meeting = await this.googleMeetService.createMeeting(accessToken, createGoogleMeetDto);
-    return meeting;
+  async createMeeting(@Req() req, @Body() createGoogleMeetDto: CreateGoogleMeetDto) {
+    console.log("create meeting", req.user);
+    return await this.googleMeetService.createMeeting(req.user.email, req.user.googleAccessToken, createGoogleMeetDto);
   }
 }

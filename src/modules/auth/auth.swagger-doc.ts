@@ -112,7 +112,7 @@ export function googleAuthCallbackSwaggerDoc() {
           description: 'teacher home page or student home page with with google info as query parameters',
           schema: {
             type: 'string',
-            example: '/additional-info?email=test@example.com&accessToken=...&refreshToken=...',
+            example: '/additional-info?email=test@example.com&googleAccessToken=...&googleRefreshToken=...',
           },
         },
       },

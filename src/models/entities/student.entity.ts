@@ -12,7 +12,7 @@ export class Student {
   @Column(() => User)
   common: User;
 
-  @Column({ default: Role.TEAHCER })
+  @Column({ default: Role.STUDENT })
   role?: Role;
 
   @OneToMany(() => Payment, (payment) => payment.student)

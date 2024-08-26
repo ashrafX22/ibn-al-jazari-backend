@@ -1,40 +1,13 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { EXPERIENCES_KEY, ROLES_KEY } from './roles.decorator';
 import { Experience } from 'src/models/enums/experience.enum';
-import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/models/enums/role.enum';
+import * as passport from 'passport';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
-
-    constructor(private jwtService: JwtService) {
-        super();
-    }
-
-    canActivate(context: ExecutionContext) {
-        const request = context.switchToHttp().getRequest();
-        const authHeader = request.headers.authorization;
-
-        if (!authHeader)
-            throw new UnauthorizedException('Authorization header is missing');
-
-        const [type, token] = authHeader.split(' ');
-
-        if (type !== 'Bearer' || !token)
-            throw new UnauthorizedException('Invalid token');
-
-        try {
-            const payload = this.jwtService.verify(token);
-            request.user = payload;
-            return true;
-        } catch (error) {
-            throw new UnauthorizedException('Invalid or expired token');
-        }
-    }
-
-}
+export class JwtAuthGuard extends AuthGuard('jwt') { }
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -52,6 +25,34 @@ export class RolesGuard implements CanActivate {
         console.log("RolesGuard");
         return requiredRoles.includes(user.role);
         return requiredRoles.some((role) => user.roles?.includes(role));
+    }
+}
+
+export class GoogleAuthGuard extends AuthGuard('google') {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const request = context.switchToHttp().getRequest();
+        const response = context.switchToHttp().getResponse();
+
+        console.log("google auth guard");
+
+        return new Promise((resolve, reject) => {
+            passport.authenticate('google', {
+                accessType: 'offline',
+                prompt: 'consent',
+            }, (err, user, info) => {
+                if (err) {
+                    console.error('Authentication Error:', err);
+                    return reject(false);
+                }
+                if (!user) {
+                    console.error('No user received from Google OAuth');
+                    return reject(false);
+                }
+                // Manually attach user to req.user
+                request.user = user;
+                resolve(true);
+            })(request, response);
+        });
     }
 }
 

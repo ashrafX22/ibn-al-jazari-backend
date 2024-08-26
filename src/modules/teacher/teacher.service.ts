@@ -18,7 +18,7 @@ export class TeacherService {
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
 
     const { email, name, password, gender, phoneNumber, dateOfBirth,
-      accessToken, refreshToken, summary, experience } = createTeacherDto;
+      googleRefreshToken, summary, experience } = createTeacherDto;
 
     try {
       const teacher = this.teacherRepository.create({
@@ -29,8 +29,7 @@ export class TeacherService {
           gender,
           phoneNumber,
           dateOfBirth,
-          accessToken,
-          refreshToken,
+          googleRefreshToken,
         },
         summary,
         experience
@@ -90,9 +89,7 @@ export class TeacherService {
       common: {
         name: updateTeacherDto.name || teacher.common.name,
         phoneNumber: updateTeacherDto.phoneNumber || teacher.common.phoneNumber,
-        accessToken: updateTeacherDto.accessToken || teacher.common.accessToken,
-        refreshToken:
-          updateTeacherDto.refreshToken || teacher.common.refreshToken,
+        googleRefreshToken: updateTeacherDto.googleRefreshToken || teacher.common.googleRefreshToken,
       },
       summary: updateTeacherDto.summary || teacher.summary,
     });

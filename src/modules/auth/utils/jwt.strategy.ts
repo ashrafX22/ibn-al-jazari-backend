@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Jwt } from './jwt.interface';
+import { AuthService } from '../auth.service';
+import { ROLES_KEY } from './roles.decorator';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +15,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
+    // stores the decoded jwt in req.user
     async validate(payload: Jwt) {
-        return { email: payload.email, role: payload.role, experience: payload.experience };
+        return payload;
     }
 }

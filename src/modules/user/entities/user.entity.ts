@@ -5,12 +5,16 @@ import { calculateAge } from 'src/shared/utils/calculate-age.util';
 export class SuperUserEntity {
   @ApiProperty()
   name: string;
+
   @ApiProperty()
   email: string;
+
   @ApiProperty()
   dateOfBirth: Date;
+
   @ApiProperty()
   phoneNumber: string;
+
   @ApiProperty()
   gender: string;
 
@@ -21,10 +25,7 @@ export class SuperUserEntity {
   password: string;
 
   @Exclude()
-  accessToken: string;
-
-  @Exclude()
-  refreshToken: string;
+  googleRefreshToken: string;
 
   @ApiProperty()
   @Expose()
