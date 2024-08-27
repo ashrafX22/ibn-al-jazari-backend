@@ -15,12 +15,14 @@ import { TeacherModule } from './modules/teacher/teacher.module';
 import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 import { UserModule } from './modules/user/user.module';
-// import { MeetingModule } from './modules/meeting/meeting.module';
-// import { GoogleMeetModule } from './modules/google-meet/google-meet.module';
+import { MeetingModule } from './modules/meeting/meeting.module';
+import { SubjectModule } from './modules/subject/subject.module';
+import { ClassroomModule } from './modules/classroom/classroom.module';
+import { EnrollmentModule } from './modules/enrollment/enrollment.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
@@ -49,12 +51,14 @@ import { UserModule } from './modules/user/user.module';
       Payment,
       TeachersPayment,
     ]),
+    AuthModule,
     UserModule,
     TeacherModule,
     StudentModule,
-    AuthModule,
-    // MeetingModule,
-    // GoogleMeetModule,
+    SubjectModule,
+    EnrollmentModule,
+    ClassroomModule,
+    MeetingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
