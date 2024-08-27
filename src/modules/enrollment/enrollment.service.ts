@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Enrollment } from './entities/enrollment.entity';
 
 @Injectable()
 export class EnrollmentService {
-  create(createEnrollmentDto: CreateEnrollmentDto) {
-    return 'This action adds a new enrollment';
+  constructor(
+    @InjectRepository(Enrollment)
+    private readonly enrollmentRepository: Repository<Enrollment>,
+  ) {}
+  async create(createEnrollmentDto: CreateEnrollmentDto) {
+    const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
+    return await this.enrollmentRepository.save(enrollment);
   }
 
-  findAll() {
-    return `This action returns all enrollment`;
+  async findAll() {
+    return await this.enrollmentRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} enrollment`;
+  async findOne(id: number) {
+    return await this.enrollmentRepository.findOneBy(id);
   }
 
-  update(id: number, updateEnrollmentDto: UpdateEnrollmentDto) {
-    return `This action updates a #${id} enrollment`;
+  async update(id: number, updateEnrollmentDto: UpdateEnrollmentDto) {
+    return await this.enrollmentRepository.update(id, updateEnrollmentDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} enrollment`;
+  async remove(id: number) {
+    const result = await this.enrollmentRepository.delete(id);
+    return `Deleted ${result.affected} enrollment`;
   }
 }
