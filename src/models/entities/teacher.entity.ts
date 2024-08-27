@@ -1,7 +1,7 @@
 import { Entity, OneToMany, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../baseUser';
 import { Classroom } from './classroom.entity';
-import { TeachersPayment } from './teacher-payment.entity';
+import { Paycheck } from './paycheck.entity';
 import { Experience } from '../enums/experience.enum';
 import { Role } from '../enums/role.enum';
 
@@ -25,6 +25,6 @@ export class Teacher {
   @OneToMany(() => Classroom, (classroom) => classroom.teacher)
   classrooms: Classroom[];
 
-  @OneToMany(() => TeachersPayment, (teachersPayment) => teachersPayment.teacher)
-  teachersPayments: TeachersPayment[];
+  @OneToMany(() => Paycheck, (teachersPayment) => teachersPayment.teacher)
+  teachersPayments: Paycheck[];
 }

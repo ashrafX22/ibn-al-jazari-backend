@@ -11,7 +11,7 @@ import { PaymentMethod } from '../enums/payment-method.enum';
 import { PaymentStatus } from '../enums/payment-status.enum';
 
 @Entity()
-export class TeachersPayment {
+export class Paycheck {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -10,7 +10,7 @@ import { Enrollment } from 'src/models/entities/enrollment.entity';
 import { Subject } from 'src/models/entities/subject.entity';
 import { Meeting } from 'src/models/entities/meeting.entity';
 import { Payment } from 'src/models/entities/payment.entity';
-import { TeachersPayment } from 'src/models/entities/teacher-payment.entity';
+import { Paycheck } from 'src/models/entities/paycheck.entity';
 import { TeacherModule } from './modules/teacher/teacher.module';
 import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
@@ -34,7 +34,7 @@ import { EnrollmentModule } from './modules/enrollment/enrollment.module';
         Subject,
         Meeting,
         Payment,
-        TeachersPayment,
+        Paycheck,
       ],
       migrations: [__dirname + '/migrations/*{.ts,.js}'],
       migrationsRun: true,
@@ -49,7 +49,7 @@ import { EnrollmentModule } from './modules/enrollment/enrollment.module';
       Subject,
       Meeting,
       Payment,
-      TeachersPayment,
+      Paycheck,
     ]),
     AuthModule,
     UserModule,
