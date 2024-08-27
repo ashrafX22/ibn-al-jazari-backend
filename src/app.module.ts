@@ -17,6 +17,7 @@ import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 import { UserModule } from './modules/user/user.module';
 import { SubjectModule } from './modules/subject/subject.module';
+import { ClassroomModule } from './modules/classroom/classroom.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { SubjectModule } from './modules/subject/subject.module';
     TeacherModule,
     StudentModule,
     SubjectModule,
+    ClassroomModule,
     AuthModule,
     GoogleMeetModule,
   ],
