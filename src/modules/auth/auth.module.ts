@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { GoogleStrategy } from './providers/google/strategies/google.strategy';
+import { GoogleStrategy } from './providers/google/google.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { GoogleAuthGuard } from './providers/google/guards/google.guard';
+import { GoogleAuthGuard } from './providers/google/google.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { ExperiencesGuard } from './guards/experiences.guard';
 import { User } from 'src/models/baseUser';
@@ -12,14 +12,15 @@ import { Teacher } from 'src/models/entities/teacher.entity';
 import { Student } from 'src/models/entities/student.entity';
 import { StudentService } from 'src/modules/student/student.service';
 import { TeacherService } from 'src/modules/teacher/teacher.service';
-import { LocalStrategy } from './strategies/local.strategy';
 import { UserService } from 'src/modules/user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from './jwt/jwt.strategy';
 import { HttpModule } from '@nestjs/axios';
 import { GoogleTokenService } from './providers/google/google-token.service';
 import { GoogleAuthService } from './providers/google/google-auth.service';
+import { LocalStrategy } from './providers/local/local.strategy';
+import { LocalAuthService } from './providers/local/local-auth.service';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { GoogleAuthService } from './providers/google/google-auth.service';
     ExperiencesGuard,
     JwtStrategy,
     LocalStrategy,
+    LocalAuthService,
     GoogleStrategy,
     GoogleAuthGuard,
     GoogleAuthService,

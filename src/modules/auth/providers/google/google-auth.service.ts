@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateStudentDto } from "src/modules/student/dto/create-student.dto";
-import { Jwt } from "../../utils/jwt.interface";
+import { Jwt } from "../../jwt/jwt.interface";
 import { TeacherEntity } from "src/modules/teacher/entities/teacher.entity";
 import { UserService } from "src/modules/user/user.service";
 import { JwtService } from "@nestjs/jwt";

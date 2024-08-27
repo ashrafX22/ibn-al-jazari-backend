@@ -1,17 +1,17 @@
 import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { GoogleAuthGuard } from './providers/google/guards/google.guard';
+import { GoogleAuthGuard } from './providers/google/google.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, googleAuthSwaggerDoc, googleAuthCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { GoogleAuthService } from './providers/google/google-auth.service';
+import { AuthProvider } from './providers/auth-provider.enum';
 
 @ApiTags('auth')
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private authService: AuthService, private googleAuthService: GoogleAuthService) { }
+  constructor(private authService: AuthService) { }
 
   @getUserSwaggerDoc()
   @UseGuards(AuthGuard('jwt'))
@@ -26,13 +26,13 @@ export class AuthController {
   @Post('local/login')
   async localLogin(@Req() req) {
     console.log("local login", req.user);
-    return this.authService.localLogin(req.user);
+    return this.authService.login(AuthProvider.LOCAL, req.user);
   }
 
   @LocalRegisterSwaggerDoc()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.localRegister(createStudentDto);
+    return await this.authService.register(AuthProvider.LOCAL, createStudentDto);
   }
 
   // google auth steps
@@ -55,7 +55,9 @@ export class AuthController {
   async googleAuthCallback(@Req() req, @Res() res) {
     console.log("google login redirect");
     console.log(req.user);
-    const result = await this.googleAuthService.googleAuth(req.user);
+
+    const result: any = await this.authService.login(AuthProvider.GOOGLE, req.user);
+
     const { newAccount } = result;
 
     // google login
@@ -80,6 +82,6 @@ export class AuthController {
   @googleRegisterSwaggerDoc()
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.googleAuthService.googleRegister(createStudentDto);
+    return await this.authService.register(AuthProvider.GOOGLE, createStudentDto);
   }
 }

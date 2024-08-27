@@ -1,19 +1,17 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
-import { StudentService } from 'src/modules/student/student.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserService } from 'src/modules/user/user.service';
-import { TeacherEntity } from '../teacher/entities/teacher.entity';
-import { UnionUserEntity } from '../user/types/user.type';
-import { Jwt } from './utils/jwt.interface';
+import { LocalAuthService } from './providers/local/local-auth.service';
+import { GoogleAuthService } from './providers/google/google-auth.service';
+import { CreateStudentDto } from '../student/dto/create-student.dto';
+import { AuthProvider } from './providers/auth-provider.enum';
 
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
     private userService: UserService,
-    private studentService: StudentService,
+    private localAuthService: LocalAuthService,
+    private googleAuthService: GoogleAuthService,
   ) { }
 
   async getUser(email: string) {
@@ -24,27 +22,27 @@ export class AuthService {
     return user;
   }
 
-  async localValidateUser(email: string, password: string): Promise<UnionUserEntity | NotFoundException | UnauthorizedException> {
-    const user = await this.userService.findByEmail(email);
-    console.log("user", user);
-
-    if (!user) throw new NotFoundException('user not found');
-
-    if (user.password === password)
-      return user;
-    else
-      throw new UnauthorizedException('invalid credintials');
+  async login(strategy: string, credentials: any) {
+    switch (strategy) {
+      case AuthProvider.LOCAL:
+        return this.localAuthService.localLogin(credentials);
+      case AuthProvider.GOOGLE:
+        return this.googleAuthService.googleAuth(credentials);
+      default:
+        throw new NotFoundException('Unsupported login method');
+    }
+    // Handle other strategies
   }
 
-  async localLogin(user: UnionUserEntity) {
-    const payload: Jwt = { email: user.email, role: user.role };
-    if (user instanceof TeacherEntity) payload.experience = user.experience;
-    return {
-      jwt: this.jwtService.sign(payload),
-    };
-  }
-
-  async localRegister(createStudentDto: CreateStudentDto) {
-    return await this.studentService.create(createStudentDto);
+  async register(strategy: string, createStudentDto: CreateStudentDto) {
+    switch (strategy) {
+      case AuthProvider.LOCAL:
+        return this.localAuthService.localRegister(createStudentDto);
+      case AuthProvider.GOOGLE:
+        return this.googleAuthService.googleRegister(createStudentDto);
+      default:
+        throw new NotFoundException('Unsupported registration method');
+    }
+    // Handle other strategies
   }
 }
