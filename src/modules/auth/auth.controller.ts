@@ -1,16 +1,24 @@
 import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { GoogleAuthGuard, JwtAuthGuard } from './utils/guards';
+import { GoogleAuthGuard } from './providers/google/guards/google.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { getUserSwaggerDoc, googleAuthSwaggerDoc, googleAuthCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc } from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { GoogleAuthService } from './providers/google/google-auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private googleAuthService: GoogleAuthService) { }
+
+  @getUserSwaggerDoc()
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
+  getUser(@Req() req) {
+    return this.authService.getUser(req.user.email);
+  }
 
   // pass username and password in a json object
   @localLoginSwaggerDoc()
@@ -47,7 +55,7 @@ export class AuthController {
   async googleAuthCallback(@Req() req, @Res() res) {
     console.log("google login redirect");
     console.log(req.user);
-    const result = await this.authService.googleAuth(req.user);
+    const result = await this.googleAuthService.googleAuth(req.user);
     const { newAccount } = result;
 
     // google login
@@ -72,14 +80,6 @@ export class AuthController {
   @googleRegisterSwaggerDoc()
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.googleRegister(createStudentDto);
-  }
-
-  @getUserSwaggerDoc()
-  @UseGuards(JwtAuthGuard)
-  @Get('user')
-  getUser(@Req() req) {
-    console.log("req user", req.user);
-    return req.user;
+    return await this.googleAuthService.googleRegister(createStudentDto);
   }
 }
