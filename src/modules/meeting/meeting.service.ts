@@ -23,12 +23,12 @@ export class MeetingService {
     async create(creatorDetails: Jwt, classroomId: number, createMeetingDto: CreateMeetingDto) {
         const { startTime, provider } = createMeetingDto;
 
-        const classroom = this.classroomService.findOne(classroomId);
+        const classroom = await this.classroomService.findOne(classroomId);
         if (!classroom) throw new NotFoundException('classroom not found');
 
-        const attendees = this.enrollmentService.findAllByClassroomId(classroomId);
+        const studentEmails = await this.enrollmentService.getStudentEmailsByClassroomId(classroomId);
 
-        const meetingDetails: MeetingDetails = { title: classroom.name, startTime, attendees };
+        const meetingDetails: MeetingDetails = { title: classroom.name, startTime, attendees: studentEmails };
 
         const link = this.meetingServiceFactory.getMeetingService(provider).createMeeting(creatorDetails, meetingDetails);
 

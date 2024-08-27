@@ -53,6 +53,6 @@ import { LocalAuthService } from './providers/local/local-auth.service';
     GoogleAuthService,
     GoogleTokenService
   ],
-  exports: [AuthService, JwtModule]
+  exports: [AuthService, JwtModule, GoogleTokenService]
 })
 export class AuthModule { }
