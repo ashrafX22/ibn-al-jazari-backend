@@ -16,6 +16,7 @@ import { TeacherModule } from './modules/teacher/teacher.module';
 import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 import { UserModule } from './modules/user/user.module';
+import { SubjectModule } from './modules/subject/subject.module';
 
 @Module({
   imports: [
@@ -51,10 +52,11 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
     TeacherModule,
     StudentModule,
+    SubjectModule,
     AuthModule,
     GoogleMeetModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
