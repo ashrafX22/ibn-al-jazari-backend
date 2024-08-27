@@ -18,6 +18,7 @@ import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 import { UserModule } from './modules/user/user.module';
 import { SubjectModule } from './modules/subject/subject.module';
 import { ClassroomModule } from './modules/classroom/classroom.module';
+import { EnrollmentModule } from './modules/enrollment/enrollment.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ClassroomModule } from './modules/classroom/classroom.module';
     TeacherModule,
     StudentModule,
     SubjectModule,
+    EnrollmentModule,
     ClassroomModule,
     AuthModule,
     GoogleMeetModule,
