@@ -16,13 +16,13 @@ export class Payment {
     id: number;
 
     @Column()
-    student_id: number;
+    studentId: number;
 
     @Column()
-    classroom_id: number;
+    classroomId: number;
 
     @Column()
-    payment_gateway_order_id: string;
+    paymentGatewayOrderId: string;
 
     @Column('float')
     amount: number;

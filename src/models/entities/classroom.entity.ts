@@ -21,19 +21,19 @@ export class Classroom {
     name: string;
 
     @Column()
-    subject_id: number;
+    subjectId: number;
 
     @Column()
-    start_time: Date;
+    startTime: Date;
 
     @Column()
-    end_time: Date;
+    endTime: Date;
 
     @CreateDateColumn()
-    created_at: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updated_at: Date;
+    updatedAt: Date;
 
     @ManyToOne(() => Teacher, (teacher) => teacher.classrooms)
     teacher: Teacher;

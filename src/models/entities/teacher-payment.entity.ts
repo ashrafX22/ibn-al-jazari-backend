@@ -15,10 +15,10 @@ export class TeachersPayment {
     id: number;
 
     @Column()
-    teacher_id: number;
+    teacherId: number;
 
     @Column()
-    payment_gateway_order_id: string;
+    paymentGatewayOrderId: string;
 
     @Column('float')
     amount: number;

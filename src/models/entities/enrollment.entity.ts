@@ -11,7 +11,7 @@ export class Enrollment {
   classroomId: number;
 
   @Column()
-  timestamp: Date;
+  enrollmentDate: Date;
 
   @ManyToOne(() => Student, (student) => student.enrollments)
   student: Student;

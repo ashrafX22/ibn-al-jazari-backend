@@ -8,5 +8,5 @@ export class CreateEnrollmentDto {
   studentId: number;
 
   @ApiProperty()
-  timestamp: Date;
+  enrollmentDate: Date;
 }
