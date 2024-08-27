@@ -25,9 +25,6 @@ export class Teacher {
   @OneToMany(() => Classroom, (classroom) => classroom.teacher)
   classrooms: Classroom[];
 
-  @OneToMany(
-    () => TeachersPayment,
-    (teachersPayment) => teachersPayment.teacher,
-  )
+  @OneToMany(() => TeachersPayment, (teachersPayment) => teachersPayment.teacher)
   teachersPayments: TeachersPayment[];
 }

@@ -4,6 +4,7 @@ import {
     Column,
     CreateDateColumn,
     ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { PaymentMethod } from '../enums/payment-method.enum';
@@ -33,5 +34,6 @@ export class TeachersPayment {
     paymentMethod: PaymentMethod;
 
     @ManyToOne(() => Teacher, (teacher) => teacher.teachersPayments)
+    @JoinColumn({ name: 'teacherId' })
     teacher: Teacher;
 }

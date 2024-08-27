@@ -5,6 +5,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import { Classroom } from './classroom.entity';
 
@@ -29,5 +30,6 @@ export class Meeting {
     updatedAt: Date;
 
     @ManyToOne(() => Classroom, (classroom) => classroom.meetings)
+    @JoinColumn({ name: 'classroomId' })
     class: Classroom;
 }

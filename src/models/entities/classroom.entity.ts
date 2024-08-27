@@ -6,19 +6,24 @@ import {
     UpdateDateColumn,
     ManyToOne,
     OneToMany,
+    JoinColumn,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { Meeting } from './meeting.entity';
 import { Enrollment } from './enrollment.entity';
 import { Payment } from './payment.entity';
+import { Subject } from './subject.entity';
 
 @Entity()
 export class Classroom {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true })
+    @Column()
     name: string;
+
+    @Column()
+    teacherId: number;
 
     @Column()
     subjectId: number;
@@ -36,7 +41,12 @@ export class Classroom {
     updatedAt: Date;
 
     @ManyToOne(() => Teacher, (teacher) => teacher.classrooms)
+    @JoinColumn({ name: 'teacherId' })
     teacher: Teacher;
+
+    @ManyToOne(() => Subject, (subject) => subject.classrooms)
+    @JoinColumn({ name: 'subjectId' })
+    subject: Subject;
 
     @OneToMany(() => Meeting, (meeting) => meeting.class)
     meetings: Meeting[];
