@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
+import { ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { CreateMeetingDto } from './dto/create-meeting.dto';
 
 export function createMeetingSwaggerDoc() {
     return applyDecorators(
@@ -9,12 +9,12 @@ export function createMeetingSwaggerDoc() {
         }),
         ApiBody({
             description: 'Details of the meeting to be created',
-            type: CreateGoogleMeetDto,
+            type: CreateMeetingDto,
         }),
         ApiResponse({
             status: 201,
             description: 'Meeting successfully created',
-            type: CreateGoogleMeetDto,
+            type: CreateMeetingDto,
         }),
         ApiResponse({
             status: 401,

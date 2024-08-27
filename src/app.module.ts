@@ -1,8 +1,7 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
-import { GoogleMeetModule } from './modules/google-meet/google-meet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from 'src/models/entities/student.entity';
 import { Teacher } from 'src/models/entities/teacher.entity';
@@ -16,6 +15,8 @@ import { TeacherModule } from './modules/teacher/teacher.module';
 import { StudentModule } from './modules/student/student.module';
 import { ConfigModule } from '@nestjs/config'; // Import ConfigModule
 import { UserModule } from './modules/user/user.module';
+// import { MeetingModule } from './modules/meeting/meeting.module';
+// import { GoogleMeetModule } from './modules/google-meet/google-meet.module';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { UserModule } from './modules/user/user.module';
     TeacherModule,
     StudentModule,
     AuthModule,
-    GoogleMeetModule,
+    // MeetingModule,
+    // GoogleMeetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

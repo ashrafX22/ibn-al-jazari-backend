@@ -14,19 +14,19 @@ export class Meeting {
     id: number;
 
     @Column()
-    classroom_id: number;
+    classroomId: number;
+
+    @Column()
+    startTime: Date;
 
     @Column()
     link: string;
 
-    @Column()
-    start_time: Date;
-
     @CreateDateColumn()
-    created_at: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    updated_at: Date;
+    updatedAt: Date;
 
     @ManyToOne(() => Classroom, (classroom) => classroom.meetings)
     class: Classroom;
