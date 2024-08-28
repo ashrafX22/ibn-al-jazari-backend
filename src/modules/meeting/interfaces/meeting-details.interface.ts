@@ -1,7 +1,7 @@
 export interface MeetingDetails {
     title: string;
 
-    startTime: Date;
+    startTime: string;
 
     attendees: string[];
 }

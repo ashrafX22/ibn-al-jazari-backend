@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { Jwt } from 'src/modules/auth/jwt/jwt.interface';
@@ -10,7 +10,7 @@ import { MeetingDetails } from '../../interfaces/meeting-details.interface';
 export class GoogleMeetingService implements IMeetingService {
     private oauth2Client: OAuth2Client;
 
-    constructor(private googleTokenService: GoogleTokenService) {
+    constructor() {
         this.oauth2Client = new google.auth.OAuth2(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,
@@ -20,33 +20,31 @@ export class GoogleMeetingService implements IMeetingService {
 
     async createMeeting(creatorDetails: Jwt, meetingDetails: MeetingDetails) {
         const { email, googleAccessToken } = creatorDetails;
-        console.log("create meeting");
+        console.log("GoogleMeetingService createMeeting");
 
-        const validGoogleAccessToken =
-            await this.googleTokenService.validateAndRefreshGoogleAccessToken(email, googleAccessToken);
-
-        console.log("new google access token", validGoogleAccessToken);
-
-        this.oauth2Client.setCredentials({ access_token: validGoogleAccessToken });
+        this.oauth2Client.setCredentials({ access_token: googleAccessToken });
         const calendar = google.calendar({
             version: 'v3',
             auth: this.oauth2Client,
         });
 
         const { title, startTime, attendees } = meetingDetails;
+        const endTime =
+            new Date(startTime).setTime(new Date(startTime).getTime() + 60 * 60 * 1000).toString();
 
         const event = {
             summary: title,
             // description: 'Meeting description',
             start: {
-                // '2024-08-07T20:00:00+03:00'
-                dateTime: startTime.toString(),
+                // '2024-08-07T19:00:00+03:00'
+                dateTime: startTime,
                 timeZone: 'Africa/Cairo',
             },
-            // end: {
-            //     dateTime: startTime,
-            //     timeZone: 'Africa/Cairo',
-            // },
+            end: {
+                // '2024-08-07T20:00:00+03:00'
+                dateTime: endTime,
+                timeZone: 'Africa/Cairo',
+            },
             // 'recurrence': [
             //     'RRULE:FREQ=DAILY;COUNT=1'
             // ],
@@ -68,14 +66,18 @@ export class GoogleMeetingService implements IMeetingService {
             },
         };
 
-        const response = await calendar.events.insert({
-            calendarId: 'primary',
-            requestBody: event,
-            conferenceDataVersion: 1,
-        });
+        try {
+            const response = await calendar.events.insert({
+                calendarId: 'primary',
+                requestBody: event,
+                conferenceDataVersion: 1,
+            });
 
-        console.log('meeting created:', response.data);
+            console.log('meeting created:', response.data);
 
-        return response.data;
+            return response.data;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 }

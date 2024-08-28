@@ -18,7 +18,7 @@ export class Meeting {
     classroomId: number;
 
     @Column()
-    startTime: Date;
+    startTime: string;
 
     @Column()
     link: string;
