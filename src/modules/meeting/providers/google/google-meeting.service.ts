@@ -3,8 +3,8 @@ import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { Jwt } from 'src/modules/auth/jwt/jwt.interface';
 import { IMeetingService } from '../../interfaces/meeting-service.interface';
-import { GoogleTokenService } from 'src/modules/auth/providers/google/google-token.service';
 import { MeetingDetails } from '../../interfaces/meeting-details.interface';
+import { addHoursToDateTime } from 'src/shared/utils/add-hours.util';
 
 @Injectable()
 export class GoogleMeetingService implements IMeetingService {
@@ -29,24 +29,24 @@ export class GoogleMeetingService implements IMeetingService {
         });
 
         const { title, startTime, attendees } = meetingDetails;
-        const endTime =
-            new Date(startTime).setTime(new Date(startTime).getTime() + 60 * 60 * 1000).toString();
 
         const event = {
             summary: title,
             // description: 'Meeting description',
             start: {
-                // '2024-08-07T19:00:00+03:00'
+                // google converts whatever timezone you give to the timeZone variable you passed
+                // '2024-08-31T18:00:00+03:00'
                 dateTime: startTime,
                 timeZone: 'Africa/Cairo',
             },
             end: {
-                // '2024-08-07T20:00:00+03:00'
-                dateTime: endTime,
+                // '2024-08-31T18:00:00+03:00'
+                dateTime: addHoursToDateTime(startTime, 1),
                 timeZone: 'Africa/Cairo',
             },
             // 'recurrence': [
-            //     'RRULE:FREQ=DAILY;COUNT=1'
+            //     // 'RRULE:FREQ=DAILY;COUNT=1'
+            //     'RRULE:FREQ=WEEKLY;BYDAY=SA,MO,WE'
             // ],
             attendees: attendees.map((email) => ({ email })),
             reminders: {
@@ -79,5 +79,9 @@ export class GoogleMeetingService implements IMeetingService {
         } catch (error) {
             throw new BadRequestException(error.message);
         }
+    }
+
+    getMeetingLink(providerMeeting: any): string {
+        return providerMeeting.hangoutLink;
     }
 }
