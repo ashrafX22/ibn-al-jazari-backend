@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtUtilService } from 'src/modules/auth/jwt/jwt-util.service';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { StudentService } from 'src/modules/student/student.service';
 import { UserService } from 'src/modules/user/user.service';
@@ -13,12 +13,12 @@ export class LocalAuthService {
     constructor(
         private userService: UserService,
         private studentService: StudentService,
-        private jwtService: JwtService
+        private jwtUtilService: JwtUtilService
     ) { }
 
     async localValidateUser(email: string, password: string): Promise<UnionUserEntity | NotFoundException | UnauthorizedException> {
         const user = await this.userService.findByEmail(email);
-        console.log("user", user);
+        console.log("localValidateUser user:", user);
 
         if (!user) throw new NotFoundException('user not found');
 
@@ -32,7 +32,7 @@ export class LocalAuthService {
         const payload: Jwt = { email: user.email, role: user.role };
         if (user instanceof TeacherEntity) payload.experience = user.experience;
         return {
-            jwt: this.jwtService.sign(payload),
+            jwt: this.jwtUtilService.issueJwt(payload)
         };
     }
 

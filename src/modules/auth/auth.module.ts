@@ -21,6 +21,7 @@ import { GoogleTokenService } from './providers/google/google-token.service';
 import { GoogleAuthService } from './providers/google/google-auth.service';
 import { LocalStrategy } from './providers/local/local.strategy';
 import { LocalAuthService } from './providers/local/local-auth.service';
+import { JwtUtilService } from './jwt/jwt-util.service';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { LocalAuthService } from './providers/local/local-auth.service';
     RolesGuard,
     ExperiencesGuard,
     JwtStrategy,
+    JwtUtilService,
     LocalStrategy,
     LocalAuthService,
     GoogleStrategy,

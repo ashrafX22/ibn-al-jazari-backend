@@ -3,7 +3,7 @@ import { CreateStudentDto } from "src/modules/student/dto/create-student.dto";
 import { Jwt } from "../../jwt/jwt.interface";
 import { TeacherEntity } from "src/modules/teacher/entities/teacher.entity";
 import { UserService } from "src/modules/user/user.service";
-import { JwtService } from "@nestjs/jwt";
+import { JwtUtilService } from "src/modules/auth/jwt/jwt-util.service";
 import { StudentService } from "src/modules/student/student.service";
 
 
@@ -12,7 +12,7 @@ export class GoogleAuthService {
     constructor(
         private userService: UserService,
         private studentService: StudentService,
-        private jwtService: JwtService
+        private jwtUtilService: JwtUtilService
     ) { }
 
     async googleAuth(googleInfo: any) {
@@ -31,7 +31,7 @@ export class GoogleAuthService {
             return {
                 newAccount: false,
                 role: user.role,
-                jwt: this.jwtService.sign(payload)
+                jwt: this.jwtUtilService.issueJwt(payload)
             };
         }
         else
@@ -49,7 +49,7 @@ export class GoogleAuthService {
             googleAccessToken: createStudentDto.googleAccessToken
         };
 
-        const jwt = this.jwtService.sign(payload);
+        const jwt = this.jwtUtilService.issueJwt(payload);
 
         return { jwt: jwt };
     }

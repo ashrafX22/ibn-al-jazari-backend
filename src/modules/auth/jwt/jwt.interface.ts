@@ -6,4 +6,6 @@ export interface Jwt {
     role: Role;
     experience?: Experience;
     googleAccessToken?: string;
+    iat?: number;
+    exp?: number;
 }
