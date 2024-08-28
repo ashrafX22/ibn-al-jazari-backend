@@ -12,10 +12,12 @@ export class GoogleTokenService {
     ) { }
 
 
-    async validateAndRefreshGoogleAccessToken(email: string, googleAccessToken: string): Promise<string> {
-        if (!this.isValidGoogleAccessToken(googleAccessToken))
-            return await this.refreshGoogleAccessToken(email);
-        return googleAccessToken;
+    async validateAndRefreshGoogleAccessToken(email: string, googleAccessToken: string): Promise<string | null> {
+        const isValid = await this.isValidGoogleAccessToken(googleAccessToken);
+
+        if (!isValid) return await this.refreshGoogleAccessToken(email);
+
+        return null;
     }
 
     async isValidGoogleAccessToken(googleAccessToken: string): Promise<boolean> {
