@@ -3,4 +3,5 @@ import { MeetingDetails } from "./meeting-details.interface";
 
 export interface IMeetingService {
     createMeeting(creatorDetails: Jwt, meetingDetails: MeetingDetails);
+    getMeetingLink(providerMeeting): string;
 }

@@ -30,14 +30,16 @@ export class MeetingService {
 
         const meetingDetails: MeetingDetails = { title: classroom.name, startTime, attendees: studentEmails };
 
-        const link = await this.meetingServiceFactory.getMeetingService(provider).createMeeting(creatorDetails, meetingDetails);
+        const meetingService = this.meetingServiceFactory.getMeetingService(provider);
+        const providerMeeting = await meetingService.createMeeting(creatorDetails, meetingDetails);
+        const meetingLink = meetingService.getMeetingLink(providerMeeting);
 
         console.log("MeetingService create");
         console.log("startTime", startTime);
         console.log("classroomId", classroomId);
-        console.log("link", link);
+        console.log("link", meetingLink);
         try {
-            const meeting = this.meetingRepository.create({ classroomId, startTime, link });
+            const meeting = this.meetingRepository.create({ classroomId, startTime, link: meetingLink });
 
             await this.meetingRepository.save(meeting);
 
