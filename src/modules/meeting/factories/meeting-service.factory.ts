@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { GoogleMeetingService } from '../providers/google/google-meeting.service';
 import { IMeetingService } from '../interfaces/meeting-service.interface';
 import { MeetingProvider } from '../enums/meeting-provider.enum';
@@ -15,7 +15,7 @@ export class MeetingServiceFactory {
                 return this.googleMeetingService;
             // Add cases for other providers
             default:
-                throw new Error('Unsupported meeting provider');
+                throw new NotFoundException('Unsupported meeting provider');
         }
     }
 }

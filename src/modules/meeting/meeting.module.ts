@@ -9,6 +9,7 @@ import { MeetingServiceFactory } from './factories/meeting-service.factory';
 import { GoogleMeetingService } from './providers/google/google-meeting.service';
 import { AuthModule } from '../auth/auth.module';
 import { EnrollmentModule } from '../enrollment/enrollment.module';
+import { JwtUtilService } from '../auth/jwt/jwt-util.service';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { EnrollmentModule } from '../enrollment/enrollment.module';
         MeetingService,
         GoogleMeetingService,
         ClassroomService,
+        JwtUtilService
     ],
 })
 export class MeetingModule { }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { ClassroomService } from '../classroom/classroom.service';
 import { EnrollmentService } from '../enrollment/enrollment.service';
@@ -30,13 +30,21 @@ export class MeetingService {
 
         const meetingDetails: MeetingDetails = { title: classroom.name, startTime, attendees: studentEmails };
 
-        const link = this.meetingServiceFactory.getMeetingService(provider).createMeeting(creatorDetails, meetingDetails);
+        const link = await this.meetingServiceFactory.getMeetingService(provider).createMeeting(creatorDetails, meetingDetails);
 
-        const meeting = this.meetingRepository.create({ classroomId, startTime, link });
+        console.log("MeetingService create");
+        console.log("startTime", startTime);
+        console.log("classroomId", classroomId);
+        console.log("link", link);
+        try {
+            const meeting = this.meetingRepository.create({ classroomId, startTime, link });
 
-        await this.meetingRepository.save(meeting);
+            await this.meetingRepository.save(meeting);
 
-        return meeting;
+            return meeting;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
     }
 
     async findAll() {

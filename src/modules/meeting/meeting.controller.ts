@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, Res } from '@nestjs/common';
 import { MeetingService } from './meeting.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { createMeetingSwaggerDoc } from './meeting.swagger';
+import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
 
 @Controller('meeting')
 export class MeetingController {
@@ -13,8 +14,11 @@ export class MeetingController {
     // @Experiences(Experience.SENIOR)
     // @Roles(Role.TEAHCER)
     @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
+    @UseInterceptors(GoogleTokenInterceptor)
     @Post(':classroomId')
-    create(@Req() req, @Param('classroomId') classroomId: string, @Body() createMeetingDto: CreateMeetingDto) {
+    create(@Req() req, @Res() res, @Param('classroomId') classroomId: string, @Body() createMeetingDto: CreateMeetingDto) {
+        console.log("create meeting controller req auth header", req.headers['Authorization']);
+        console.log("create meeting controller res auth header", res.getHeader('Authorization'));
         return this.meetingService.create(req.user, +classroomId, createMeetingDto);
     }
 
