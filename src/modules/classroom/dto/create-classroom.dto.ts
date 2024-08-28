@@ -10,8 +10,8 @@ export class CreateClassroomDto {
   subject_id: number;
 
   @ApiProperty()
-  start_time: Date;
+  startTime: string;
 
   @ApiProperty()
-  end_time: Date;
+  endTime: string;
 }

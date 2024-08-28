@@ -29,10 +29,10 @@ export class Classroom {
     subjectId: number;
 
     @Column()
-    startTime: Date;
+    startTime: string;
 
     @Column()
-    endTime: Date;
+    endTime: string;
 
     @CreateDateColumn()
     createdAt: Date;
