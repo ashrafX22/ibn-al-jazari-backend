@@ -22,6 +22,12 @@ export class GoogleTokenInterceptor implements NestInterceptor {
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
+
+        if (request.method === 'OPTIONS') {
+            console.log("bypassed preflight");
+            return next.handle();
+        }
+
         const user: Jwt = request.user;
 
         const { email, googleAccessToken } = user;

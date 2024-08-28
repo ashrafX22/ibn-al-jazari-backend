@@ -17,6 +17,8 @@ async function bootstrap() {
     origin: process.env.ORIGIN,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    allowedHeaders: 'Content-Type, Authorization',
+    exposedHeaders: 'Authorization',
   });
 
   app.use(passport.initialize());

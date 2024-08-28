@@ -16,10 +16,13 @@ export class MeetingController {
     @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
     @UseInterceptors(GoogleTokenInterceptor)
     @Post(':classroomId')
-    create(@Req() req, @Res() res, @Param('classroomId') classroomId: string, @Body() createMeetingDto: CreateMeetingDto) {
+    async create(@Req() req, @Res() res, @Param('classroomId') classroomId: string, @Body() createMeetingDto: CreateMeetingDto) {
         console.log("create meeting controller req auth header", req.headers['Authorization']);
         console.log("create meeting controller res auth header", res.getHeader('Authorization'));
-        return this.meetingService.create(req.user, +classroomId, createMeetingDto);
+
+        const meeting = await this.meetingService.create(req.user, +classroomId, createMeetingDto);
+
+        return res.json(meeting);
     }
 
     @Get()
