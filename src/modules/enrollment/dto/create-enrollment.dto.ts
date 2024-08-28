@@ -6,7 +6,4 @@ export class CreateEnrollmentDto {
 
   @ApiProperty()
   studentId: number;
-
-  @ApiProperty()
-  enrollmentDate: Date;
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { Student } from './student.entity';
 import { Classroom } from './classroom.entity';
 
@@ -10,7 +10,7 @@ export class Enrollment {
   @PrimaryColumn()
   classroomId: number;
 
-  @Column()
+  @CreateDateColumn()
   enrollmentDate: Date;
 
   @ManyToOne(() => Student, (student) => student.enrollments)
