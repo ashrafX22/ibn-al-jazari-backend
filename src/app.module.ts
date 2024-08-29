@@ -43,17 +43,6 @@ import { Appointment } from './models/entities/appointment.entity';
       synchronize: true, // Set to false in production
       logging: true,
     }),
-    TypeOrmModule.forFeature([
-      Student,
-      Teacher,
-      Classroom,
-      Enrollment,
-      Subject,
-      Appointment,
-      Meeting,
-      Payment,
-      Paycheck,
-    ]),
     AuthModule,
     UserModule,
     TeacherModule,
