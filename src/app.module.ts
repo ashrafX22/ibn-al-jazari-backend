@@ -20,6 +20,7 @@ import { SubjectModule } from './modules/subject/subject.module';
 import { ClassroomModule } from './modules/classroom/classroom.module';
 import { EnrollmentModule } from './modules/enrollment/enrollment.module';
 import { Appointment } from './models/entities/appointment.entity';
+import { AppointmentModule } from './modules/appointment/appointment.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { Appointment } from './models/entities/appointment.entity';
     EnrollmentModule,
     ClassroomModule,
     MeetingModule,
+    AppointmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
