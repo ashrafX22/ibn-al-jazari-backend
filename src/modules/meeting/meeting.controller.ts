@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  Res,
+} from '@nestjs/common';
 import { MeetingService } from './meeting.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
@@ -8,40 +20,61 @@ import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.in
 
 @Controller('meeting')
 export class MeetingController {
-    constructor(private readonly meetingService: MeetingService) { }
+  constructor(private readonly meetingService: MeetingService) {}
 
-    @createMeetingSwaggerDoc()
-    // @Experiences(Experience.SENIOR)
-    // @Roles(Role.TEAHCER)
-    @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
-    @UseInterceptors(GoogleTokenInterceptor)
-    @Post(':classroomId')
-    async create(@Req() req, @Res() res, @Param('classroomId') classroomId: string, @Body() createMeetingDto: CreateMeetingDto) {
-        console.log("create meeting controller req auth header", req.headers['Authorization']);
-        console.log("create meeting controller res auth header", res.getHeader('Authorization'));
+  @createMeetingSwaggerDoc()
+  // @Experiences(Experience.SENIOR)
+  // @Roles(Role.TEAHCER)
+  @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
+  @UseInterceptors(GoogleTokenInterceptor)
+  @Post(':classroomId')
+  async create(
+    @Req() req,
+    @Res() res,
+    @Param('classroomId') classroomId: string,
+    @Body() createMeetingDto: CreateMeetingDto,
+  ) {
+    console.log(
+      'create meeting controller req auth header',
+      req.headers['Authorization'],
+    );
+    console.log(
+      'create meeting controller res auth header',
+      res.getHeader('Authorization'),
+    );
 
-        const meeting = await this.meetingService.create(req.user, +classroomId, createMeetingDto);
+    const meeting = await this.meetingService.create(
+      req.user,
+      +classroomId,
+      createMeetingDto,
+    );
 
-        return res.json(meeting);
-    }
+    return res.json(meeting);
+  }
 
-    @Get()
-    findAll() {
-        return this.meetingService.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.meetingService.findAll();
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.meetingService.findOne(+id);
-    }
+  // @getMeetingsByTeacherSwaggerDoc()
+  @Get('teacher/:teacherId')
+  getMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
+    return this.meetingService.getMeetingsByTeacherId(+teacherId);
+  }
 
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
-    //     return this.meetingService.update(+id, updateMeetingDto);
-    // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.meetingService.findOne(+id);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.meetingService.remove(+id);
-    }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
+  //     return this.meetingService.update(+id, updateMeetingDto);
+  // }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.meetingService.remove(+id);
+  }
 }
