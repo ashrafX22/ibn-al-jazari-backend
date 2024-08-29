@@ -10,12 +10,14 @@ import { GoogleMeetingService } from './providers/google/google-meeting.service'
 import { AuthModule } from '../auth/auth.module';
 import { EnrollmentModule } from '../enrollment/enrollment.module';
 import { JwtUtilService } from '../auth/jwt/jwt-util.service';
+import { AppointmentModule } from '../appointment/appointment.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Meeting, Classroom]),
         AuthModule,
-        EnrollmentModule
+        EnrollmentModule,
+        AppointmentModule
     ],
     controllers: [MeetingController],
     providers: [
@@ -23,7 +25,7 @@ import { JwtUtilService } from '../auth/jwt/jwt-util.service';
         MeetingService,
         GoogleMeetingService,
         ClassroomService,
-        JwtUtilService
+        JwtUtilService,
     ],
 })
 export class MeetingModule { }

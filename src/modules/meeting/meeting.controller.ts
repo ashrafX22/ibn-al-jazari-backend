@@ -35,10 +35,10 @@ export class MeetingController {
         return this.meetingService.findOne(+id);
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
-        return this.meetingService.update(+id, updateMeetingDto);
-    }
+    // @Patch(':id')
+    // update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
+    //     return this.meetingService.update(+id, updateMeetingDto);
+    // }
 
     @Delete(':id')
     remove(@Param('id') id: string) {

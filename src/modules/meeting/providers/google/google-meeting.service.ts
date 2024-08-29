@@ -28,7 +28,13 @@ export class GoogleMeetingService implements IMeetingService {
             auth: this.oauth2Client,
         });
 
-        const { title, startTime, attendees } = meetingDetails;
+        const { title, appointments, attendees } = meetingDetails;
+
+        const daysArray = appointments.map((appointment) => (appointment.day.substring(0, 2)).toUpperCase());
+        const days = daysArray.join();
+
+        // TODO: validate that there are appointmetns
+        const startTime = appointments[0].startTime;
 
         const event = {
             summary: title,
@@ -36,7 +42,7 @@ export class GoogleMeetingService implements IMeetingService {
             start: {
                 // google converts whatever timezone you give to the timeZone variable you passed
                 // '2024-08-31T18:00:00+03:00'
-                dateTime: startTime,
+                dateTime: startTime, // startTime,
                 timeZone: 'Africa/Cairo',
             },
             end: {
@@ -44,10 +50,10 @@ export class GoogleMeetingService implements IMeetingService {
                 dateTime: addHoursToDateTime(startTime, 1),
                 timeZone: 'Africa/Cairo',
             },
-            // 'recurrence': [
-            //     // 'RRULE:FREQ=DAILY;COUNT=1'
-            //     'RRULE:FREQ=WEEKLY;BYDAY=SA,MO,WE'
-            // ],
+            'recurrence': [
+                // 'RRULE:FREQ=DAILY;COUNT=1'
+                `RRULE:FREQ=WEEKLY;BYDAY=${days}`
+            ],
             attendees: attendees.map((email) => ({ email })),
             reminders: {
                 useDefault: false,

@@ -15,13 +15,10 @@ export class Meeting {
     id: number;
 
     @Column()
-    classroomId: number;
-
-    @Column()
-    startTime: string;
-
-    @Column()
     link: string;
+
+    @Column()
+    classroomId: number;
 
     @CreateDateColumn()
     createdAt: Date;

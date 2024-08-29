@@ -21,7 +21,7 @@ export class EnrollmentService {
   }
 
   // TODO: optimize by only retrieving emails from db
-  async getStudentEmailsByClassroomId(classroomId: number): Promise<string[]> {
+  async findStudentEmailsByClassroomId(classroomId: number): Promise<string[]> {
     const enrollments = await this.enrollmentRepository.find({
       where: { classroomId },
       relations: ['student'], // ensure that the student relation is loaded

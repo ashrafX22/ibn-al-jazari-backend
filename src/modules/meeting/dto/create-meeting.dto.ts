@@ -3,8 +3,5 @@ import { MeetingProvider } from "../enums/meeting-provider.enum";
 
 export class CreateMeetingDto {
     @ApiProperty()
-    startTime: string;
-
-    @ApiProperty()
     provider: MeetingProvider;
 }
