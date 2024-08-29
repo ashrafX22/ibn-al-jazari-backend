@@ -17,7 +17,10 @@ export class AppointmentController {
     return this.appointmentService.findAll();
   }
 
-  
+  @Get('classroom/:classroomId')
+  async findAppointmentsByClassroomId(@Param('classroomId') classroomId: string) {
+    return this.appointmentService.findAppointmentsByClassroomId(+classroomId);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

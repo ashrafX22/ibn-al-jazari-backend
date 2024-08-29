@@ -26,8 +26,14 @@ export class AppointmentService {
     return `This action returns all appointment`;
   }
 
-  findAppointmentsByClassroomId(classroomId: number) {
-    return this.appointmentRepository.findBy({ classroomId });
+  async findAppointmentsByClassroomId(classroomId: number) {
+    return await this.appointmentRepository.find({
+      where: { classroomId },
+      select: {
+        day: true,
+        startTime: true
+      }
+    });
   }
 
   findOne(id: number) {
