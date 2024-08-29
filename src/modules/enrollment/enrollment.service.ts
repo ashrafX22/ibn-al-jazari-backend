@@ -10,7 +10,7 @@ export class EnrollmentService {
   constructor(
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
-  ) { }
+  ) {}
   async create(createEnrollmentDto: CreateEnrollmentDto) {
     const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
     return await this.enrollmentRepository.save(enrollment);
@@ -27,7 +27,18 @@ export class EnrollmentService {
       relations: ['student'], // ensure that the student relation is loaded
     });
 
-    return enrollments.map(enrollment => enrollment['student']['common']['email']);
+    return enrollments.map(
+      (enrollment) => enrollment['student']['common']['email'],
+    );
+  }
+
+  async findStudentEnrollmentsByStudentId(
+    studentId: number,
+  ): Promise<Enrollment[]> {
+    const enrollments = await this.enrollmentRepository.find({
+      where: { studentId },
+    });
+    return enrollments;
   }
 
   async findOne(id: number) {

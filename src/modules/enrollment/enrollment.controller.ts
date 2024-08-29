@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
@@ -23,6 +24,13 @@ export class EnrollmentController {
   @Get()
   findAll() {
     return this.enrollmentService.findAll();
+  }
+
+  @Get('student/:studentId')
+  findStudentEnrollmentsByStudentId(
+    @Param('studentId', ParseIntPipe) studentId: number,
+  ) {
+    return this.enrollmentService.findStudentEnrollmentsByStudentId(+studentId);
   }
 
   @Get(':id')

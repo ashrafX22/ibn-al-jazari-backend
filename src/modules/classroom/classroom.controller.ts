@@ -31,6 +31,12 @@ export class ClassroomController {
     return this.classroomService.getClassroomsByTeacherId(+teachderId);
   }
 
+  // @getClassroomsByStudentIdSwaggerDoc()
+  @Get('student/:studentId')
+  getClassroomsByStudentId(@Param('studentId') studentId: string) {
+    return this.classroomService.getClassroomsByStudentId(+studentId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.classroomService.findOne(+id);
