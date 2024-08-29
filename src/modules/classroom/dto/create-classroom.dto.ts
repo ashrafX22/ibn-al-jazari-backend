@@ -3,11 +3,12 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateClassroomDto {
   @ApiProperty()
   name: string;
-  @ApiProperty()
-  teacher_id: number;
 
   @ApiProperty()
-  subject_id: number;
+  teacherId: number;
+
+  @ApiProperty()
+  subjectId: number;
 
   @ApiProperty()
   startTime: string;
