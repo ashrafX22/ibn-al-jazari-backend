@@ -13,6 +13,7 @@ import { Meeting } from './meeting.entity';
 import { Enrollment } from './enrollment.entity';
 import { Payment } from './payment.entity';
 import { Subject } from './subject.entity';
+import { Appointment } from './appointment.entity';
 
 @Entity()
 export class Classroom {
@@ -53,6 +54,9 @@ export class Classroom {
 
     @OneToMany(() => Enrollment, (enrollment) => enrollment.classroom)
     enrollments: Enrollment[];
+
+    @OneToMany(() => Appointment, (appointment) => appointment.classroom)
+    appointments: Appointment[];
 
     @OneToMany(() => Payment, (payment) => payment.classroom)
     payments: Payment[];
