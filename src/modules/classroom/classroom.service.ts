@@ -20,6 +20,14 @@ export class ClassroomService {
     return await this.classroomRepository.find();
   }
 
+  //find all rooms related to the given teacher
+  async getClassroomsByTeacherId(teacherId: number): Promise<Classroom[]> {
+    return await this.classroomRepository.find({
+      where: { teacherId },
+      // relations: ['teacher'],
+    });
+  }
+
   async findOne(id: number) {
     return await this.classroomRepository.findOneBy({ id });
   }

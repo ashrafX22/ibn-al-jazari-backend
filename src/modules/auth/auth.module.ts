@@ -22,17 +22,19 @@ import { GoogleAuthService } from './providers/google/google-auth.service';
 import { LocalStrategy } from './providers/local/local.strategy';
 import { LocalAuthService } from './providers/local/local-auth.service';
 import { JwtUtilService } from './jwt/jwt-util.service';
+import { Classroom } from 'src/models/entities/classroom.entity';
+import { Meeting } from 'src/models/entities/meeting.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([User, Student, Teacher]),
+    TypeOrmModule.forFeature([User, Student, Teacher, Classroom, Meeting]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { algorithm: 'HS256', expiresIn: '7d' },
     }),
-    HttpModule
+    HttpModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -53,8 +55,8 @@ import { JwtUtilService } from './jwt/jwt-util.service';
     GoogleStrategy,
     GoogleAuthGuard,
     GoogleAuthService,
-    GoogleTokenService
+    GoogleTokenService,
   ],
-  exports: [AuthService, JwtModule, GoogleTokenService]
+  exports: [AuthService, JwtModule, GoogleTokenService],
 })
-export class AuthModule { }
+export class AuthModule {}
