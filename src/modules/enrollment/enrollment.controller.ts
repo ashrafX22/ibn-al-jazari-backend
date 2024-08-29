@@ -5,7 +5,7 @@ import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 
 @Controller('enrollment')
 export class EnrollmentController {
-  constructor(private readonly enrollmentService: EnrollmentService) {}
+  constructor(private readonly enrollmentService: EnrollmentService) { }
 
   @Post()
   create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
@@ -15,6 +15,11 @@ export class EnrollmentController {
   @Get()
   findAll() {
     return this.enrollmentService.findAll();
+  }
+
+  @Get('classroom/:classroomId/students')
+  async findStudentsByClassroomId(@Param('classroomId') classroomId: string) {
+    return await this.enrollmentService.findStudentsByClassroomId(+classroomId);
   }
 
   @Get(':id')

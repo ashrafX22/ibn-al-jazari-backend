@@ -20,6 +20,32 @@ export class EnrollmentService {
     return await this.enrollmentRepository.find();
   }
 
+  async findStudentsByClassroomId(classroomId: number) {
+    const enrollments = await this.enrollmentRepository.find({
+      where: {
+        classroomId
+      },
+      relations: {
+        student: true
+      },
+      select: {
+        student: {
+          id: true,
+          common: {
+            name: true,
+            email: true,
+          },
+        },
+      }
+    });
+
+    return enrollments.map((enrollment) => ({
+      id: enrollment['student']['id'],
+      name: enrollment['student']['common']['name'],
+      email: enrollment['student']['common']['email'],
+    }));
+  }
+
   // TODO: optimize by only retrieving emails from db
   async findStudentEmailsByClassroomId(classroomId: number): Promise<string[]> {
     const enrollments = await this.enrollmentRepository.find({
