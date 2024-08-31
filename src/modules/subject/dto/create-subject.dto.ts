@@ -5,11 +5,15 @@ export class CreateSubjectDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The name of the subject',
+  })
   name: string;
 
   @IsNotEmpty()
   @IsNumber()
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The price of the subject',
+  })
   price: number;
 }

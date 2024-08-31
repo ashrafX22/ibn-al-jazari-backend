@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { Subject } from 'src/models/entities/subject.entity';
@@ -12,8 +12,12 @@ export class SubjectService {
     private readonly subjectRepository: Repository<Subject>,
   ) {}
   async create(createSubjectDto: CreateSubjectDto) {
-    const subject = this.subjectRepository.create(createSubjectDto);
-    return await this.subjectRepository.save(subject);
+    try {
+      const subject = this.subjectRepository.create(createSubjectDto);
+      return await this.subjectRepository.save(subject);
+    } catch (error) {
+      throw new InternalServerErrorException('An unexpected error occurred.');
+    }
   }
 
   async findAll() {
