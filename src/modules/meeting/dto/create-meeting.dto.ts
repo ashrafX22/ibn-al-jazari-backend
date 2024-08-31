@@ -1,7 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { MeetingProvider } from "../enums/meeting-provider.enum";
+import { ApiProperty } from '@nestjs/swagger';
+import { MeetingProvider } from '../enums/meeting-provider.enum';
+import { IsEnum } from 'class-validator';
 
 export class CreateMeetingDto {
-    @ApiProperty()
-    provider: MeetingProvider;
+  @ApiProperty({
+    description: 'the name of the meeting provider',
+    examples: ['google', 'zoom', 'discord', 'local'],
+  })
+  @IsEnum(MeetingProvider)
+  provider: MeetingProvider;
 }

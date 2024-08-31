@@ -4,7 +4,6 @@ import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Enrollment } from './entities/enrollment.entity';
-import { async } from 'rxjs';
 
 @Injectable()
 export class EnrollmentService {
