@@ -1,7 +1,24 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { GoogleAuthGuard } from './providers/google/google.guard';
 import { ApiTags } from '@nestjs/swagger';
-import { getUserSwaggerDoc, googleAuthSwaggerDoc, googleAuthCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc } from './auth.swagger-doc';
+import {
+  getUserSwaggerDoc,
+  googleAuthSwaggerDoc,
+  googleAuthCallbackSwaggerDoc,
+  LocalRegisterSwaggerDoc,
+  localLoginSwaggerDoc,
+  googleRegisterSwaggerDoc,
+} from './auth.swagger-doc';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -11,12 +28,12 @@ import { AuthProvider } from './providers/auth-provider.enum';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @getUserSwaggerDoc()
   @UseGuards(AuthGuard('jwt'))
   @Get('user')
-  getUser(@Req() req) {
+  async getUser(@Req() req) {
     return this.authService.getUser(req.user.email);
   }
 
@@ -25,14 +42,17 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('local/login')
   async localLogin(@Req() req) {
-    console.log("local login", req.user);
+    console.log('local login', req.user);
     return this.authService.login(AuthProvider.LOCAL, req.user);
   }
 
   @LocalRegisterSwaggerDoc()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(AuthProvider.LOCAL, createStudentDto);
+    return await this.authService.register(
+      AuthProvider.LOCAL,
+      createStudentDto,
+    );
   }
 
   // google auth steps
@@ -42,7 +62,7 @@ export class AuthController {
   @googleAuthSwaggerDoc()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  googleAuth() { }
+  googleAuth() {}
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
@@ -53,10 +73,13 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleAuthCallback(@Req() req, @Res() res) {
-    console.log("google login redirect");
+    console.log('google login redirect');
     console.log(req.user);
 
-    const result: any = await this.authService.login(AuthProvider.GOOGLE, req.user);
+    const result: any = await this.authService.login(
+      AuthProvider.GOOGLE,
+      req.user,
+    );
 
     const { newAccount } = result;
 
@@ -75,13 +98,18 @@ export class AuthController {
         googleAccessToken: req.user.googleAccessToken,
         googleRefreshToken: req.user.googleRefreshToken,
       }).toString();
-      return res.redirect(`${process.env.ORIGIN}/additional-info?${queryParams}`);
+      return res.redirect(
+        `${process.env.ORIGIN}/additional-info?${queryParams}`,
+      );
     }
   }
 
   @googleRegisterSwaggerDoc()
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(AuthProvider.GOOGLE, createStudentDto);
+    return await this.authService.register(
+      AuthProvider.GOOGLE,
+      createStudentDto,
+    );
   }
 }

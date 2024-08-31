@@ -30,37 +30,40 @@ export class TeacherController {
 
   @createTeacherSwaggerDoc()
   @Post()
-  create(@Body() createTeacherDto: CreateTeacherDto) {
+  async create(@Body() createTeacherDto: CreateTeacherDto) {
     return this.teacherService.create(createTeacherDto);
   }
 
   @findAllTeachersSwaggerDoc()
   @Get()
-  findAll() {
+  async findAll() {
     return this.teacherService.findAll();
   }
 
   @findTeacherByIdSwaggerDoc()
   @Get(':id')
-  findById(@Param('id') id: string) {
+  async findById(@Param('id') id: string) {
     return this.teacherService.findById(+id);
   }
 
   @findTeacherByEmailSwaggerDoc()
   @Get('email/:email')
-  findOneByEmail(@Param('email') email: string) {
+  async findOneByEmail(@Param('email') email: string) {
     return this.teacherService.findByEmail(email);
   }
 
   @updateTeacherSwaggerDoc()
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateTeacherDto: UpdateTeacherDto,
+  ) {
     return this.teacherService.update(+id, updateTeacherDto);
   }
 
   @removeTeacherSwaggerDoc()
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.teacherService.remove(+id);
   }
 }

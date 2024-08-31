@@ -16,34 +16,34 @@ export class ClassroomController {
   constructor(private readonly classroomService: ClassroomService) {}
 
   @Post()
-  create(@Body() createClassroomDto: CreateClassroomDto) {
+  async create(@Body() createClassroomDto: CreateClassroomDto) {
     return this.classroomService.create(createClassroomDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.classroomService.findAll();
   }
 
   // @getClassroomsByTeacherSwaggerDoc()
   @Get('teacher/:teachderId')
-  getClassroomsByTeacherId(@Param('teachderId') teachderId: string) {
+  async getClassroomsByTeacherId(@Param('teachderId') teachderId: string) {
     return this.classroomService.getClassroomsByTeacherId(+teachderId);
   }
 
   // @getClassroomsByStudentIdSwaggerDoc()
   @Get('student/:studentId')
-  getClassroomsByStudentId(@Param('studentId') studentId: string) {
+  async getClassroomsByStudentId(@Param('studentId') studentId: string) {
     return this.classroomService.getClassroomsByStudentId(+studentId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.classroomService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateClassroomDto: UpdateClassroomDto,
   ) {
@@ -51,7 +51,7 @@ export class ClassroomController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.classroomService.remove(+id);
   }
 }

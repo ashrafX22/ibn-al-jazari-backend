@@ -17,17 +17,17 @@ export class EnrollmentController {
   constructor(private readonly enrollmentService: EnrollmentService) {}
 
   @Post()
-  create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
+  async create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
     return this.enrollmentService.create(createEnrollmentDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.enrollmentService.findAll();
   }
 
   @Get('student/:studentId')
-  findStudentEnrollmentsByStudentId(
+  async findStudentEnrollmentsByStudentId(
     @Param('studentId', ParseIntPipe) studentId: number,
   ) {
     return this.enrollmentService.findStudentEnrollmentsByStudentId(+studentId);
@@ -39,7 +39,7 @@ export class EnrollmentController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEnrollmentDto: UpdateEnrollmentDto,
   ) {
@@ -47,7 +47,7 @@ export class EnrollmentController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.enrollmentService.remove(+id);
   }
 }

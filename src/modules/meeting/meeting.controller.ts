@@ -53,7 +53,7 @@ export class MeetingController {
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.meetingService.findAll();
   }
 
@@ -65,22 +65,22 @@ export class MeetingController {
 
   // @getMeetingsByStudentIdSwaggerDoc()
   @Get('teacher/:teacherId')
-  findMeetingsByStudentId(@Param('studentId') studentId: string) {
+  async findMeetingsByStudentId(@Param('studentId') studentId: string) {
     return this.meetingService.getMeetingsByTeacherId(+studentId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.meetingService.findOne(+id);
   }
 
   // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
+  // async update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
   //     return this.meetingService.update(+id, updateMeetingDto);
   // }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.meetingService.remove(+id);
   }
 }
