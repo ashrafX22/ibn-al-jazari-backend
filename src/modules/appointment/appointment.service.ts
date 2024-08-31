@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { Repository } from 'typeorm';
@@ -9,17 +13,34 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class AppointmentService {
   constructor(
     @InjectRepository(Appointment)
-    private readonly appointmentRepository: Repository<Appointment>
-  ) { }
-  create(classroomId: number, createAppointmentDto: CreateAppointmentDto) {
-    const appointment = this.appointmentRepository.create({
-      classroomId,
-      ...createAppointmentDto,
-    });
+    private readonly appointmentRepository: Repository<Appointment>,
+  ) {}
+  async create(
+    classroomId: number,
+    createAppointmentDto: CreateAppointmentDto,
+  ) {
+    try {
+      const appointment = this.appointmentRepository.create({
+        classroomId,
+        ...createAppointmentDto,
+      });
 
-    this.appointmentRepository.save(appointment);
+      await this.appointmentRepository.save(appointment);
 
-    return appointment;
+      return appointment;
+    } catch (error) {
+      if (error.code === '23505') {
+        // Example: handle unique constraint violation
+        throw new BadRequestException(
+          'Appointment with this time already exists.',
+        );
+      } else if (error instanceof TypeError) {
+        // Handle type errors, if necessary
+        throw new BadRequestException('Invalid data provided.');
+      } else {
+        throw new InternalServerErrorException('An unexpected error occurred.');
+      }
+    }
   }
 
   findAll() {
