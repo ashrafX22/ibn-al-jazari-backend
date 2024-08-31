@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
 import { Classroom } from 'src/models/entities/classroom.entity';
@@ -14,10 +14,24 @@ export class ClassroomService {
     private readonly enrollmentService: EnrollmentService,
   ) {}
   async create(createClassroomDto: CreateClassroomDto) {
-    const classroom = this.classroomRepository.create(createClassroomDto);
-    return await this.classroomRepository.save(classroom);
+    try {
+      const classroom = this.classroomRepository.create(createClassroomDto);
+      return await this.classroomRepository.save(classroom);
+    } catch (error) {
+      if (error.code === '23505') {
+        // Duplicate entry error code in PostgreSQL
+        throw new HttpException(
+          'Classroom with this name already exists',
+          HttpStatus.CONFLICT,
+        );
+      } else {
+        throw new HttpException(
+          'Failed to create classroom',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
-
   async findAll() {
     return await this.classroomRepository.find();
   }
