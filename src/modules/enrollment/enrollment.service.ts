@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Enrollment } from './entities/enrollment.entity';
+import { async } from 'rxjs';
 
 @Injectable()
 export class EnrollmentService {
@@ -12,8 +13,23 @@ export class EnrollmentService {
     private readonly enrollmentRepository: Repository<Enrollment>,
   ) {}
   async create(createEnrollmentDto: CreateEnrollmentDto) {
-    const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
-    return await this.enrollmentRepository.save(enrollment);
+    try {
+      const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
+      return await this.enrollmentRepository.save(enrollment);
+    } catch (error) {
+      if (error.code === '23505') {
+        // Duplicate entry error code in PostgreSQL
+        throw new HttpException(
+          ' you are already Classroom ',
+          HttpStatus.CONFLICT,
+        );
+      } else {
+        throw new HttpException(
+          'Failed to create enrollment',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 
   async findAll() {

@@ -1,9 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateEnrollmentDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'ID of the classroom' })
+  @IsInt()
+  @IsNotEmpty()
   classroomId: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'ID of the student' })
+  @IsInt()
+  @IsNotEmpty()
   studentId: number;
 }
