@@ -98,6 +98,26 @@ export class MeetingService {
     return meetings;
   }
 
+  async findMeetingsByStudentId(studentId: number): Promise<Meeting[]> {
+    const classrooms =
+      await this.classroomService.getClassroomsByStudentId(studentId);
+    // Extract the classroom IDs from the classrooms
+    const classroomIds = classrooms.map((classroom) => classroom.id);
+
+    if (classroomIds.length === 0) {
+      return []; // If no classrooms are found, return an empty array
+    }
+
+    // Fetch all meetings related to the classrooms using find options
+    const meetings = await this.meetingRepository.find({
+      where: {
+        classroomId: In(classroomIds),
+      },
+    });
+
+    return meetings;
+  }
+
   async findOne(id: number) {
     return await this.meetingRepository.findOneBy({ id });
   }

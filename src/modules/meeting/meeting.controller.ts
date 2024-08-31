@@ -57,10 +57,16 @@ export class MeetingController {
     return this.meetingService.findAll();
   }
 
-  // @getMeetingsByTeacherSwaggerDoc()
+  // @getMeetingsByTeacherIdSwaggerDoc()
   @Get('teacher/:teacherId')
-  getMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
+  findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
     return this.meetingService.getMeetingsByTeacherId(+teacherId);
+  }
+
+  // @getMeetingsByStudentIdSwaggerDoc()
+  @Get('teacher/:teacherId')
+  findMeetingsByStudentId(@Param('studentId') studentId: string) {
+    return this.meetingService.getMeetingsByTeacherId(+studentId);
   }
 
   @Get(':id')
