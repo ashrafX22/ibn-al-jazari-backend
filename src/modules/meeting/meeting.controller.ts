@@ -15,7 +15,7 @@ import { MeetingService } from './meeting.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { createMeetingSwaggerDoc } from './meeting.swagger';
+import { createMeetingSwaggerDoc } from './meeting.swagger-doc';
 import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
 
 @Controller('meeting')
