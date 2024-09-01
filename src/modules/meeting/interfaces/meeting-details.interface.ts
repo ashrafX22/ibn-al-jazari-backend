@@ -1,10 +1,9 @@
-import { Appointment } from "src/models/entities/appointment.entity";
-import { Day } from "src/models/enums/day.enum";
+import { AppointmentEntity } from 'src/modules/appointment/entities/appointment.entity';
 
 export interface MeetingDetails {
-    title: string;
+  title: string;
 
-    appointments: Appointment[];
+  appointments: AppointmentEntity[];
 
-    attendees: string[];
+  attendees: string[];
 }

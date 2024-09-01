@@ -14,6 +14,7 @@ import { Jwt } from '../auth/jwt/jwt.interface';
 import { MeetingDetails } from './interfaces/meeting-details.interface';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { AppointmentService } from '../appointment/appointment.service';
+import { MeetingEnity } from './entities/meeting.entity';
 
 @Injectable()
 export class MeetingService {
@@ -30,11 +31,11 @@ export class MeetingService {
     creatorDetails: Jwt,
     classroomId: number,
     createMeetingDto: CreateMeetingDto,
-  ) {
+  ): Promise<MeetingEnity> {
     const { provider } = createMeetingDto;
 
     const classroom = await this.classroomService.findOne(classroomId);
-    if (!classroom) throw new NotFoundException('classroom not found');
+    if (!classroom) throw new NotFoundException('Classroom not found');
 
     const classroomAppointments =
       await this.appointmentService.findAppointmentsByClassroomId(classroomId);
@@ -56,87 +57,80 @@ export class MeetingService {
     );
     const meetingLink = meetingService.getMeetingLink(providerMeeting);
 
-    console.log('MeetingService create');
-    console.log('classroomId', classroomId);
-    console.log('link', meetingLink);
     try {
       const meeting = this.meetingRepository.create({
         classroomId,
         link: meetingLink,
       });
 
-      await this.meetingRepository.save(meeting);
-
-      return meeting;
+      const savedMeeting = await this.meetingRepository.save(meeting);
+      return new MeetingEnity(savedMeeting);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async findAll() {
-    return await this.meetingRepository.find();
+  async findAll(): Promise<MeetingEnity[]> {
+    const meetings = await this.meetingRepository.find();
+    return meetings.map((meeting) => new MeetingEnity(meeting));
   }
 
-  // finds all meetings related to a specific teacher through the classroom relation
-  async getMeetingsByTeacherId(teacherId: number): Promise<Meeting[]> {
+  async getMeetingsByTeacherId(teacherId: number): Promise<MeetingEnity[]> {
     const classrooms =
       await this.classroomService.getClassroomsByTeacherId(teacherId);
-    // Extract the classroom IDs from the classrooms
+
     const classroomIds = classrooms.map((classroom) => classroom.id);
 
     if (classroomIds.length === 0) {
-      return []; // If no classrooms are found, return an empty array
+      return [];
     }
 
-    // Fetch all meetings related to the classrooms using find options
     const meetings = await this.meetingRepository.find({
       where: {
         classroomId: In(classroomIds),
       },
     });
 
-    return meetings;
+    return meetings.map((meeting) => new MeetingEnity(meeting));
   }
 
-  async findMeetingsByStudentId(studentId: number): Promise<Meeting[]> {
+  async findMeetingsByStudentId(studentId: number): Promise<MeetingEnity[]> {
     const classrooms =
       await this.classroomService.getClassroomsByStudentId(studentId);
-    // Extract the classroom IDs from the classrooms
+
     const classroomIds = classrooms.map((classroom) => classroom.id);
 
     if (classroomIds.length === 0) {
-      return []; // If no classrooms are found, return an empty array
+      return [];
     }
 
-    // Fetch all meetings related to the classrooms using find options
     const meetings = await this.meetingRepository.find({
       where: {
         classroomId: In(classroomIds),
       },
     });
 
-    return meetings;
+    return meetings.map((meeting) => new MeetingEnity(meeting));
   }
 
-  async findOne(id: number) {
-    return await this.meetingRepository.findOneBy({ id });
+  async findOne(id: number): Promise<MeetingEnity> {
+    const meeting = await this.meetingRepository.findOneBy({ id });
+
+    if (!meeting) {
+      throw new NotFoundException(`Meeting with ID ${id} not found.`);
+    }
+
+    return new MeetingEnity(meeting);
   }
 
-  // async update(id: number, updateMeetingDto: UpdateMeetingDto) {
-  //     const meeting = await this.meetingRepository.findOneBy({ id });
-
-  //     if (!meeting) return null;
-
-  //     await this.meetingRepository.update(id, updateMeetingDto);
-
-  //     return await this.meetingRepository.findOneBy({ id });
-  // }
-
-  async remove(id: number) {
+  async remove(id: number): Promise<MeetingEnity> {
     const meeting = await this.findOne(id);
 
-    if (!meeting) return null;
+    if (!meeting) {
+      throw new NotFoundException(`Meeting with ID ${id} not found.`);
+    }
 
-    return this.meetingRepository.remove(meeting);
+    await this.meetingRepository.delete(meeting);
+    return new MeetingEnity(meeting);
   }
 }
