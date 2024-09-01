@@ -19,7 +19,7 @@ export class classroomEntity {
   @ApiProperty()
   endTime: string;
 
-  //expose fields as needed
+  // add or exclude or expose properties as needed
 
   constructor(partial: Partial<classroomEntity>) {
     Object.assign(this, partial);
