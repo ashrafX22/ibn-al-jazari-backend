@@ -5,6 +5,7 @@ import { Classroom } from 'src/models/entities/classroom.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { EnrollmentService } from '../enrollment/enrollment.service';
+import { classroomEntity } from './entities/classroom.entity';
 
 @Injectable()
 export class ClassroomService {
@@ -13,10 +14,14 @@ export class ClassroomService {
     private readonly classroomRepository: Repository<Classroom>,
     private readonly enrollmentService: EnrollmentService,
   ) {}
-  async create(createClassroomDto: CreateClassroomDto) {
+
+  async create(
+    createClassroomDto: CreateClassroomDto,
+  ): Promise<classroomEntity> {
     try {
       const classroom = this.classroomRepository.create(createClassroomDto);
-      return await this.classroomRepository.save(classroom);
+      await this.classroomRepository.save(classroom);
+      return new classroomEntity(classroom);
     } catch (error) {
       if (error.code === '23505') {
         // Duplicate entry error code in PostgreSQL
@@ -32,18 +37,25 @@ export class ClassroomService {
       }
     }
   }
-  async findAll() {
-    return await this.classroomRepository.find();
+
+  async findAll(): Promise<classroomEntity[]> {
+    const classrooms = await this.classroomRepository.find();
+    return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
-  //find all rooms related to the given teacher
-  async getClassroomsByTeacherId(teacherId: number): Promise<Classroom[]> {
-    return await this.classroomRepository.find({
+  async getClassroomsByTeacherId(
+    teacherId: number,
+  ): Promise<classroomEntity[]> {
+    const classrooms = await this.classroomRepository.find({
       where: { teacherId },
       // relations: ['teacher'],
     });
+    return classrooms.map((classroom) => new classroomEntity(classroom));
   }
-  async getClassroomsByStudentId(studentId: number): Promise<Classroom[]> {
+
+  async getClassroomsByStudentId(
+    studentId: number,
+  ): Promise<classroomEntity[]> {
     const enrollments =
       await this.enrollmentService.findStudentEnrollmentsByStudentId(studentId);
 
@@ -51,20 +63,38 @@ export class ClassroomService {
       (enrollment) => enrollment['classroomId'],
     );
 
-    return await this.classroomRepository.find({
+    const classrooms = await this.classroomRepository.find({
       where: { id: In(classroomIds) },
     });
+    return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
-  async findOne(id: number) {
-    return await this.classroomRepository.findOneBy({ id });
+  async findOne(id: number): Promise<classroomEntity> {
+    const classroom = await this.classroomRepository.findOneBy({ id });
+    if (!classroom) {
+      throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+    }
+    return new classroomEntity(classroom);
   }
 
-  async update(id: number, updateClassroomDto: UpdateClassroomDto) {
-    return await this.classroomRepository.update(id, updateClassroomDto);
+  async update(
+    id: number,
+    updateClassroomDto: UpdateClassroomDto,
+  ): Promise<classroomEntity> {
+    await this.classroomRepository.update(id, updateClassroomDto);
+    const updatedClassroom = await this.classroomRepository.findOneBy({ id });
+    if (!updatedClassroom) {
+      throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+    }
+    return new classroomEntity(updatedClassroom);
   }
 
-  async remove(id: number) {
-    return await this.classroomRepository.delete(id);
+  async remove(id: number): Promise<classroomEntity> {
+    const classroom = await this.classroomRepository.findOneBy({ id });
+    if (!classroom) {
+      throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+    }
+    await this.classroomRepository.delete(id);
+    return new classroomEntity(classroom);
   }
 }
