@@ -10,7 +10,9 @@ import {
 import { ClassroomService } from './classroom.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
   constructor(private readonly classroomService: ClassroomService) { }

@@ -11,7 +11,10 @@ import {
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('enrollment')
 @Controller('enrollment')
 export class EnrollmentController {
   constructor(private readonly enrollmentService: EnrollmentService) { }

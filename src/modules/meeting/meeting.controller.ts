@@ -17,7 +17,9 @@ import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { createMeetingSwaggerDoc } from './meeting.swagger-doc';
 import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('meeting')
 @Controller('meeting')
 export class MeetingController {
   constructor(private readonly meetingService: MeetingService) { }
