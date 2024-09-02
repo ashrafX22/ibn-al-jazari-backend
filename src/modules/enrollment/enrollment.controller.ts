@@ -14,7 +14,7 @@ import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 
 @Controller('enrollment')
 export class EnrollmentController {
-  constructor(private readonly enrollmentService: EnrollmentService) {}
+  constructor(private readonly enrollmentService: EnrollmentService) { }
 
   @Post()
   async create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
@@ -33,21 +33,21 @@ export class EnrollmentController {
     return this.enrollmentService.findStudentEnrollmentsByStudentId(+studentId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.enrollmentService.findOne(+id);
+  @Get(':classroomId/:studentId')
+  findOne(@Param('classroomId') classroomId: string, @Param('studentId') studentId: string) {
+    return this.enrollmentService.findOne(+classroomId, +studentId);
   }
 
-  @Patch(':id')
+  @Patch(':classroomId/:studentId')
   async update(
-    @Param('id') id: string,
+    @Param('classroomId') classroomId: string, @Param('studentId') studentId: string,
     @Body() updateEnrollmentDto: UpdateEnrollmentDto,
   ) {
-    return this.enrollmentService.update(+id, updateEnrollmentDto);
+    return this.enrollmentService.update(+classroomId, +studentId, updateEnrollmentDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.enrollmentService.remove(+id);
+  @Delete(':classroomId/:studentId')
+  async remove(@Param('classroomId') classroomId: string, @Param('studentId') studentId: string) {
+    return this.enrollmentService.remove(+classroomId, +studentId);
   }
 }
