@@ -47,7 +47,7 @@ export class EnrollmentService {
       relations: ['student'], // ensure that the student relation is loaded
     });
 
-    return enrollments.map((enrollment) => enrollment.student.common.email);
+    return enrollments.map((enrollment) => enrollment['student']['common']['email']);
   }
 
   async findEnrollmentsByStudentId(
