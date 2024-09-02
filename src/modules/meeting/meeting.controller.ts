@@ -20,7 +20,7 @@ import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.in
 
 @Controller('meeting')
 export class MeetingController {
-  constructor(private readonly meetingService: MeetingService) {}
+  constructor(private readonly meetingService: MeetingService) { }
 
   @createMeetingSwaggerDoc()
   // @Experiences(Experience.SENIOR)
@@ -60,13 +60,13 @@ export class MeetingController {
   // @getMeetingsByTeacherIdSwaggerDoc()
   @Get('teacher/:teacherId')
   findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.meetingService.getMeetingsByTeacherId(+teacherId);
+    return this.meetingService.findMeetingsByTeacherId(+teacherId);
   }
 
   // @getMeetingsByStudentIdSwaggerDoc()
   @Get('teacher/:teacherId')
   async findMeetingsByStudentId(@Param('studentId') studentId: string) {
-    return this.meetingService.getMeetingsByTeacherId(+studentId);
+    return this.meetingService.findMeetingsByTeacherId(+studentId);
   }
 
   @Get(':id')

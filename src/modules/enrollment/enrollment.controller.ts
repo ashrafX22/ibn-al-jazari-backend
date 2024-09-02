@@ -30,7 +30,7 @@ export class EnrollmentController {
   async findStudentEnrollmentsByStudentId(
     @Param('studentId', ParseIntPipe) studentId: number,
   ) {
-    return this.enrollmentService.findStudentEnrollmentsByStudentId(+studentId);
+    return this.enrollmentService.findEnrollmentsByStudentId(+studentId);
   }
 
   @Get(':classroomId/:studentId')

@@ -25,7 +25,7 @@ export class MeetingService {
     private readonly meetingServiceFactory: MeetingServiceFactory,
     private readonly appointmentService: AppointmentService,
     private readonly enrollmentService: EnrollmentService,
-  ) {}
+  ) { }
 
   async create(
     creatorDetails: Jwt,
@@ -75,9 +75,9 @@ export class MeetingService {
     return meetings.map((meeting) => new MeetingEnity(meeting));
   }
 
-  async getMeetingsByTeacherId(teacherId: number): Promise<MeetingEnity[]> {
+  async findMeetingsByTeacherId(teacherId: number): Promise<MeetingEnity[]> {
     const classrooms =
-      await this.classroomService.getClassroomsByTeacherId(teacherId);
+      await this.classroomService.findClassroomsByTeacherId(teacherId);
 
     const classroomIds = classrooms.map((classroom) => classroom.id);
 
@@ -96,7 +96,7 @@ export class MeetingService {
 
   async findMeetingsByStudentId(studentId: number): Promise<MeetingEnity[]> {
     const classrooms =
-      await this.classroomService.getClassroomsByStudentId(studentId);
+      await this.classroomService.findClassroomsByStudentId(studentId);
 
     const classroomIds = classrooms.map((classroom) => classroom.id);
 

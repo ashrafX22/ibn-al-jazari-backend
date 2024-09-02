@@ -45,7 +45,7 @@ export class ClassroomService {
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
-  async getClassroomsByTeacherId(
+  async findClassroomsByTeacherId(
     teacherId: number,
   ): Promise<classroomEntity[]> {
     const classrooms = await this.classroomRepository.find({
@@ -55,11 +55,11 @@ export class ClassroomService {
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
-  async getClassroomsByStudentId(
+  async findClassroomsByStudentId(
     studentId: number,
   ): Promise<classroomEntity[]> {
     const enrollments =
-      await this.enrollmentService.findStudentEnrollmentsByStudentId(studentId);
+      await this.enrollmentService.findEnrollmentsByStudentId(studentId);
 
     const classroomIds = enrollments.map(
       (enrollment) => enrollment['classroomId'],

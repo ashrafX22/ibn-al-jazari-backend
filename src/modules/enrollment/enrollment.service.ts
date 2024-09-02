@@ -11,7 +11,7 @@ export class EnrollmentService {
   constructor(
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
-  ) {}
+  ) { }
 
   async create(
     createEnrollmentDto: CreateEnrollmentDto,
@@ -50,7 +50,7 @@ export class EnrollmentService {
     return enrollments.map((enrollment) => enrollment.student.common.email);
   }
 
-  async findStudentEnrollmentsByStudentId(
+  async findEnrollmentsByStudentId(
     studentId: number,
   ): Promise<EnrollmentEntity[]> {
     const enrollments = await this.enrollmentRepository.find({

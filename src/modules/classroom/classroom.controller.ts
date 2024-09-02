@@ -13,7 +13,7 @@ import { UpdateClassroomDto } from './dto/update-classroom.dto';
 
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) {}
+  constructor(private readonly classroomService: ClassroomService) { }
 
   @Post()
   async create(@Body() createClassroomDto: CreateClassroomDto) {
@@ -28,13 +28,13 @@ export class ClassroomController {
   // @getClassroomsByTeacherSwaggerDoc()
   @Get('teacher/:teachderId')
   async getClassroomsByTeacherId(@Param('teachderId') teachderId: string) {
-    return this.classroomService.getClassroomsByTeacherId(+teachderId);
+    return this.classroomService.findClassroomsByTeacherId(+teachderId);
   }
 
   // @getClassroomsByStudentIdSwaggerDoc()
   @Get('student/:studentId')
   async getClassroomsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.getClassroomsByStudentId(+studentId);
+    return this.classroomService.findClassroomsByStudentId(+studentId);
   }
 
   @Get(':id')
