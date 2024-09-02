@@ -13,15 +13,17 @@ export class ClassroomService {
     @InjectRepository(Classroom)
     private readonly classroomRepository: Repository<Classroom>,
     private readonly enrollmentService: EnrollmentService,
-  ) {}
+  ) { }
 
   async create(
     createClassroomDto: CreateClassroomDto,
   ): Promise<classroomEntity> {
     try {
       const classroom = this.classroomRepository.create(createClassroomDto);
-      await this.classroomRepository.save(classroom);
-      return new classroomEntity(classroom);
+
+      const savedClassroom = await this.classroomRepository.save(classroom);
+
+      return new classroomEntity(savedClassroom);
     } catch (error) {
       if (error.code === '23505') {
         // Duplicate entry error code in PostgreSQL

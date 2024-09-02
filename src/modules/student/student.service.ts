@@ -22,9 +22,9 @@ export class StudentService {
         },
       });
 
-      await this.studentRepository.save(student);
+      const savedStudent = await this.studentRepository.save(student);
 
-      const studentEntity = new StudentEntity(flattenObject(student));
+      const studentEntity = new StudentEntity(flattenObject(savedStudent));
 
       console.log("create student", studentEntity);
 
