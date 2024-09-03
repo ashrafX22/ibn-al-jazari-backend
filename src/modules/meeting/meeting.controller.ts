@@ -15,14 +15,22 @@ import { MeetingService } from './meeting.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { createMeetingSwaggerDoc } from './meeting.swagger-doc';
+import {
+  createMeetingSwaggerDoc,
+  findAllMeetingsSwaggerDoc,
+  findMeetingsByStudentIdSwaggerDoc,
+  findMeetingsByTeacherIdSwaggerDoc,
+  findOneMeetingSwaggerDoc,
+  removeMeetingSwaggerDoc,
+  updateMeetingSwaggerDoc,
+} from './meeting.swagger.doc';
 import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('meeting')
 @Controller('meeting')
 export class MeetingController {
-  constructor(private readonly meetingService: MeetingService) { }
+  constructor(private readonly meetingService: MeetingService) {}
 
   @createMeetingSwaggerDoc()
   // @Experiences(Experience.SENIOR)
@@ -55,33 +63,39 @@ export class MeetingController {
   }
 
   @Get()
+  @findAllMeetingsSwaggerDoc()
   async findAll() {
     return this.meetingService.findAll();
   }
 
   // @getMeetingsByTeacherIdSwaggerDoc()
   @Get('teacher/:teacherId')
+  @findMeetingsByTeacherIdSwaggerDoc()
   findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
     return this.meetingService.findMeetingsByTeacherId(+teacherId);
   }
 
   // @getMeetingsByStudentIdSwaggerDoc()
   @Get('student/:studentId')
+  @findMeetingsByStudentIdSwaggerDoc()
   async findMeetingsByStudentId(@Param('studentId') studentId: string) {
     return this.meetingService.findMeetingsByStudentId(+studentId);
   }
 
   @Get(':id')
+  @findOneMeetingSwaggerDoc()
   async findOne(@Param('id') id: string) {
     return this.meetingService.findOne(+id);
   }
 
   // @Patch(':id')
+  //@updateMeetingSwaggerDoc()
   // async update(@Param('id') id: string, @Body() updateMeetingDto: UpdateMeetingDto) {
   //     return this.meetingService.update(+id, updateMeetingDto);
   // }
 
   @Delete(':id')
+  @removeMeetingSwaggerDoc()
   async remove(@Param('id') id: string) {
     return this.meetingService.remove(+id);
   }
