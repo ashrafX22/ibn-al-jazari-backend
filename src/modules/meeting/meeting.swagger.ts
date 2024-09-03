@@ -27,8 +27,6 @@ export function createMeetingSwaggerDoc() {
           summary: 'Example meeting creation',
           value: {
             provider: MeetingProvider.GOOGLE,
-            title: 'Ijazah Class',
-            startTime: '2024-09-10T10:00:00Z',
           } as CreateMeetingDto,
         },
       },
