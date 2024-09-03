@@ -23,8 +23,8 @@ import {
 export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
 
-  @Post(':classroomId')
   @createAppointmentSwaggerDoc()
+  @Post('classroom/:classroomId')
   async create(
     @Param('classroomId') classroomId: string,
     @Body() createAppointmentDto: CreateAppointmentDto,
