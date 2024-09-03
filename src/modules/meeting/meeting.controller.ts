@@ -33,7 +33,7 @@ export class MeetingController {
   constructor(private readonly meetingService: MeetingService) {}
 
   @createMeetingSwaggerDoc()
-  // @Experiences(Experience.SENIOR)
+  // @Experiences(Experience.senior)
   // @Roles(Role.TEAHCER)
   @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
   @UseInterceptors(GoogleTokenInterceptor)

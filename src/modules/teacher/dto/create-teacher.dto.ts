@@ -13,8 +13,8 @@ export class CreateTeacherDto extends CreateUserDto {
 
   @IsEnum(Experience)
   @ApiProperty({
-    description: "The ",
-    example: 'SENIOR',
+    description: "The experience level of the teacher",
+    example: 'senior',
   })
   experience: Experience;
 }
