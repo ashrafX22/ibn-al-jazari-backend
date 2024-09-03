@@ -18,7 +18,7 @@ import {
   findClassroomsByTeacherIdSwaggerDoc,
   findOneClassroomSwaggerDoc,
   updateClassroomSwaggerDoc,
-} from './classroom.swagger.docs';
+} from './classroom.swagger';
 
 @ApiTags('classroom')
 @Controller('classroom')

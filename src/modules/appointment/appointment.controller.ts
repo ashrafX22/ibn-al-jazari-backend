@@ -16,7 +16,7 @@ import {
   findAllAppointmentsSwaggerDoc,
   findOneAppointmentSwaggerDoc,
   updateAppointmentSwaggerDoc,
-} from './appointment.swagger.docs';
+} from './appointment.swagger';
 
 @ApiTags('appointment')
 @Controller('appointment')

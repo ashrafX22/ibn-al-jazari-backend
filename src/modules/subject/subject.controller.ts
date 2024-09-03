@@ -17,7 +17,7 @@ import {
   findOneSubjectSwaggerDoc,
   removeSubjectSwaggerDoc,
   updateSubjectSwaggerDoc,
-} from './subject.swagger.doc';
+} from './subject.swagger';
 
 @ApiTags('subject')
 @Controller('subject')

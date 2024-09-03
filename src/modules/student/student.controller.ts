@@ -20,7 +20,7 @@ import {
   findStudentByEmailSwaggerDoc,
   updateStudentSwaggerDoc,
   removeStudentSwaggerDoc,
-} from './student.swagger-doc';
+} from './student.swagger';
 
 @ApiTags('student')
 @Controller('student')

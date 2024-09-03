@@ -20,7 +20,7 @@ import {
   findTeacherByIdSwaggerDoc,
   removeTeacherSwaggerDoc,
   updateTeacherSwaggerDoc,
-} from './teacher.swagger-doc';
+} from './teacher.swagger';
 
 @ApiTags('teacher')
 @Controller('teacher')

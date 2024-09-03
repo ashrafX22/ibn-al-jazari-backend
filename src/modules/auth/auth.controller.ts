@@ -18,7 +18,7 @@ import {
   LocalRegisterSwaggerDoc,
   localLoginSwaggerDoc,
   googleRegisterSwaggerDoc,
-} from './auth.swagger-doc';
+} from './auth.swagger';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';

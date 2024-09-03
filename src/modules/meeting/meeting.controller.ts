@@ -23,7 +23,7 @@ import {
   findOneMeetingSwaggerDoc,
   removeMeetingSwaggerDoc,
   updateMeetingSwaggerDoc,
-} from './meeting.swagger.doc';
+} from './meeting.swagger';
 import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
 import { ApiTags } from '@nestjs/swagger';
 

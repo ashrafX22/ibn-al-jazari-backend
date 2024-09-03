@@ -19,7 +19,7 @@ import {
   findOneEnrollmentSwaggerDoc,
   removeEnrollmentSwaggerDoc,
   updateEnrollmentSwaggerDoc,
-} from './enrollment.swagger.doc';
+} from './enrollment.swagger';
 
 @ApiTags('enrollment')
 @Controller('enrollment')
