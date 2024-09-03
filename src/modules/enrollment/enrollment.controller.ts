@@ -12,24 +12,34 @@ import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { ApiTags } from '@nestjs/swagger';
-
+import {
+  createEnrollmentSwaggerDoc,
+  findAllEnrollmentsSwaggerDoc,
+  findEnrollmentsByStudentIdSwaggerDoc,
+  findOneEnrollmentSwaggerDoc,
+  removeEnrollmentSwaggerDoc,
+  updateEnrollmentSwaggerDoc,
+} from './enrollment.swagger.doc';
 
 @ApiTags('enrollment')
 @Controller('enrollment')
 export class EnrollmentController {
-  constructor(private readonly enrollmentService: EnrollmentService) { }
+  constructor(private readonly enrollmentService: EnrollmentService) {}
 
   @Post()
+  @createEnrollmentSwaggerDoc()
   async create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
     return this.enrollmentService.create(createEnrollmentDto);
   }
 
   @Get()
+  @findAllEnrollmentsSwaggerDoc()
   async findAll() {
     return this.enrollmentService.findAll();
   }
 
   @Get('student/:studentId')
+  @findEnrollmentsByStudentIdSwaggerDoc()
   async findStudentEnrollmentsByStudentId(
     @Param('studentId', ParseIntPipe) studentId: number,
   ) {
@@ -37,20 +47,34 @@ export class EnrollmentController {
   }
 
   @Get(':classroomId/:studentId')
-  findOne(@Param('classroomId') classroomId: string, @Param('studentId') studentId: string) {
+  @findOneEnrollmentSwaggerDoc()
+  findOne(
+    @Param('classroomId') classroomId: string,
+    @Param('studentId') studentId: string,
+  ) {
     return this.enrollmentService.findOne(+classroomId, +studentId);
   }
 
   @Patch(':classroomId/:studentId')
+  @updateEnrollmentSwaggerDoc()
   async update(
-    @Param('classroomId') classroomId: string, @Param('studentId') studentId: string,
+    @Param('classroomId') classroomId: string,
+    @Param('studentId') studentId: string,
     @Body() updateEnrollmentDto: UpdateEnrollmentDto,
   ) {
-    return this.enrollmentService.update(+classroomId, +studentId, updateEnrollmentDto);
+    return this.enrollmentService.update(
+      +classroomId,
+      +studentId,
+      updateEnrollmentDto,
+    );
   }
 
   @Delete(':classroomId/:studentId')
-  async remove(@Param('classroomId') classroomId: string, @Param('studentId') studentId: string) {
+  @removeEnrollmentSwaggerDoc()
+  async remove(
+    @Param('classroomId') classroomId: string,
+    @Param('studentId') studentId: string,
+  ) {
     return this.enrollmentService.remove(+classroomId, +studentId);
   }
 }
