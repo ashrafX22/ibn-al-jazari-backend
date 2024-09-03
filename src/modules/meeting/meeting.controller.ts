@@ -29,7 +29,7 @@ export class MeetingController {
   // @Roles(Role.TEAHCER)
   @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
   @UseInterceptors(GoogleTokenInterceptor)
-  @Post(':classroomId')
+  @Post('/classroom/:classroomId')
   async create(
     @Req() req,
     @Res() res,
