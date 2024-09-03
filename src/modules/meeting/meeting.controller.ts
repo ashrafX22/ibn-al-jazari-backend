@@ -66,9 +66,9 @@ export class MeetingController {
   }
 
   // @getMeetingsByStudentIdSwaggerDoc()
-  @Get('teacher/:teacherId')
+  @Get('student/:studentId')
   async findMeetingsByStudentId(@Param('studentId') studentId: string) {
-    return this.meetingService.findMeetingsByTeacherId(+studentId);
+    return this.meetingService.findMeetingsByStudentId(+studentId);
   }
 
   @Get(':id')
