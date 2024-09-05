@@ -48,10 +48,13 @@ export class ClassroomService {
   async findClassroomsByTeacherId(
     teacherId: number,
   ): Promise<classroomEntity[]> {
-    const classrooms = await this.classroomRepository.find({
-      where: { teacherId },
-      // relations: ['teacher'],
-    });
+    const classrooms = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .leftJoinAndSelect('classroom.subject', 'subject')
+      .select(['classroom.id', 'classroom.name', 'subject.name'])
+      .where('classroom.teacherId = (:teacherId)', { teacherId })
+      .getMany();
+
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
@@ -65,9 +68,13 @@ export class ClassroomService {
       (enrollment) => enrollment['classroomId'],
     );
 
-    const classrooms = await this.classroomRepository.find({
-      where: { id: In(classroomIds) },
-    });
+    const classrooms = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .leftJoinAndSelect('classroom.subject', 'subject')
+      .select(['classroom.id', 'classroom.name', 'subject.name'])
+      .where('classroom.id IN (:...classroomIds)', { classroomIds })
+      .getMany();
+
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
