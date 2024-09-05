@@ -29,7 +29,7 @@ export class LocalAuthService {
     }
 
     async localLogin(user: UnionUserEntity) {
-        const payload: Jwt = { email: user.email, role: user.role };
+        const payload: Jwt = { id: user.id, email: user.email, role: user.role };
         if (user instanceof TeacherEntity) payload.experience = user.experience;
         return {
             jwt: this.jwtUtilService.issueJwt(payload)

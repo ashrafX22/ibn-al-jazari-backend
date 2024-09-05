@@ -23,7 +23,7 @@ export class GoogleAuthService {
             const result = await this.userService.update(user.id, { googleRefreshToken: googleRefreshToken });
             console.log("same google refresh token after user update?", user.googleRefreshToken === result.googleRefreshToken);
 
-            let payload: Jwt = { email: user.email, role: user.role, googleAccessToken: googleAccessToken };
+            let payload: Jwt = { id: user.id, email: user.email, role: user.role, googleAccessToken: googleAccessToken };
 
             if (user instanceof TeacherEntity)
                 payload = { ...payload, experience: user.experience };
@@ -44,6 +44,7 @@ export class GoogleAuthService {
         });
 
         const payload: Jwt = {
+            id: student.id,
             email: student.email,
             role: student.role,
             googleAccessToken: createStudentDto.googleAccessToken
