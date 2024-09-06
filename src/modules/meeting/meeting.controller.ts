@@ -30,7 +30,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('meeting')
 @Controller('meeting')
 export class MeetingController {
-  constructor(private readonly meetingService: MeetingService) {}
+  constructor(private readonly meetingService: MeetingService) { }
 
   @createMeetingSwaggerDoc()
   // @Experiences(Experience.senior)
@@ -66,20 +66,6 @@ export class MeetingController {
   @findAllMeetingsSwaggerDoc()
   async findAll() {
     return this.meetingService.findAll();
-  }
-
-  // @getMeetingsByTeacherIdSwaggerDoc()
-  @Get('teacher/:teacherId')
-  @findMeetingsByTeacherIdSwaggerDoc()
-  findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.meetingService.findMeetingsByTeacherId(+teacherId);
-  }
-
-  // @getMeetingsByStudentIdSwaggerDoc()
-  @Get('student/:studentId')
-  @findMeetingsByStudentIdSwaggerDoc()
-  async findMeetingsByStudentId(@Param('studentId') studentId: string) {
-    return this.meetingService.findMeetingsByStudentId(+studentId);
   }
 
   @Get(':id')

@@ -75,44 +75,6 @@ export class MeetingService {
     return meetings.map((meeting) => new MeetingEnity(meeting));
   }
 
-  async findMeetingsByTeacherId(teacherId: number): Promise<MeetingEnity[]> {
-    const classrooms =
-      await this.classroomService.findClassroomsByTeacherId(teacherId);
-
-    const classroomIds = classrooms.map((classroom) => classroom.id);
-
-    if (classroomIds.length === 0) {
-      return [];
-    }
-
-    const meetings = await this.meetingRepository.find({
-      where: {
-        classroomId: In(classroomIds),
-      },
-    });
-
-    return meetings.map((meeting) => new MeetingEnity(meeting));
-  }
-
-  async findMeetingsByStudentId(studentId: number): Promise<MeetingEnity[]> {
-    const classrooms =
-      await this.classroomService.findClassroomsByStudentId(studentId);
-
-    const classroomIds = classrooms.map((classroom) => classroom.id);
-
-    if (classroomIds.length === 0) {
-      return [];
-    }
-
-    const meetings = await this.meetingRepository.find({
-      where: {
-        classroomId: In(classroomIds),
-      },
-    });
-
-    return meetings.map((meeting) => new MeetingEnity(meeting));
-  }
-
   async findOne(id: number): Promise<MeetingEnity> {
     const meeting = await this.meetingRepository.findOneBy({ id });
 

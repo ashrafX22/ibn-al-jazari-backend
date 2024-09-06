@@ -23,7 +23,7 @@ import {
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) {}
+  constructor(private readonly classroomService: ClassroomService) { }
 
   @Post()
   @createClassroomSwaggerDoc()
@@ -35,6 +35,16 @@ export class ClassroomController {
   @findAllClassroomsSwaggerDoc()
   async findAll() {
     return this.classroomService.findAll();
+  }
+
+  @Get('teacher/:teacherId/meetings')
+  async findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
+    return this.classroomService.findMeetingsByTeacherId(+teacherId);
+  }
+
+  @Get('student/:studentId/meetings')
+  async findMeetingsByStudentId(@Param('studentId') studentId: string) {
+    return this.classroomService.findMeetingsByStudentId(+studentId);
   }
 
   @Get('teacher/:teacherId')

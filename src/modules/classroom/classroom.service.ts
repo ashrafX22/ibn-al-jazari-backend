@@ -45,6 +45,37 @@ export class ClassroomService {
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
+  async findMeetingsByTeacherId(teacherId: number) {
+    const classrooms = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .innerJoinAndSelect('classroom.subject', 'subject')
+      .leftJoinAndSelect('classroom.meetings', 'meeting')
+      .leftJoinAndSelect('classroom.appointments', 'appointment')
+      .select(['classroom.id', 'classroom.name', 'subject.name', 'meeting.link', 'appointment.day', 'appointment.startTime'])
+      .where('classroom.teacherId = :teacherId', { teacherId })
+      .getMany();
+    return classrooms.map((classroom) => new classroomEntity(classroom));
+  }
+
+  async findMeetingsByStudentId(studentId: number) {
+    const enrollments =
+      await this.enrollmentService.findEnrollmentsByStudentId(studentId);
+
+    const classroomIds = enrollments.map(
+      (enrollment) => enrollment['classroomId'],
+    );
+
+    const classrooms = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .innerJoinAndSelect('classroom.subject', 'subject')
+      .leftJoinAndSelect('classroom.meetings', 'meeting')
+      .leftJoinAndSelect('classroom.appointments', 'appointment')
+      .select(['classroom.id', 'classroom.name', 'subject.name', 'meeting.link', 'appointment.day', 'appointment.startTime'])
+      .where('classroom.id IN (:...classroomIds)', { classroomIds })
+      .getMany();
+    return classrooms.map((classroom) => new classroomEntity(classroom));
+  }
+
   async findClassroomsByTeacherId(
     teacherId: number,
   ): Promise<classroomEntity[]> {
