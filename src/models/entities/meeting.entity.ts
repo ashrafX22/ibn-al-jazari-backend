@@ -17,7 +17,7 @@ export class Meeting {
     @Column()
     link: string;
 
-    @Column()
+    @Column({ unique: true })
     classroomId: number;
 
     @CreateDateColumn()
