@@ -30,7 +30,6 @@ export class GoogleAuthService {
 
             return {
                 newAccount: false,
-                role: user.role,
                 jwt: this.jwtUtilService.issueJwt(payload)
             };
         }

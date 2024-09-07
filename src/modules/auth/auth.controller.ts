@@ -28,7 +28,7 @@ import { AuthProvider } from './providers/auth-provider.enum';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @getUserSwaggerDoc()
   @UseGuards(AuthGuard('jwt'))
@@ -62,7 +62,7 @@ export class AuthController {
   @googleAuthSwaggerDoc()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  googleAuth() {}
+  googleAuth() { }
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
@@ -85,11 +85,11 @@ export class AuthController {
 
     // google login
     if (!newAccount) {
-      const { role, jwt } = result;
+      const { jwt } = result;
       const queryParams = new URLSearchParams({
         jwt: jwt,
       }).toString();
-      return res.redirect(`${process.env.ORIGIN}/${role}-home?${queryParams}`);
+      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
     }
     // google register
     else {
