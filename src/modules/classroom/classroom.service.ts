@@ -131,10 +131,13 @@ export class ClassroomService {
   ): Promise<classroomEntity[]> {
     const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
-      .leftJoinAndSelect('classroom.subject', 'subject')
-      .select(['classroom.id', 'classroom.name', 'subject.name'])
+      .leftJoin('classroom.subject', 'subject')
+      .select([
+        'classroom.id AS "id"',
+        'classroom.name AS "name"',
+        'subject.name AS "subjectName"'])
       .where('classroom.teacherId = (:teacherId)', { teacherId })
-      .getMany();
+      .getRawMany();
 
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
@@ -152,9 +155,12 @@ export class ClassroomService {
     const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
       .leftJoinAndSelect('classroom.subject', 'subject')
-      .select(['classroom.id', 'classroom.name', 'subject.name'])
+      .select([
+        'classroom.id AS "id"',
+        'classroom.name AS "name"',
+        'subject.name AS "subjectName"'])
       .where('classroom.id IN (:...classroomIds)', { classroomIds })
-      .getMany();
+      .getRawMany();
 
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
