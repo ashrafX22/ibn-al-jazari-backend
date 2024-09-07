@@ -79,6 +79,7 @@ export class ClassroomService {
         name: enrollment.student.common.name,
       })),
       appointments: classroom.appointments.map(appointment => ({
+        id: appointment.id,
         day: appointment.day,
         startTime: appointment.startTime,
       }))
