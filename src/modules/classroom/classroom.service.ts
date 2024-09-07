@@ -55,28 +55,34 @@ export class ClassroomService {
     return new classroomEntity(classroom);
   }
 
-  async findClassroomDetails(id: number): Promise<classroomEntity[]> {
-    const classrooms = await this.classroomRepository
+  // works. However, the query itself return all fields.
+  async findClassroomDetails(id: number): Promise<any> {
+    const classroom = await this.classroomRepository
       .createQueryBuilder('classroom')
-      .leftJoin('classroom.enrollments', 'enrollment')
-      .leftJoin('enrollment.student', 'student')
-      .leftJoin('classroom.appointments', 'appointment')
-      .select([
-        'classroom.name AS "classroomName"',
-        'student.name AS "studentName"',
-        'student.email AS "studentEmail"',
-        'appointment.day AS "appointmentDay"',
-        'appointment.startTime AS "appointmentStartTime"',
-      ])
+      .leftJoinAndSelect('classroom.subject', 'subject')
+      .leftJoinAndSelect('classroom.appointments', 'appointment')
+      .leftJoinAndSelect('classroom.enrollments', 'enrollment')
+      .leftJoinAndSelect('enrollment.student', 'student')
       .where('classroom.id = :id', { id })
-      .orderBy('appointment.startTime', 'ASC')
-      .getRawMany();
+      .getOne();
 
-    if (!classrooms) {
+    if (!classroom)
       throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
-    }
 
-    return classrooms.map((classroom) => new classroomEntity(classroom));
+    return {
+      name: classroom.name,
+      subject: {
+        name: classroom.subject.name,
+      },
+      students: classroom.enrollments.map(enrollment => ({
+        id: enrollment.student.id,
+        name: enrollment.student.common.name,
+      })),
+      appointments: classroom.appointments.map(appointment => ({
+        day: appointment.day,
+        startTime: appointment.startTime,
+      }))
+    };
   }
 
   async findMeetingsByTeacherId(teacherId: number) {
@@ -84,7 +90,7 @@ export class ClassroomService {
       .createQueryBuilder('classroom')
       .innerJoin('classroom.subject', 'subject')
       .leftJoin('classroom.meetings', 'meeting')
-      .leftJoinAndSelect('classroom.appointments', 'appointment')
+      .leftJoin('classroom.appointments', 'appointment')
       .select([
         'classroom.id as "classroomId"',
         'classroom.name AS "classroomName"',
@@ -154,7 +160,7 @@ export class ClassroomService {
 
     const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
-      .leftJoinAndSelect('classroom.subject', 'subject')
+      .leftJoin('classroom.subject', 'subject')
       .select([
         'classroom.id AS "id"',
         'classroom.name AS "name"',
