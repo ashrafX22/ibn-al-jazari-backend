@@ -55,8 +55,8 @@ export class ClassroomService {
     return new classroomEntity(classroom);
   }
 
-  async findClassroomDetails(id: number): Promise<classroomEntity> {
-    const classroom = await this.classroomRepository
+  async findClassroomDetails(id: number): Promise<classroomEntity[]> {
+    const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
       .leftJoin('classroom.enrollments', 'enrollment')
       .leftJoin('enrollment.student', 'student')
@@ -69,13 +69,14 @@ export class ClassroomService {
         'appointment.startTime AS "appointmentStartTime"',
       ])
       .where('classroom.id = :id', { id })
-      .getRawOne();
+      .orderBy('appointment.startTime', 'ASC')
+      .getRawMany();
 
-    if (!classroom) {
+    if (!classrooms) {
       throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
     }
 
-    return new classroomEntity(classroom);
+    return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
   async findMeetingsByTeacherId(teacherId: number) {
@@ -83,7 +84,7 @@ export class ClassroomService {
       .createQueryBuilder('classroom')
       .innerJoin('classroom.subject', 'subject')
       .leftJoin('classroom.meetings', 'meeting')
-      .leftJoin('classroom.appointments', 'appointment')
+      .leftJoinAndSelect('classroom.appointments', 'appointment')
       .select([
         'classroom.id as "classroomId"',
         'classroom.name AS "classroomName"',
@@ -93,6 +94,7 @@ export class ClassroomService {
         'appointment.startTime AS "appointmentStartTime"',
       ])
       .where('classroom.teacherId = :teacherId', { teacherId })
+      .orderBy('appointment.startTime', 'ASC')
       .getRawMany();
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
@@ -119,6 +121,7 @@ export class ClassroomService {
         'appointment.startTime as "appointmentStartTime"',
       ])
       .where('classroom.id IN (:...classroomIds)', { classroomIds })
+      .orderBy('appointment.startTime', 'ASC')
       .getRawMany();
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
