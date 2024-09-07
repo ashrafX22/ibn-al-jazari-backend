@@ -45,15 +45,55 @@ export class ClassroomService {
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
+  async findOne(id: number): Promise<classroomEntity> {
+    const classroom = await this.classroomRepository.findOneBy({ id });
+
+    if (!classroom) {
+      throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+    }
+
+    return new classroomEntity(classroom);
+  }
+
+  async findClassroomDetails(id: number): Promise<classroomEntity> {
+    const classroom = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .leftJoin('classroom.enrollments', 'enrollment')
+      .leftJoin('enrollment.student', 'student')
+      .leftJoin('classroom.appointments', 'appointment')
+      .select([
+        'classroom.name AS "classroomName"',
+        'student.name AS "studentName"',
+        'student.email AS "studentEmail"',
+        'appointment.day AS "appointmentDay"',
+        'appointment.startTime AS "appointmentStartTime"',
+      ])
+      .where('classroom.id = :id', { id })
+      .getRawOne();
+
+    if (!classroom) {
+      throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+    }
+
+    return new classroomEntity(classroom);
+  }
+
   async findMeetingsByTeacherId(teacherId: number) {
     const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
-      .innerJoinAndSelect('classroom.subject', 'subject')
-      .leftJoinAndSelect('classroom.meetings', 'meeting')
-      .leftJoinAndSelect('classroom.appointments', 'appointment')
-      .select(['classroom.id', 'classroom.name', 'subject.name', 'meeting.link', 'appointment.day', 'appointment.startTime'])
+      .innerJoin('classroom.subject', 'subject')
+      .leftJoin('classroom.meetings', 'meeting')
+      .leftJoin('classroom.appointments', 'appointment')
+      .select([
+        'classroom.id as "classroomId"',
+        'classroom.name AS "classroomName"',
+        'subject.name AS "subjectName"',
+        'meeting.link AS "meetingLink"',
+        'appointment.day AS "appointmentDay"',
+        'appointment.startTime AS "appointmentStartTime"',
+      ])
       .where('classroom.teacherId = :teacherId', { teacherId })
-      .getMany();
+      .getRawMany();
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
@@ -67,12 +107,19 @@ export class ClassroomService {
 
     const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
-      .innerJoinAndSelect('classroom.subject', 'subject')
-      .leftJoinAndSelect('classroom.meetings', 'meeting')
-      .leftJoinAndSelect('classroom.appointments', 'appointment')
-      .select(['classroom.id', 'classroom.name', 'subject.name', 'meeting.link', 'appointment.day', 'appointment.startTime'])
+      .innerJoin('classroom.subject', 'subject')
+      .leftJoin('classroom.meetings', 'meeting')
+      .leftJoin('classroom.appointments', 'appointment')
+      .select([
+        'classroom.id as "classroomId"',
+        'classroom.name as "classroomName"',
+        'subject.name as "subjectName"',
+        'meeting.link as "meetingLink"',
+        'appointment.day as "appointmentDay"',
+        'appointment.startTime as "appointmentStartTime"',
+      ])
       .where('classroom.id IN (:...classroomIds)', { classroomIds })
-      .getMany();
+      .getRawMany();
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
@@ -107,14 +154,6 @@ export class ClassroomService {
       .getMany();
 
     return classrooms.map((classroom) => new classroomEntity(classroom));
-  }
-
-  async findOne(id: number): Promise<classroomEntity> {
-    const classroom = await this.classroomRepository.findOneBy({ id });
-    if (!classroom) {
-      throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
-    }
-    return new classroomEntity(classroom);
   }
 
   async update(

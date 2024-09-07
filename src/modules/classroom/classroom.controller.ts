@@ -37,6 +37,17 @@ export class ClassroomController {
     return this.classroomService.findAll();
   }
 
+  @Get(':id')
+  @findOneClassroomSwaggerDoc()
+  async findOne(@Param('id') id: string) {
+    return this.classroomService.findOne(+id);
+  }
+
+  @Get('details/:id')
+  async findClassroomDetails(@Param('id') id: string) {
+    return this.classroomService.findClassroomDetails(+id);
+  }
+
   @Get('teacher/:teacherId/meetings')
   async findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
     return this.classroomService.findMeetingsByTeacherId(+teacherId);
@@ -59,11 +70,6 @@ export class ClassroomController {
     return this.classroomService.findClassroomsByStudentId(+studentId);
   }
 
-  @Get(':id')
-  @findOneClassroomSwaggerDoc()
-  async findOne(@Param('id') id: string) {
-    return this.classroomService.findOne(+id);
-  }
 
   @Patch(':id')
   @updateClassroomSwaggerDoc()
