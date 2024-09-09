@@ -16,14 +16,4 @@ export class CreateClassroomDto {
   @IsInt()
   @IsNotEmpty()
   subjectId: number;
-
-  @ApiProperty({ description: 'Start time of the class (ISO 8601 format)' })
-  @IsDateString()
-  @IsNotEmpty()
-  startTime: string;
-
-  @ApiProperty({ description: 'End time of the class (ISO 8601 format)' })
-  @IsDateString()
-  @IsNotEmpty()
-  endTime: string;
 }

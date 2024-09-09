@@ -13,12 +13,6 @@ export class classroomEntity {
   @ApiProperty()
   subjectId: number;
 
-  @ApiProperty()
-  startTime: string;
-
-  @ApiProperty()
-  endTime: string;
-
   // add or exclude or expose properties as needed
 
   constructor(partial: Partial<classroomEntity>) {

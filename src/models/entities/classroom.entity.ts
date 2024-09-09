@@ -29,14 +29,6 @@ export class Classroom {
   @Column()
   subjectId: number;
 
-  // the start data of the course
-  @Column()
-  startTime: string;
-
-  // the end data of the course
-  @Column()
-  endTime: string;
-
   @CreateDateColumn()
   createdAt: Date;
 

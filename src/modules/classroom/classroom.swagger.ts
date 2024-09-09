@@ -14,19 +14,6 @@ export function createClassroomSwaggerDoc() {
       type: CreateClassroomDto,
       description:
         'The DTO containing the necessary information to create a classroom.',
-      examples: {
-        example1: {
-          summary: 'Example classroom',
-          value: {
-            name: 'Tajweid',
-            description: 'Basic tajweid classroom',
-            teacherId: 1,
-            subjectId: 1,
-            startTime: '2022-01-01T08:00:00.000Z',
-            endTime: '2022-01-01T10:00:00.000Z',
-          } as CreateClassroomDto,
-        },
-      },
     }),
     ApiResponse({
       status: 201,
