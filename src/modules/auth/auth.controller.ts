@@ -101,7 +101,7 @@ export class AuthController {
         googleRefreshToken: req.user.googleRefreshToken,
       }).toString();
       return res.redirect(
-        `${process.env.ORIGIN}/additional-info?${queryParams}`,
+        `${process.env.ORIGIN}/auth/register-additional?${queryParams}`,
       );
     }
   }
