@@ -87,89 +87,105 @@ export class ClassroomService {
   }
 
   async findLessonsByTeacherId(teacherId: number) {
-    const classrooms = await this.classroomRepository
-      .createQueryBuilder('classroom')
-      .innerJoin('classroom.subject', 'subject')
-      .leftJoin('classroom.meetings', 'meeting')
-      .leftJoin('classroom.appointments', 'appointment')
-      .select([
-        'classroom.id as "classroomId"',
-        'classroom.name AS "classroomName"',
-        'subject.name AS "subjectName"',
-        'meeting.link AS "meetingLink"',
-        'appointment.day AS "appointmentDay"',
-        'appointment.startTime AS "appointmentStartTime"',
-      ])
-      .where('classroom.teacherId = :teacherId', { teacherId })
-      .orderBy('appointment.startTime', 'ASC')
-      .getRawMany();
-    return classrooms.map((classroom) => new classroomEntity(classroom));
+    try {
+      const classrooms = await this.classroomRepository
+        .createQueryBuilder('classroom')
+        .innerJoin('classroom.subject', 'subject')
+        .leftJoin('classroom.meetings', 'meeting')
+        .leftJoin('classroom.appointments', 'appointment')
+        .select([
+          'classroom.id as "classroomId"',
+          'classroom.name AS "classroomName"',
+          'subject.name AS "subjectName"',
+          'meeting.link AS "meetingLink"',
+          'appointment.day AS "appointmentDay"',
+          'appointment.startTime AS "appointmentStartTime"',
+        ])
+        .where('classroom.teacherId = :teacherId', { teacherId })
+        .orderBy('appointment.startTime', 'ASC')
+        .getRawMany();
+      return classrooms.map((classroom) => new classroomEntity(classroom));
+    } catch (error) {
+      return [];
+    }
   }
 
   async findLessonsByStudentId(studentId: number) {
-    const enrollments =
-      await this.enrollmentService.findEnrollmentsByStudentId(studentId);
+    try {
+      const enrollments =
+        await this.enrollmentService.findEnrollmentsByStudentId(studentId);
 
-    const classroomIds = enrollments.map(
-      (enrollment) => enrollment['classroomId'],
-    );
+      const classroomIds = enrollments.map(
+        (enrollment) => enrollment['classroomId'],
+      );
 
-    const classrooms = await this.classroomRepository
-      .createQueryBuilder('classroom')
-      .innerJoin('classroom.subject', 'subject')
-      .leftJoin('classroom.meetings', 'meeting')
-      .leftJoin('classroom.appointments', 'appointment')
-      .select([
-        'classroom.id as "classroomId"',
-        'classroom.name as "classroomName"',
-        'subject.name as "subjectName"',
-        'meeting.link as "meetingLink"',
-        'appointment.day as "appointmentDay"',
-        'appointment.startTime as "appointmentStartTime"',
-      ])
-      .where('classroom.id IN (:...classroomIds)', { classroomIds })
-      .orderBy('appointment.startTime', 'ASC')
-      .getRawMany();
-    return classrooms.map((classroom) => new classroomEntity(classroom));
+      const classrooms = await this.classroomRepository
+        .createQueryBuilder('classroom')
+        .innerJoin('classroom.subject', 'subject')
+        .leftJoin('classroom.meetings', 'meeting')
+        .leftJoin('classroom.appointments', 'appointment')
+        .select([
+          'classroom.id as "classroomId"',
+          'classroom.name as "classroomName"',
+          'subject.name as "subjectName"',
+          'meeting.link as "meetingLink"',
+          'appointment.day as "appointmentDay"',
+          'appointment.startTime as "appointmentStartTime"',
+        ])
+        .where('classroom.id IN (:...classroomIds)', { classroomIds })
+        .orderBy('appointment.startTime', 'ASC')
+        .getRawMany();
+      return classrooms.map((classroom) => new classroomEntity(classroom));
+    } catch (error) {
+      return [];
+    }
   }
 
   async findClassroomsByTeacherId(
     teacherId: number,
   ): Promise<classroomEntity[]> {
-    const classrooms = await this.classroomRepository
-      .createQueryBuilder('classroom')
-      .leftJoin('classroom.subject', 'subject')
-      .select([
-        'classroom.id AS "id"',
-        'classroom.name AS "name"',
-        'subject.name AS "subjectName"'])
-      .where('classroom.teacherId = (:teacherId)', { teacherId })
-      .getRawMany();
+    try {
+      const classrooms = await this.classroomRepository
+        .createQueryBuilder('classroom')
+        .leftJoin('classroom.subject', 'subject')
+        .select([
+          'classroom.id AS "id"',
+          'classroom.name AS "name"',
+          'subject.name AS "subjectName"'])
+        .where('classroom.teacherId = (:teacherId)', { teacherId })
+        .getRawMany();
 
-    return classrooms.map((classroom) => new classroomEntity(classroom));
+      return classrooms.map((classroom) => new classroomEntity(classroom));
+    } catch (error) {
+      return [];
+    }
   }
 
   async findClassroomsByStudentId(
     studentId: number,
   ): Promise<classroomEntity[]> {
-    const enrollments =
-      await this.enrollmentService.findEnrollmentsByStudentId(studentId);
+    try {
+      const enrollments =
+        await this.enrollmentService.findEnrollmentsByStudentId(studentId);
 
-    const classroomIds = enrollments.map(
-      (enrollment) => enrollment['classroomId'],
-    );
+      const classroomIds = enrollments.map(
+        (enrollment) => enrollment['classroomId'],
+      );
 
-    const classrooms = await this.classroomRepository
-      .createQueryBuilder('classroom')
-      .leftJoin('classroom.subject', 'subject')
-      .select([
-        'classroom.id AS "id"',
-        'classroom.name AS "name"',
-        'subject.name AS "subjectName"'])
-      .where('classroom.id IN (:...classroomIds)', { classroomIds })
-      .getRawMany();
+      const classrooms = await this.classroomRepository
+        .createQueryBuilder('classroom')
+        .leftJoin('classroom.subject', 'subject')
+        .select([
+          'classroom.id AS "id"',
+          'classroom.name AS "name"',
+          'subject.name AS "subjectName"'])
+        .where('classroom.id IN (:...classroomIds)', { classroomIds })
+        .getRawMany();
 
-    return classrooms.map((classroom) => new classroomEntity(classroom));
+      return classrooms.map((classroom) => new classroomEntity(classroom));
+    } catch (error) {
+      return [];
+    }
   }
 
   async update(
