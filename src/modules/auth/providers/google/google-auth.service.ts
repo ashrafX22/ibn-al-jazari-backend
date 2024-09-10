@@ -49,8 +49,6 @@ export class GoogleAuthService {
             googleAccessToken: createStudentDto.googleAccessToken
         };
 
-        const jwt = this.jwtUtilService.issueJwt(payload);
-
-        return { jwt: jwt };
+        return this.jwtUtilService.issueJwt(payload);
     }
 }
