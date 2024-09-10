@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import * as passport from 'passport';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import * as helmet from 'helmet';
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
+  app.use(helmet);
 
   // TODO: set origin
   app.enableCors({
