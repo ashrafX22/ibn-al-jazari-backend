@@ -86,7 +86,7 @@ export class ClassroomService {
     };
   }
 
-  async findMeetingsByTeacherId(teacherId: number) {
+  async findLessonsByTeacherId(teacherId: number) {
     const classrooms = await this.classroomRepository
       .createQueryBuilder('classroom')
       .innerJoin('classroom.subject', 'subject')
@@ -106,7 +106,7 @@ export class ClassroomService {
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
-  async findMeetingsByStudentId(studentId: number) {
+  async findLessonsByStudentId(studentId: number) {
     const enrollments =
       await this.enrollmentService.findEnrollmentsByStudentId(studentId);
 

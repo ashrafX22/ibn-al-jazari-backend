@@ -48,14 +48,14 @@ export class ClassroomController {
     return this.classroomService.findClassroomDetails(+id);
   }
 
-  @Get('teacher/:teacherId/meetings')
-  async findMeetingsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findMeetingsByTeacherId(+teacherId);
+  @Get('teacher/:teacherId/lessons')
+  async findLessonsByTeacherId(@Param('teacherId') teacherId: string) {
+    return this.classroomService.findLessonsByTeacherId(+teacherId);
   }
 
-  @Get('student/:studentId/meetings')
-  async findMeetingsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findMeetingsByStudentId(+studentId);
+  @Get('student/:studentId/lessons')
+  async findLessonsByStudentId(@Param('studentId') studentId: string) {
+    return this.classroomService.findLessonsByStudentId(+studentId);
   }
 
   @Get('teacher/:teacherId')
