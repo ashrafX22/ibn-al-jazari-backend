@@ -23,6 +23,7 @@ import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthProvider } from './providers/auth-provider.enum';
+import { JwtAuthHeaderInterceptor } from './jwt/jwt-auth-header.interceptor';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -40,10 +41,11 @@ export class AuthController {
   // pass username and password in a json object
   @localLoginSwaggerDoc()
   @UseGuards(AuthGuard('local'))
+  @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('local/login')
   async localLogin(@Req() req) {
-    console.log('local login', req.user);
-    return this.authService.login(AuthProvider.LOCAL, req.user);
+    const jwt = await this.authService.login(AuthProvider.LOCAL, req.user);
+    return { message: "success", jwt };
   }
 
   @LocalRegisterSwaggerDoc()
@@ -105,11 +107,15 @@ export class AuthController {
   }
 
   @googleRegisterSwaggerDoc()
+  @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(
+
+    const jwt = await this.authService.register(
       AuthProvider.GOOGLE,
       createStudentDto,
     );
+
+    return { message: "success", jwt };
   }
 }
