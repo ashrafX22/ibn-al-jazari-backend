@@ -11,11 +11,20 @@ export class EnrollmentService {
   constructor(
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
-  ) { }
+  ) {}
 
   async create(
     createEnrollmentDto: CreateEnrollmentDto,
   ): Promise<EnrollmentEntity> {
+    // check if student has already reached the maximum number of enrollments
+    const studentId = createEnrollmentDto.studentId;
+    const enrollments = await this.findEnrollmentsByStudentId(studentId);
+    if (enrollments.length > 7) {
+      throw new HttpException(
+        'You have reached the maximum number of enrollments',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     try {
       const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
       const savedEnrollment = await this.enrollmentRepository.save(enrollment);
@@ -47,7 +56,9 @@ export class EnrollmentService {
       relations: ['student'], // ensure that the student relation is loaded
     });
 
-    return enrollments.map((enrollment) => enrollment['student']['common']['email']);
+    return enrollments.map(
+      (enrollment) => enrollment['student']['common']['email'],
+    );
   }
 
   async findEnrollmentsByStudentId(
