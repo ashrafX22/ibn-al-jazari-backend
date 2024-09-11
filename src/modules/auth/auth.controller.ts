@@ -24,12 +24,13 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthProvider } from './providers/auth-provider.enum';
 import { JwtAuthHeaderInterceptor } from './jwt/jwt-auth-header.interceptor';
+import { PasswordHashInterceptor } from './interceptors/password-hash.interceptor';
 
 @ApiTags('auth')
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @getUserSwaggerDoc()
   @UseGuards(AuthGuard('jwt'))
@@ -45,10 +46,11 @@ export class AuthController {
   @Post('local/login')
   async localLogin(@Req() req) {
     const jwt = await this.authService.login(AuthProvider.LOCAL, req.user);
-    return { message: "success", jwt };
+    return { message: 'success', jwt };
   }
 
   @LocalRegisterSwaggerDoc()
+  @UseInterceptors(PasswordHashInterceptor)
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
     return await this.authService.register(
@@ -64,7 +66,7 @@ export class AuthController {
   @googleAuthSwaggerDoc()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  googleAuth() { }
+  googleAuth() {}
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
@@ -108,14 +110,14 @@ export class AuthController {
 
   @googleRegisterSwaggerDoc()
   @UseInterceptors(JwtAuthHeaderInterceptor)
+  @UseInterceptors(PasswordHashInterceptor)
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-
     const jwt = await this.authService.register(
       AuthProvider.GOOGLE,
       createStudentDto,
     );
 
-    return { message: "success", jwt };
+    return { message: 'success', jwt };
   }
 }
