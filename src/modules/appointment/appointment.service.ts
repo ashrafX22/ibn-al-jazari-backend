@@ -21,6 +21,13 @@ export class AppointmentService {
     classroomId: number,
     createAppointmentDto: CreateAppointmentDto,
   ): Promise<AppointmentEntity> {
+    // check if classroom has reached the maximum number of appointments
+    const appointments = await this.findAppointmentsByClassroomId(classroomId);
+    if (appointments.length > 7) {
+      throw new BadRequestException(
+        'You have reached the maximum number of appointments',
+      );
+    }
     try {
       const appointment = this.appointmentRepository.create({
         classroomId,
