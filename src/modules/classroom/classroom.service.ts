@@ -13,11 +13,22 @@ export class ClassroomService {
     @InjectRepository(Classroom)
     private readonly classroomRepository: Repository<Classroom>,
     private readonly enrollmentService: EnrollmentService,
-  ) { }
+  ) {}
 
   async create(
     createClassroomDto: CreateClassroomDto,
   ): Promise<classroomEntity> {
+    // check if teacher has reached the maximum number of classrooms
+    // so that he can't spam classrooms
+    const teacherId = createClassroomDto.teacherId;
+    const classrooms = await this.findClassroomsByTeacherId(teacherId);
+    if (classrooms.length > 20) {
+      throw new HttpException(
+        'You have reached the maximum number of classrooms',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     try {
       const classroom = this.classroomRepository.create(createClassroomDto);
 
@@ -74,15 +85,15 @@ export class ClassroomService {
       subject: {
         name: classroom.subject.name,
       },
-      students: classroom.enrollments.map(enrollment => ({
+      students: classroom.enrollments.map((enrollment) => ({
         id: enrollment.student.id,
         name: enrollment.student.common.name,
       })),
-      appointments: classroom.appointments.map(appointment => ({
+      appointments: classroom.appointments.map((appointment) => ({
         id: appointment.id,
         day: appointment.day,
         startTime: appointment.startTime,
-      }))
+      })),
     };
   }
 
@@ -151,7 +162,8 @@ export class ClassroomService {
         .select([
           'classroom.id AS "id"',
           'classroom.name AS "name"',
-          'subject.name AS "subjectName"'])
+          'subject.name AS "subjectName"',
+        ])
         .where('classroom.teacherId = (:teacherId)', { teacherId })
         .getRawMany();
 
@@ -178,7 +190,8 @@ export class ClassroomService {
         .select([
           'classroom.id AS "id"',
           'classroom.name AS "name"',
-          'subject.name AS "subjectName"'])
+          'subject.name AS "subjectName"',
+        ])
         .where('classroom.id IN (:...classroomIds)', { classroomIds })
         .getRawMany();
 
