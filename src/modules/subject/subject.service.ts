@@ -28,7 +28,7 @@ export class SubjectService {
     return subjects.map((subject) => new SubjectEntity(subject));
   }
 
-  async findOne(id: number): Promise<SubjectEntity> {
+  async findOne(id: string): Promise<SubjectEntity> {
     const subject = await this.subjectRepository.findOneBy({ id });
     if (!subject) {
       throw new InternalServerErrorException('Subject not found.');
@@ -37,7 +37,7 @@ export class SubjectService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateSubjectDto: UpdateSubjectDto,
   ): Promise<SubjectEntity> {
     await this.subjectRepository.update(id, updateSubjectDto);
@@ -48,7 +48,7 @@ export class SubjectService {
     return new SubjectEntity(updatedSubject);
   }
 
-  async remove(id: number): Promise<SubjectEntity> {
+  async remove(id: string): Promise<SubjectEntity> {
     const subject = await this.subjectRepository.findOneBy({ id });
     if (!subject) {
       throw new InternalServerErrorException('Subject not found.');

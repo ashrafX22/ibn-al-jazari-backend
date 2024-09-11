@@ -8,17 +8,19 @@ export function createEnrollmentSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Create a new enrollment',
-      description: 'This function handles the creation of a new enrollment for a student in a classroom.',
+      description:
+        'This function handles the creation of a new enrollment for a student in a classroom.',
     }),
     ApiBody({
       type: CreateEnrollmentDto,
-      description: 'The DTO containing the necessary information to create an enrollment.',
+      description:
+        'The DTO containing the necessary information to create an enrollment.',
       examples: {
         example1: {
           summary: 'Example enrollment creation',
           value: {
-            studentId: 1,
-            classroomId: 101,
+            studentId: 'f83qw7ybiwe7yf',
+            classroomId: 'saufdgw734h34',
           } as CreateEnrollmentDto,
         },
       },
@@ -57,7 +59,8 @@ export function findStudentEmailsByClassroomIdSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Retrieve student emails by classroom ID',
-      description: 'This function returns a list of student emails enrolled in a specific classroom.',
+      description:
+        'This function returns a list of student emails enrolled in a specific classroom.',
     }),
     ApiParam({
       name: 'classroomId',
@@ -79,7 +82,8 @@ export function findEnrollmentsByStudentIdSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Retrieve enrollments by student ID',
-      description: 'This function returns all enrollments associated with a specific student.',
+      description:
+        'This function returns all enrollments associated with a specific student.',
     }),
     ApiParam({
       name: 'studentId',
@@ -88,7 +92,8 @@ export function findEnrollmentsByStudentIdSwaggerDoc() {
     }),
     ApiResponse({
       status: 200,
-      description: 'An array of enrollment entities associated with the student',
+      description:
+        'An array of enrollment entities associated with the student',
       type: EnrollmentEntity,
       isArray: true,
     }),
@@ -101,7 +106,8 @@ export function findOneEnrollmentSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Retrieve a single enrollment by student ID and classroom ID',
-      description: 'This function returns a single enrollment based on the provided student ID and classroom ID.',
+      description:
+        'This function returns a single enrollment based on the provided student ID and classroom ID.',
     }),
     ApiParam({
       name: 'studentId',
@@ -127,7 +133,8 @@ export function updateEnrollmentSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Update an enrollment',
-      description: 'This function updates the details of an existing enrollment based on the provided student ID and classroom ID.',
+      description:
+        'This function updates the details of an existing enrollment based on the provided student ID and classroom ID.',
     }),
     ApiParam({
       name: 'studentId',
@@ -141,7 +148,8 @@ export function updateEnrollmentSwaggerDoc() {
     }),
     ApiBody({
       type: UpdateEnrollmentDto,
-      description: 'The DTO containing the updated information for the enrollment.',
+      description:
+        'The DTO containing the updated information for the enrollment.',
       examples: {
         example1: {
           summary: 'Example enrollment update',
@@ -166,7 +174,8 @@ export function removeEnrollmentSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Delete an enrollment',
-      description: 'This function deletes an enrollment based on the provided student ID and classroom ID.',
+      description:
+        'This function deletes an enrollment based on the provided student ID and classroom ID.',
     }),
     ApiParam({
       name: 'studentId',

@@ -23,7 +23,7 @@ import {
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) { }
+  constructor(private readonly classroomService: ClassroomService) {}
 
   @Post()
   @createClassroomSwaggerDoc()
@@ -40,36 +40,35 @@ export class ClassroomController {
   @Get(':id')
   @findOneClassroomSwaggerDoc()
   async findOne(@Param('id') id: string) {
-    return this.classroomService.findOne(+id);
+    return this.classroomService.findOne(id);
   }
 
   @Get('details/:id')
   async findClassroomDetails(@Param('id') id: string) {
-    return this.classroomService.findClassroomDetails(+id);
+    return this.classroomService.findClassroomDetails(id);
   }
 
   @Get('teacher/:teacherId/lessons')
   async findLessonsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findLessonsByTeacherId(+teacherId);
+    return this.classroomService.findLessonsByTeacherId(teacherId);
   }
 
   @Get('student/:studentId/lessons')
   async findLessonsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findLessonsByStudentId(+studentId);
+    return this.classroomService.findLessonsByStudentId(studentId);
   }
 
   @Get('teacher/:teacherId')
   @findClassroomsByTeacherIdSwaggerDoc()
   async getClassroomsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findClassroomsByTeacherId(+teacherId);
+    return this.classroomService.findClassroomsByTeacherId(teacherId);
   }
 
   @Get('student/:studentId')
   @findClassroomsByStudentIdSwaggerDoc()
   async getClassroomsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findClassroomsByStudentId(+studentId);
+    return this.classroomService.findClassroomsByStudentId(studentId);
   }
-
 
   @Patch(':id')
   @updateClassroomSwaggerDoc()
@@ -77,12 +76,12 @@ export class ClassroomController {
     @Param('id') id: string,
     @Body() updateClassroomDto: UpdateClassroomDto,
   ) {
-    return this.classroomService.update(+id, updateClassroomDto);
+    return this.classroomService.update(id, updateClassroomDto);
   }
 
   @Delete(':id')
   @createClassroomSwaggerDoc()
   async remove(@Param('id') id: string) {
-    return this.classroomService.remove(+id);
+    return this.classroomService.remove(id);
   }
 }

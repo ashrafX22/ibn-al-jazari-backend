@@ -25,11 +25,11 @@ export class MeetingService {
     private readonly meetingServiceFactory: MeetingServiceFactory,
     private readonly appointmentService: AppointmentService,
     private readonly enrollmentService: EnrollmentService,
-  ) { }
+  ) {}
 
   async create(
     creatorDetails: Jwt,
-    classroomId: number,
+    classroomId: string,
     createMeetingDto: CreateMeetingDto,
   ): Promise<MeetingEnity> {
     const { provider } = createMeetingDto;
@@ -75,7 +75,7 @@ export class MeetingService {
     return meetings.map((meeting) => new MeetingEnity(meeting));
   }
 
-  async findOne(id: number): Promise<MeetingEnity> {
+  async findOne(id: string): Promise<MeetingEnity> {
     const meeting = await this.meetingRepository.findOneBy({ id });
 
     if (!meeting) {
@@ -85,7 +85,7 @@ export class MeetingService {
     return new MeetingEnity(meeting);
   }
 
-  async remove(id: number): Promise<MeetingEnity> {
+  async remove(id: string): Promise<MeetingEnity> {
     const meeting = await this.findOne(id);
 
     if (!meeting) {

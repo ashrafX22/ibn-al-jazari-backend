@@ -29,7 +29,7 @@ export class AppointmentController {
     @Param('classroomId') classroomId: string,
     @Body() createAppointmentDto: CreateAppointmentDto,
   ) {
-    return this.appointmentService.create(+classroomId, createAppointmentDto);
+    return this.appointmentService.create(classroomId, createAppointmentDto);
   }
 
   @Get()
@@ -41,7 +41,7 @@ export class AppointmentController {
   @Get(':id')
   @findOneAppointmentSwaggerDoc()
   async findOne(@Param('id') id: string) {
-    return this.appointmentService.findOne(+id);
+    return this.appointmentService.findOne(id);
   }
 
   @Patch(':id')
@@ -50,12 +50,12 @@ export class AppointmentController {
     @Param('id') id: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
   ) {
-    return this.appointmentService.update(+id, updateAppointmentDto);
+    return this.appointmentService.update(id, updateAppointmentDto);
   }
 
   @Delete(':id')
   @createAppointmentSwaggerDoc()
   async remove(@Param('id') id: string) {
-    return this.appointmentService.remove(+id);
+    return this.appointmentService.remove(id);
   }
 }

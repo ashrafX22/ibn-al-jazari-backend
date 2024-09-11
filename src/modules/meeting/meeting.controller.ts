@@ -30,7 +30,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('meeting')
 @Controller('meeting')
 export class MeetingController {
-  constructor(private readonly meetingService: MeetingService) { }
+  constructor(private readonly meetingService: MeetingService) {}
 
   @createMeetingSwaggerDoc()
   // @Experiences(Experience.senior)
@@ -55,7 +55,7 @@ export class MeetingController {
 
     const meeting = await this.meetingService.create(
       req.user,
-      +classroomId,
+      classroomId,
       createMeetingDto,
     );
 
@@ -71,7 +71,7 @@ export class MeetingController {
   @Get(':id')
   @findOneMeetingSwaggerDoc()
   async findOne(@Param('id') id: string) {
-    return this.meetingService.findOne(+id);
+    return this.meetingService.findOne(id);
   }
 
   // @Patch(':id')
@@ -83,6 +83,6 @@ export class MeetingController {
   @Delete(':id')
   @removeMeetingSwaggerDoc()
   async remove(@Param('id') id: string) {
-    return this.meetingService.remove(+id);
+    return this.meetingService.remove(id);
   }
 }

@@ -10,11 +10,11 @@ import { Classroom } from './classroom.entity';
 
 @Entity()
 export class Enrollment {
-  @PrimaryColumn()
-  studentId: number;
+  @PrimaryColumn('uuid')
+  studentId: string;
 
-  @PrimaryColumn()
-  classroomId: number;
+  @PrimaryColumn('uuid')
+  classroomId: string;
 
   @CreateDateColumn()
   enrollmentDate: Date;

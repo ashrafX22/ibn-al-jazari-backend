@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class MeetingEnity {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   link: string;
 
   @ApiProperty()
-  classroomId: number;
+  classroomId: string;
 
   // add or exclude or expose properties as needed
 

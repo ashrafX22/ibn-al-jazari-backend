@@ -41,9 +41,9 @@ export class EnrollmentController {
   @Get('student/:studentId')
   @findEnrollmentsByStudentIdSwaggerDoc()
   async findStudentEnrollmentsByStudentId(
-    @Param('studentId', ParseIntPipe) studentId: number,
+    @Param('studentId') studentId: string,
   ) {
-    return this.enrollmentService.findEnrollmentsByStudentId(+studentId);
+    return this.enrollmentService.findEnrollmentsByStudentId(studentId);
   }
 
   @Get(':classroomId/:studentId')
@@ -52,7 +52,7 @@ export class EnrollmentController {
     @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,
   ) {
-    return this.enrollmentService.findOne(+classroomId, +studentId);
+    return this.enrollmentService.findOne(classroomId, studentId);
   }
 
   @Patch(':classroomId/:studentId')
@@ -63,8 +63,8 @@ export class EnrollmentController {
     @Body() updateEnrollmentDto: UpdateEnrollmentDto,
   ) {
     return this.enrollmentService.update(
-      +classroomId,
-      +studentId,
+      classroomId,
+      studentId,
       updateEnrollmentDto,
     );
   }
@@ -75,6 +75,6 @@ export class EnrollmentController {
     @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,
   ) {
-    return this.enrollmentService.remove(+classroomId, +studentId);
+    return this.enrollmentService.remove(classroomId, studentId);
   }
 }

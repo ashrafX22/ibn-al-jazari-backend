@@ -50,7 +50,7 @@ export class EnrollmentService {
     return enrollments.map((enrollment) => new EnrollmentEntity(enrollment));
   }
 
-  async findStudentEmailsByClassroomId(classroomId: number): Promise<string[]> {
+  async findStudentEmailsByClassroomId(classroomId: string): Promise<string[]> {
     const enrollments = await this.enrollmentRepository.find({
       where: { classroomId },
       relations: ['student'], // ensure that the student relation is loaded
@@ -62,7 +62,7 @@ export class EnrollmentService {
   }
 
   async findEnrollmentsByStudentId(
-    studentId: number,
+    studentId: string,
   ): Promise<EnrollmentEntity[]> {
     const enrollments = await this.enrollmentRepository.find({
       where: { studentId },
@@ -71,8 +71,8 @@ export class EnrollmentService {
   }
 
   async findOne(
-    studentId: number,
-    classroomId: number,
+    studentId: string,
+    classroomId: string,
   ): Promise<EnrollmentEntity> {
     const enrollment = await this.enrollmentRepository.findOneBy({
       studentId,
@@ -87,8 +87,8 @@ export class EnrollmentService {
   }
 
   async update(
-    studentId: number,
-    classroomId: number,
+    studentId: string,
+    classroomId: string,
     updateEnrollmentDto: UpdateEnrollmentDto,
   ): Promise<EnrollmentEntity> {
     await this.enrollmentRepository.update(
@@ -108,8 +108,8 @@ export class EnrollmentService {
   }
 
   async remove(
-    studentId: number,
-    classroomId: number,
+    studentId: string,
+    classroomId: string,
   ): Promise<EnrollmentEntity> {
     const enrollment = await this.enrollmentRepository.findOneBy({
       studentId,

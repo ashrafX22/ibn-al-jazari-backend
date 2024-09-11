@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class AppointmentEntity {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
-  classroomId: number;
+  classroomId: string;
 
   @ApiProperty()
   day: string;

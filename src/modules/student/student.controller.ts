@@ -43,7 +43,7 @@ export class StudentController {
   @findStudentByIdSwaggerDoc()
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return this.studentService.findById(+id);
+    return this.studentService.findById(id);
   }
 
   @findStudentByEmailSwaggerDoc()
@@ -58,12 +58,12 @@ export class StudentController {
     @Param('id') id: string,
     @Body() updateStudentDto: UpdateStudentDto,
   ) {
-    return this.studentService.update(+id, updateStudentDto);
+    return this.studentService.update(id, updateStudentDto);
   }
 
   @removeStudentSwaggerDoc()
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.studentService.remove(+id);
+    return this.studentService.remove(id);
   }
 }

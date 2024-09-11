@@ -56,7 +56,7 @@ export class ClassroomService {
     return classrooms.map((classroom) => new classroomEntity(classroom));
   }
 
-  async findOne(id: number): Promise<classroomEntity> {
+  async findOne(id: string): Promise<classroomEntity> {
     const classroom = await this.classroomRepository.findOneBy({ id });
 
     if (!classroom) {
@@ -67,7 +67,7 @@ export class ClassroomService {
   }
 
   // works. However, the query itself return all fields.
-  async findClassroomDetails(id: number): Promise<any> {
+  async findClassroomDetails(id: string): Promise<any> {
     const classroom = await this.classroomRepository
       .createQueryBuilder('classroom')
       .leftJoinAndSelect('classroom.subject', 'subject')
@@ -97,7 +97,7 @@ export class ClassroomService {
     };
   }
 
-  async findLessonsByTeacherId(teacherId: number) {
+  async findLessonsByTeacherId(teacherId: string) {
     try {
       const classrooms = await this.classroomRepository
         .createQueryBuilder('classroom')
@@ -121,7 +121,7 @@ export class ClassroomService {
     }
   }
 
-  async findLessonsByStudentId(studentId: number) {
+  async findLessonsByStudentId(studentId: string) {
     try {
       const enrollments =
         await this.enrollmentService.findEnrollmentsByStudentId(studentId);
@@ -153,7 +153,7 @@ export class ClassroomService {
   }
 
   async findClassroomsByTeacherId(
-    teacherId: number,
+    teacherId: string,
   ): Promise<classroomEntity[]> {
     try {
       const classrooms = await this.classroomRepository
@@ -174,7 +174,7 @@ export class ClassroomService {
   }
 
   async findClassroomsByStudentId(
-    studentId: number,
+    studentId: string,
   ): Promise<classroomEntity[]> {
     try {
       const enrollments =
@@ -202,7 +202,7 @@ export class ClassroomService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateClassroomDto: UpdateClassroomDto,
   ): Promise<classroomEntity> {
     await this.classroomRepository.update(id, updateClassroomDto);
@@ -213,7 +213,7 @@ export class ClassroomService {
     return new classroomEntity(updatedClassroom);
   }
 
-  async remove(id: number): Promise<classroomEntity> {
+  async remove(id: string): Promise<classroomEntity> {
     const classroom = await this.classroomRepository.findOneBy({ id });
     if (!classroom) {
       throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);

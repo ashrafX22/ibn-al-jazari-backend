@@ -7,8 +7,8 @@ import { Role } from '../enums/role.enum';
 
 @Entity()
 export class Teacher {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column(() => User)
   common: User;

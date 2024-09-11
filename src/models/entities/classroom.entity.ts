@@ -17,17 +17,17 @@ import { Appointment } from './appointment.entity';
 
 @Entity()
 export class Classroom {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;
 
   @Column()
-  teacherId: number;
+  teacherId: string;
 
   @Column()
-  subjectId: number;
+  subjectId: string;
 
   @CreateDateColumn()
   createdAt: Date;

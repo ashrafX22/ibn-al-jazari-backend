@@ -8,12 +8,12 @@ export class CreateClassroomDto {
   name: string;
 
   @ApiProperty({ description: 'ID of the teacher' })
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  teacherId: number;
+  teacherId: string;
 
   @ApiProperty({ description: 'ID of the subject' })
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  subjectId: number;
+  subjectId: string;
 }

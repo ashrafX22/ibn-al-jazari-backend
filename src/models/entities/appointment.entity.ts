@@ -1,23 +1,28 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Classroom } from "./classroom.entity";
-import { Day } from "../enums/day.enum";
-
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Classroom } from './classroom.entity';
+import { Day } from '../enums/day.enum';
 
 @Entity()
 export class Appointment {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    classroomId: number;
+  @Column()
+  classroomId: string;
 
-    @Column()
-    day: Day;
+  @Column()
+  day: Day;
 
-    @Column()
-    startTime: string;
+  @Column()
+  startTime: string;
 
-    @ManyToOne(() => Classroom, (classroom) => classroom.appointments)
-    @JoinColumn({ name: 'classroomId' })
-    classroom: Classroom;
+  @ManyToOne(() => Classroom, (classroom) => classroom.appointments)
+  @JoinColumn({ name: 'classroomId' })
+  classroom: Classroom;
 }

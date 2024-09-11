@@ -5,7 +5,7 @@ import { SuperUserEntity } from 'src/modules/user/entities/user.entity';
 
 export class TeacherEntity extends SuperUserEntity {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   role: Role;
