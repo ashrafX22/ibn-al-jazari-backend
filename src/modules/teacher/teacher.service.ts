@@ -10,13 +10,14 @@ import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { TeacherEntity } from './entities/teacher.entity';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { flattenObject } from 'src/shared/utils/flatten-object.util';
+import { TeacherStatus } from 'src/models/enums/teacher-status.enum';
 
 @Injectable()
 export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-  ) {}
+  ) { }
 
   // Create a new teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
@@ -72,10 +73,13 @@ export class TeacherService {
   }
 
   async findByEmail(email: string): Promise<TeacherEntity | null> {
-    const teacher = await this.teacherRepository.findOneBy({
-      common: {
-        email,
-      },
+    const teacher = await this.teacherRepository.findOne({
+      where: {
+        common: {
+          email,
+        },
+        status: TeacherStatus.APPROVED
+      }
     });
 
     if (!teacher) return null;
@@ -106,6 +110,20 @@ export class TeacherService {
     const updatedTeacher = await this.teacherRepository.findOneBy({ id });
 
     return new TeacherEntity(flattenObject(updatedTeacher));
+  }
+
+  async approve(id: string): Promise<TeacherEntity | null> {
+    const teacher = await this.teacherRepository.findOneBy({ id });
+
+    if (!teacher) return null;
+
+    await this.teacherRepository.update(id, {
+      status: TeacherStatus.APPROVED
+    });
+
+    const approvedTeacher = await this.teacherRepository.findOneBy({ id });
+
+    return new TeacherEntity(flattenObject(approvedTeacher));
   }
 
   // Delete a teacher by ID

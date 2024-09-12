@@ -11,6 +11,12 @@ export class CreateTeacherDto extends CreateUserDto {
   })
   summary: string;
 
+  @IsString()
+  @ApiProperty({
+    description: "the url of the ijaza photo",
+  })
+  ijazaPhotoUrl: string;
+
   @IsEnum(Experience)
   @ApiProperty({
     description: "The experience level of the teacher",

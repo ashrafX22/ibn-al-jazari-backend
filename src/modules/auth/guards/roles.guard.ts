@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
 import { PublicRouteService } from '../public-route/public.service';
+import { TeacherStatus } from 'src/models/enums/teacher-status.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -23,6 +24,8 @@ export class RolesGuard implements CanActivate {
         console.log("required roles", requiredRoles);
 
         const { user } = context.switchToHttp().getRequest();
-        return requiredRoles.includes(user.role);
+
+        return requiredRoles.includes(user.role)
+            && (user.role === Role.TEACHER ? user.status === TeacherStatus.APPROVED : true);
     }
 }

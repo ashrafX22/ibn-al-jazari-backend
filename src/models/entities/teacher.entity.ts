@@ -4,6 +4,7 @@ import { Classroom } from './classroom.entity';
 import { Paycheck } from './paycheck.entity';
 import { Experience } from '../enums/experience.enum';
 import { Role } from '../enums/role.enum';
+import { TeacherStatus } from '../enums/teacher-status.enum';
 
 @Entity()
 export class Teacher {
@@ -19,8 +20,14 @@ export class Teacher {
   @Column({ default: '' })
   summary: string;
 
+  @Column()
+  ijazaPhotoUrl: string;
+
   @Column({ default: Experience.JUNIOR })
   experience: Experience;
+
+  @Column({ default: TeacherStatus.PENDING })
+  status: TeacherStatus;
 
   @OneToMany(() => Classroom, (classroom) => classroom.teacher)
   classrooms: Classroom[];
