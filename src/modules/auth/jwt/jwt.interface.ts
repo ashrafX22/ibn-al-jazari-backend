@@ -3,7 +3,6 @@ import { Role } from 'src/models/enums/role.enum';
 
 export interface Jwt {
   id: string;
-  email: string;
   role: Role;
   experience?: Experience;
   googleAccessToken?: string;
