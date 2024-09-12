@@ -18,32 +18,35 @@ import {
   removeSubjectSwaggerDoc,
   updateSubjectSwaggerDoc,
 } from './subject.swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
 
 @ApiTags('subject')
 @Controller('subject')
 export class SubjectController {
-  constructor(private readonly subjectService: SubjectService) {}
+  constructor(private readonly subjectService: SubjectService) { }
 
-  @Post()
   @createSubjectSwaggerDoc()
+  @Post()
   async create(@Body() createSubjectDto: CreateSubjectDto) {
     return this.subjectService.create(createSubjectDto);
   }
 
-  @Get()
   @findAllSubjectsSwaggerDoc()
+  @Roles(Role.TEACHER)
+  @Get()
   async findAll() {
     return this.subjectService.findAll();
   }
 
-  @Get(':id')
   @findOneSubjectSwaggerDoc()
+  @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.subjectService.findOne(id);
   }
 
-  @Patch(':id')
   @updateSubjectSwaggerDoc()
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateSubjectDto: UpdateSubjectDto,
@@ -51,8 +54,8 @@ export class SubjectController {
     return this.subjectService.update(id, updateSubjectDto);
   }
 
-  @Delete(':id')
   @removeSubjectSwaggerDoc()
+  @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.subjectService.remove(id);
   }

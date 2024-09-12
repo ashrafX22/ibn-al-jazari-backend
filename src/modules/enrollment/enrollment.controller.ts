@@ -20,34 +20,37 @@ import {
   removeEnrollmentSwaggerDoc,
   updateEnrollmentSwaggerDoc,
 } from './enrollment.swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
 
 @ApiTags('enrollment')
 @Controller('enrollment')
 export class EnrollmentController {
-  constructor(private readonly enrollmentService: EnrollmentService) {}
+  constructor(private readonly enrollmentService: EnrollmentService) { }
 
-  @Post()
   @createEnrollmentSwaggerDoc()
+  @Roles(Role.TEACHER)
+  @Post()
   async create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
     return this.enrollmentService.create(createEnrollmentDto);
   }
 
-  @Get()
   @findAllEnrollmentsSwaggerDoc()
+  @Get()
   async findAll() {
     return this.enrollmentService.findAll();
   }
 
-  @Get('student/:studentId')
   @findEnrollmentsByStudentIdSwaggerDoc()
+  @Get('student/:studentId')
   async findStudentEnrollmentsByStudentId(
     @Param('studentId') studentId: string,
   ) {
     return this.enrollmentService.findEnrollmentsByStudentId(studentId);
   }
 
-  @Get(':classroomId/:studentId')
   @findOneEnrollmentSwaggerDoc()
+  @Get(':classroomId/:studentId')
   findOne(
     @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,
@@ -55,8 +58,8 @@ export class EnrollmentController {
     return this.enrollmentService.findOne(classroomId, studentId);
   }
 
-  @Patch(':classroomId/:studentId')
   @updateEnrollmentSwaggerDoc()
+  @Patch(':classroomId/:studentId')
   async update(
     @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,
@@ -69,8 +72,8 @@ export class EnrollmentController {
     );
   }
 
-  @Delete(':classroomId/:studentId')
   @removeEnrollmentSwaggerDoc()
+  @Delete(':classroomId/:studentId')
   async remove(
     @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,

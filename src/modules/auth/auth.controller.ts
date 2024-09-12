@@ -24,15 +24,18 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthProvider } from './providers/auth-provider.enum';
 import { JwtAuthHeaderInterceptor } from './jwt/jwt-auth-header.interceptor';
+import { PublicRoute } from './public-route/public-route.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
 
 @ApiTags('auth')
-@Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
 
   @getUserSwaggerDoc()
-  @UseGuards(AuthGuard('jwt'))
+  @Roles(Role.TEACHER, Role.STUDENT)
   @Get('user')
   async getUser(@Req() req) {
     return this.authService.getUser(req.user.email);
@@ -40,6 +43,7 @@ export class AuthController {
 
   // pass username and password in a json object
   @localLoginSwaggerDoc()
+  @PublicRoute()
   @UseGuards(AuthGuard('local'))
   @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('local/login')
@@ -49,6 +53,7 @@ export class AuthController {
   }
 
   @LocalRegisterSwaggerDoc()
+  @PublicRoute()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
     return await this.authService.register(
@@ -62,6 +67,7 @@ export class AuthController {
   // - user authenticates if not authenticated
   // - redirects to the googleRedirect endpoint
   @googleAuthSwaggerDoc()
+  @PublicRoute()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
   googleAuth() { }
@@ -72,6 +78,7 @@ export class AuthController {
   // - user is saved to req.user upon subsequent requests
   // - redirection to the frontend
   @googleAuthCallbackSwaggerDoc()
+  @PublicRoute()
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleAuthCallback(@Req() req, @Res() res) {
@@ -107,6 +114,7 @@ export class AuthController {
   }
 
   @googleRegisterSwaggerDoc()
+  @PublicRoute()
   @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {

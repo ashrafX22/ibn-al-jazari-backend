@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Req,
   UseInterceptors,
   Res,
@@ -14,7 +13,6 @@ import {
 import { MeetingService } from './meeting.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
-import { AuthGuard } from '@nestjs/passport';
 import {
   createMeetingSwaggerDoc,
   findAllMeetingsSwaggerDoc,
@@ -33,9 +31,6 @@ export class MeetingController {
   constructor(private readonly meetingService: MeetingService) {}
 
   @createMeetingSwaggerDoc()
-  // @Experiences(Experience.senior)
-  // @Roles(Role.TEAHCER)
-  @UseGuards(AuthGuard('jwt')) // , RolesGuard, ExperienceGuard
   @UseInterceptors(GoogleTokenInterceptor)
   @Post('/classroom/:classroomId')
   async create(
