@@ -97,7 +97,7 @@ export class ClassroomService {
     };
   }
 
-  async findLessonsByTeacherId(teacherId: string) {
+  async findWeeklyLessonsByTeacherId(teacherId: string) {
     try {
       const classrooms = await this.classroomRepository
         .createQueryBuilder('classroom')
@@ -124,7 +124,7 @@ export class ClassroomService {
     }
   }
 
-  async findLessonsByStudentId(studentId: string) {
+  async findWeeklyLessonsByStudentId(studentId: string) {
     try {
       const enrollments =
         await this.enrollmentService.findEnrollmentsByStudentId(studentId);

@@ -54,14 +54,14 @@ export class ClassroomController {
 
   @Roles(Role.TEACHER)
   @Get('teacher/:teacherId/lessons')
-  async findLessonsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findLessonsByTeacherId(teacherId);
+  async findWeeklyLessonsByTeacherId(@Param('teacherId') teacherId: string) {
+    return this.classroomService.findWeeklyLessonsByTeacherId(teacherId);
   }
 
   @Roles(Role.STUDENT)
   @Get('student/:studentId/lessons')
-  async findLessonsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findLessonsByStudentId(studentId);
+  async findWeeklyLessonsByStudentId(@Param('studentId') studentId: string) {
+    return this.classroomService.findWeeklyLessonsByStudentId(studentId);
   }
 
   @findClassroomsByTeacherIdSwaggerDoc()
