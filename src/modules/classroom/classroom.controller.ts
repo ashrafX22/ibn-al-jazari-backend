@@ -19,59 +19,67 @@ import {
   findOneClassroomSwaggerDoc,
   updateClassroomSwaggerDoc,
 } from './classroom.swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
 
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) {}
+  constructor(private readonly classroomService: ClassroomService) { }
 
-  @Post()
   @createClassroomSwaggerDoc()
+  @Roles(Role.TEACHER)
+  @Post()
   async create(@Body() createClassroomDto: CreateClassroomDto) {
     return this.classroomService.create(createClassroomDto);
   }
 
-  @Get()
   @findAllClassroomsSwaggerDoc()
+  @Get()
   async findAll() {
     return this.classroomService.findAll();
   }
 
-  @Get(':id')
   @findOneClassroomSwaggerDoc()
+  @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.classroomService.findOne(id);
   }
 
+  @Roles(Role.TEACHER, Role.STUDENT)
   @Get('details/:id')
   async findClassroomDetails(@Param('id') id: string) {
     return this.classroomService.findClassroomDetails(id);
   }
 
+  @Roles(Role.TEACHER)
   @Get('teacher/:teacherId/lessons')
   async findLessonsByTeacherId(@Param('teacherId') teacherId: string) {
     return this.classroomService.findLessonsByTeacherId(teacherId);
   }
 
+  @Roles(Role.STUDENT)
   @Get('student/:studentId/lessons')
   async findLessonsByStudentId(@Param('studentId') studentId: string) {
     return this.classroomService.findLessonsByStudentId(studentId);
   }
 
-  @Get('teacher/:teacherId')
   @findClassroomsByTeacherIdSwaggerDoc()
+  @Roles(Role.TEACHER)
+  @Get('teacher/:teacherId')
   async getClassroomsByTeacherId(@Param('teacherId') teacherId: string) {
     return this.classroomService.findClassroomsByTeacherId(teacherId);
   }
 
-  @Get('student/:studentId')
   @findClassroomsByStudentIdSwaggerDoc()
+  @Roles(Role.STUDENT)
+  @Get('student/:studentId')
   async getClassroomsByStudentId(@Param('studentId') studentId: string) {
     return this.classroomService.findClassroomsByStudentId(studentId);
   }
 
-  @Patch(':id')
   @updateClassroomSwaggerDoc()
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateClassroomDto: UpdateClassroomDto,
@@ -79,8 +87,8 @@ export class ClassroomController {
     return this.classroomService.update(id, updateClassroomDto);
   }
 
-  @Delete(':id')
   @createClassroomSwaggerDoc()
+  @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.classroomService.remove(id);
   }

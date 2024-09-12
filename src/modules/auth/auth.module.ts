@@ -24,6 +24,8 @@ import { LocalAuthService } from './providers/local/local-auth.service';
 import { JwtUtilService } from './jwt/jwt-util.service';
 import { Classroom } from 'src/models/entities/classroom.entity';
 import { Meeting } from 'src/models/entities/meeting.entity';
+import { PublicRouteService } from './public-route/public.service';
+import { JwtAuthGuard } from './jwt/jwt.guard';
 
 @Module({
   imports: [
@@ -56,7 +58,9 @@ import { Meeting } from 'src/models/entities/meeting.entity';
     GoogleAuthGuard,
     GoogleAuthService,
     GoogleTokenService,
+    JwtAuthGuard,
+    PublicRouteService,
   ],
   exports: [AuthService, JwtModule, GoogleTokenService],
 })
-export class AuthModule {}
+export class AuthModule { }

@@ -13,7 +13,7 @@ export class Teacher {
   @Column(() => User)
   common: User;
 
-  @Column({ default: Role.TEAHCER })
+  @Column({ default: Role.TEACHER })
   role?: Role;
 
   @Column({ default: '' })

@@ -13,7 +13,7 @@ export class ClassroomService {
     @InjectRepository(Classroom)
     private readonly classroomRepository: Repository<Classroom>,
     private readonly enrollmentService: EnrollmentService,
-  ) {}
+  ) { }
 
   async create(
     createClassroomDto: CreateClassroomDto,
@@ -115,7 +115,10 @@ export class ClassroomService {
         .where('classroom.teacherId = :teacherId', { teacherId })
         .orderBy('appointment.startTime', 'ASC')
         .getRawMany();
-      return classrooms.map((classroom) => new classroomEntity(classroom));
+
+      return classrooms
+        .filter((classroom) => { classroom.meetingLink })
+        .map((classroom) => new classroomEntity(classroom));
     } catch (error) {
       return [];
     }
@@ -146,7 +149,10 @@ export class ClassroomService {
         .where('classroom.id IN (:...classroomIds)', { classroomIds })
         .orderBy('appointment.startTime', 'ASC')
         .getRawMany();
-      return classrooms.map((classroom) => new classroomEntity(classroom));
+
+      return classrooms
+        .filter((classroom) => { classroom.meetingLink })
+        .map((classroom) => new classroomEntity(classroom));
     } catch (error) {
       return [];
     }
