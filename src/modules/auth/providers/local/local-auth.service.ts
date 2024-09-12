@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  UseInterceptors,
 } from '@nestjs/common';
 import { JwtUtilService } from 'src/modules/auth/jwt/jwt-util.service';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
@@ -11,7 +10,6 @@ import { UserService } from 'src/modules/user/user.service';
 import { TeacherEntity } from 'src/modules/teacher/entities/teacher.entity';
 import { UnionUserEntity } from 'src/modules/user/types/user.type';
 import { Jwt } from 'src/modules/auth/jwt/jwt.interface';
-import { PasswordHashInterceptor } from '../../interceptors/password-hash.interceptor';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -20,7 +18,7 @@ export class LocalAuthService {
     private userService: UserService,
     private studentService: StudentService,
     private jwtUtilService: JwtUtilService,
-  ) {}
+  ) { }
 
   async localValidateUser(
     email: string,

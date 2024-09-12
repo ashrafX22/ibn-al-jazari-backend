@@ -118,7 +118,6 @@ export class AuthController {
   @googleRegisterSwaggerDoc()
   @PublicRoute()
   @UseInterceptors(JwtAuthHeaderInterceptor)
-  @UseInterceptors(PasswordHashInterceptor)
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
     const jwt = await this.authService.register(

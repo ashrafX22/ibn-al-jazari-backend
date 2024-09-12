@@ -2,7 +2,6 @@ import {
   Injectable,
   ConflictException,
   InternalServerErrorException,
-  UseInterceptors,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,7 +9,6 @@ import { Student } from '../../models/entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentEntity } from './entities/student.entity';
 import { flattenObject } from 'src/shared/utils/flatten-object.util';
-import { PasswordHashInterceptor } from '../auth/interceptors/password-hash.interceptor';
 
 @Injectable()
 export class StudentService {
