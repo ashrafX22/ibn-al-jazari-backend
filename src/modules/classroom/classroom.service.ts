@@ -88,6 +88,7 @@ export class ClassroomService {
       students: classroom.enrollments.map((enrollment) => ({
         id: enrollment.student.id,
         name: enrollment.student.common.name,
+        email: enrollment.student.common.email,
       })),
       appointments: classroom.appointments.map((appointment) => ({
         id: appointment.id,
