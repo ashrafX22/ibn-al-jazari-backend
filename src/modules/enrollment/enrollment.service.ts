@@ -18,13 +18,25 @@ export class EnrollmentService {
   ): Promise<EnrollmentEntity> {
     // check if student has already reached the maximum number of enrollments
     const studentId = createEnrollmentDto.studentId;
-    const enrollments = await this.findEnrollmentsByStudentId(studentId);
-    if (enrollments.length > 7) {
+    const studentEnrollments = await this.findEnrollmentsByStudentId(studentId);
+    if (studentEnrollments.length > 7) {
       throw new HttpException(
         'You have reached the maximum number of enrollments',
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    // check if classroom has reached the maximum number of enrollments
+    const classroomId = createEnrollmentDto.classroomId;
+    const classroomEnrollments =
+      await this.findEnrollmentsByClassroomId(classroomId);
+    if (classroomEnrollments.length > 5) {
+      throw new HttpException(
+        'This classroom has reached the maximum number of enrollments',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     try {
       const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
       const savedEnrollment = await this.enrollmentRepository.save(enrollment);
@@ -43,6 +55,15 @@ export class EnrollmentService {
         );
       }
     }
+  }
+
+  async findEnrollmentsByClassroomId(
+    classroomId: string,
+  ): Promise<Enrollment[]> {
+    const enrollments = await this.enrollmentRepository.find({
+      where: { classroomId },
+    });
+    return enrollments;
   }
 
   async findAll(): Promise<EnrollmentEntity[]> {
