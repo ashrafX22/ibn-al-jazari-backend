@@ -208,6 +208,41 @@ export class ClassroomService {
     }
   }
 
+  async findJoinableClassrooms(studentId: string): Promise<classroomEntity[]> {
+    try {
+      const enrollments =
+        await this.enrollmentService.findEnrollmentsByStudentId(studentId);
+
+      const classroomIds = enrollments.map(
+        (enrollment) => enrollment['classroomId'],
+      );
+
+      console.log("classroomIds", classroomIds);
+
+      const query = this.classroomRepository
+        .createQueryBuilder('classroom')
+        .leftJoin('classroom.subject', 'subject')
+        .leftJoin('classroom.teacher', 'teacher')
+        .select([
+          'classroom.id AS "id"',
+          'classroom.name AS "name"',
+          'subject.id AS "subjectId"',
+          'subject.name AS "subjectName"',
+          'teacher.id AS "teacherId"',
+          'teacher.name AS "teacherName"',
+        ]);
+
+      if (classroomIds.length > 0)
+        query.where('classroom.id NOT IN (:...classroomIds)', { classroomIds });
+
+      const classrooms = await query.getRawMany();
+
+      return classrooms.map((classroom) => new classroomEntity(classroom));
+    } catch (error) {
+      return [];
+    }
+  }
+
   async update(
     id: string,
     updateClassroomDto: UpdateClassroomDto,

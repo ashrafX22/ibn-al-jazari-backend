@@ -29,7 +29,7 @@ export class EnrollmentController {
   constructor(private readonly enrollmentService: EnrollmentService) { }
 
   @createEnrollmentSwaggerDoc()
-  @Roles(Role.TEACHER)
+  @Roles(Role.TEACHER, Role.STUDENT)
   @Post()
   async create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
     return this.enrollmentService.create(createEnrollmentDto);

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { ClassroomService } from './classroom.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
@@ -32,51 +33,58 @@ export class ClassroomController {
   @Roles(Role.TEACHER)
   @Post()
   async create(@Body() createClassroomDto: CreateClassroomDto) {
-    return this.classroomService.create(createClassroomDto);
+    return await this.classroomService.create(createClassroomDto);
   }
 
   @findAllClassroomsSwaggerDoc()
   @Get()
   async findAll() {
-    return this.classroomService.findAll();
+    return await this.classroomService.findAll();
+  }
+
+  @Roles(Role.TEACHER, Role.STUDENT)
+  @Get('joinable')
+  async findJoinableClassrooms( @Req() req) {
+    console.log("findJoinableClassrooms user", req.user);
+    return await this.classroomService.findJoinableClassrooms(req.user.id);
   }
 
   @findOneClassroomSwaggerDoc()
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.classroomService.findOne(id);
+    return await this.classroomService.findOne(id);
   }
 
   @Roles(Role.TEACHER, Role.STUDENT)
   @Get('details/:id')
   async findClassroomDetails(@Param('id') id: string) {
-    return this.classroomService.findClassroomDetails(id);
+    return await this.classroomService.findClassroomDetails(id);
   }
 
   @Roles(Role.TEACHER)
   @Get('teacher/:teacherId/lessons')
   async findWeeklyLessonsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findWeeklyLessonsByTeacherId(teacherId);
+    return await this.classroomService.findWeeklyLessonsByTeacherId(teacherId);
   }
 
   @Roles(Role.STUDENT)
   @Get('student/:studentId/lessons')
   async findWeeklyLessonsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findWeeklyLessonsByStudentId(studentId);
+    return await this.classroomService.findWeeklyLessonsByStudentId(studentId);
   }
 
   @findClassroomsByTeacherIdSwaggerDoc()
   @Roles(Role.TEACHER)
   @Get('teacher/:teacherId')
-  async getClassroomsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findClassroomsByTeacherId(teacherId);
+  async findClassroomsByTeacherId(@Param('teacherId') teacherId: string) {
+    return await this.classroomService.findClassroomsByTeacherId(teacherId);
   }
 
   @findClassroomsByStudentIdSwaggerDoc()
   @Roles(Role.STUDENT)
   @Get('student/:studentId')
-  async getClassroomsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findClassroomsByStudentId(studentId);
+  async findClassroomsByStudentId(@Param('studentId') studentId: string) {
+    return await this.classroomService.findClassroomsByStudentId(studentId);
   }
 
   @updateClassroomSwaggerDoc()
@@ -85,12 +93,12 @@ export class ClassroomController {
     @Param('id') id: string,
     @Body() updateClassroomDto: UpdateClassroomDto,
   ) {
-    return this.classroomService.update(id, updateClassroomDto);
+    return await this.classroomService.update(id, updateClassroomDto);
   }
 
   @Delete(':id')
   @removeClassroomSwaggerDoc()
   async remove(@Param('id') id: string) {
-    return this.classroomService.remove(id);
+    return await this.classroomService.remove(id);
   }
 }
