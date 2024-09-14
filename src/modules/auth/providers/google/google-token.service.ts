@@ -12,10 +12,10 @@ export class GoogleTokenService {
     ) { }
 
 
-    async validateAndRefreshGoogleAccessToken(email: string, googleAccessToken: string): Promise<string | null> {
+    async validateAndRefreshGoogleAccessToken(id: string, googleAccessToken: string): Promise<string | null> {
         const isValid = await this.isValidGoogleAccessToken(googleAccessToken);
 
-        if (!isValid) return await this.refreshGoogleAccessToken(email);
+        if (!isValid) return await this.refreshGoogleAccessToken(id);
 
         return null;
     }
@@ -33,10 +33,10 @@ export class GoogleTokenService {
         }
     }
 
-    async refreshGoogleAccessToken(email: string): Promise<string> {
+    async refreshGoogleAccessToken(id: string): Promise<string> {
         console.log("refreshGoogleAccessToken");
 
-        const user = await this.userService.findByEmail(email);
+        const user = await this.userService.findById(id);
 
         if (!user || !user.googleRefreshToken)
             throw new UnauthorizedException('No refresh token available. Please log in again.');

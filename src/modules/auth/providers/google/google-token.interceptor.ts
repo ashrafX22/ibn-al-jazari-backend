@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { GoogleTokenService } from './google-token.service';
 import { Jwt } from '../../jwt/jwt.interface';
 import { JwtUtilService } from '../../jwt/jwt-util.service';
@@ -16,7 +15,7 @@ export class GoogleTokenInterceptor implements NestInterceptor {
   constructor(
     private readonly googleTokenService: GoogleTokenService,
     private readonly jwtUtilService: JwtUtilService,
-  ) {}
+  ) { }
 
   async intercept(
     context: ExecutionContext,
@@ -31,8 +30,7 @@ export class GoogleTokenInterceptor implements NestInterceptor {
     }
 
     const user: Jwt = request.user;
-    const { email } = request.user;
-    const { googleAccessToken } = user;
+    const { id, googleAccessToken } = user;
 
     console.log('GoogleTokenInterceptor');
     console.log('oiginal token', googleAccessToken);
@@ -44,7 +42,7 @@ export class GoogleTokenInterceptor implements NestInterceptor {
 
     const refreshedGoogleAccessToken =
       await this.googleTokenService.validateAndRefreshGoogleAccessToken(
-        email,
+        id,
         googleAccessToken,
       );
 
