@@ -9,7 +9,6 @@ import {
   IsOptional,
   IsString,
   IsNotEmpty,
-  IsAlpha,
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';
 import { hashSync } from 'bcrypt';
@@ -25,7 +24,7 @@ export class CreateUserDto {
   profilePicture?: string;
 
   @IsNotEmpty()
-  @IsAlpha()
+  @IsString()
   @ApiProperty({
     description: 'The full name of the user',
     example: 'John Doe',
