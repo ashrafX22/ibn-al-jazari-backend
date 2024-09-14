@@ -17,7 +17,7 @@ import {
   googleAuthCallbackSwaggerDoc,
   LocalRegisterSwaggerDoc,
   localLoginSwaggerDoc,
-  googleRegisterSwaggerDoc,
+  googleRegisterStudentSwaggerDoc,
 } from './auth.swagger';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
@@ -28,12 +28,13 @@ import { PasswordHashInterceptor } from './interceptors/password-hash.intercepto
 import { PublicRoute } from './public-route/public-route.decorator';
 import { Roles } from './decorators/roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
+import { CreateTeacherDto } from '../teacher/dto/create-teacher.dto';
 
 @ApiTags('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @getUserSwaggerDoc()
   @Roles(Role.TEACHER, Role.STUDENT)
@@ -58,7 +59,7 @@ export class AuthController {
   @PublicRoute()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(
+    return await this.authService.registerStudent(
       AuthProvider.LOCAL,
       createStudentDto,
     );
@@ -72,7 +73,7 @@ export class AuthController {
   @PublicRoute()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  googleAuth() {}
+  googleAuth() { }
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
@@ -115,15 +116,26 @@ export class AuthController {
     }
   }
 
-  @googleRegisterSwaggerDoc()
+  @googleRegisterStudentSwaggerDoc()
   @PublicRoute()
   @UseInterceptors(JwtAuthHeaderInterceptor)
-  @UseInterceptors(PasswordHashInterceptor)
-  @Post('/google/register')
-  async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-    const jwt = await this.authService.register(
+  @Post('/google/register/student')
+  async googleRegisterStudent(@Body() createStudentDto: CreateStudentDto) {
+    const jwt = await this.authService.registerStudent(
       AuthProvider.GOOGLE,
       createStudentDto,
+    );
+
+    return { message: 'success', jwt };
+  }
+
+  @PublicRoute()
+  @UseInterceptors(JwtAuthHeaderInterceptor)
+  @Post('/google/register/teacher')
+  async googleRegisterTeacher(@Body() createTeacherDto: CreateTeacherDto) {
+    const jwt = await this.authService.registerTeacher(
+      AuthProvider.GOOGLE,
+      createTeacherDto,
     );
 
     return { message: 'success', jwt };

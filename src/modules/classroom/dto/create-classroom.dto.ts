@@ -5,7 +5,7 @@ export class CreateClassroomDto {
   @ApiProperty({ description: 'Name of the classroom' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(70)
+  @MaxLength(40)
   name: string;
 
   @ApiProperty({ description: 'ID of the teacher' })

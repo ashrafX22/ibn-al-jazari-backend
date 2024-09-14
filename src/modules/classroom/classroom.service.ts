@@ -88,6 +88,7 @@ export class ClassroomService {
       students: classroom.enrollments.map((enrollment) => ({
         id: enrollment.student.id,
         name: enrollment.student.common.name,
+        email: enrollment.student.common.email,
       })),
       appointments: classroom.appointments.map((appointment) => ({
         id: appointment.id,
@@ -97,7 +98,7 @@ export class ClassroomService {
     };
   }
 
-  async findLessonsByTeacherId(teacherId: string) {
+  async findWeeklyLessonsByTeacherId(teacherId: string) {
     try {
       const classrooms = await this.classroomRepository
         .createQueryBuilder('classroom')
@@ -124,7 +125,7 @@ export class ClassroomService {
     }
   }
 
-  async findLessonsByStudentId(studentId: string) {
+  async findWeeklyLessonsByStudentId(studentId: string) {
     try {
       const enrollments =
         await this.enrollmentService.findEnrollmentsByStudentId(studentId);

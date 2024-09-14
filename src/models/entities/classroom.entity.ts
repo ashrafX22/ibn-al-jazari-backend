@@ -21,7 +21,7 @@ export class Classroom {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 40 })
   name: string;
 
   @Column()

@@ -26,30 +26,30 @@ import {
 @Controller('teacher')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TeacherController {
-  constructor(private readonly teacherService: TeacherService) {}
+  constructor(private readonly teacherService: TeacherService) { }
 
   @createTeacherSwaggerDoc()
   @Post()
   async create(@Body() createTeacherDto: CreateTeacherDto) {
-    return this.teacherService.create(createTeacherDto);
+    return await this.teacherService.create(createTeacherDto);
   }
 
   @findAllTeachersSwaggerDoc()
   @Get()
   async findAll() {
-    return this.teacherService.findAll();
+    return await this.teacherService.findAll();
   }
 
   @findTeacherByIdSwaggerDoc()
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return this.teacherService.findById(id);
+    return await this.teacherService.findById(id);
   }
 
   @findTeacherByEmailSwaggerDoc()
   @Get('email/:email')
   async findOneByEmail(@Param('email') email: string) {
-    return this.teacherService.findByEmail(email);
+    return await this.teacherService.findByEmail(email);
   }
 
   @updateTeacherSwaggerDoc()
@@ -58,12 +58,17 @@ export class TeacherController {
     @Param('id') id: string,
     @Body() updateTeacherDto: UpdateTeacherDto,
   ) {
-    return this.teacherService.update(id, updateTeacherDto);
+    return await this.teacherService.update(id, updateTeacherDto);
+  }
+
+  @Patch(':id')
+  async approve(@Param('id') id: string) {
+    return await this.teacherService.approve(id);
   }
 
   @removeTeacherSwaggerDoc()
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.teacherService.remove(id);
+    return await this.teacherService.remove(id);
   }
 }
