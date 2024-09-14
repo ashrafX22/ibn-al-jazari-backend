@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -31,6 +32,7 @@ export class TeacherService {
       googleRefreshToken,
       summary,
       experience,
+      ijazaPhotoUrl,
     } = createTeacherDto;
 
     try {
@@ -46,6 +48,7 @@ export class TeacherService {
         },
         summary,
         experience,
+        ijazaPhotoUrl
       });
 
       const savedTeacher = await this.teacherRepository.save(teacher);
@@ -77,8 +80,7 @@ export class TeacherService {
       where: {
         common: {
           email,
-        },
-        status: TeacherStatus.APPROVED
+        }
       }
     });
 

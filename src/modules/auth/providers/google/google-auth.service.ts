@@ -7,6 +7,8 @@ import { JwtUtilService } from "src/modules/auth/jwt/jwt-util.service";
 import { StudentService } from "src/modules/student/student.service";
 import { TeacherService } from "src/modules/teacher/teacher.service";
 import { CreateTeacherDto } from "src/modules/teacher/dto/create-teacher.dto";
+import { Role } from "src/models/enums/role.enum";
+import { TeacherStatus } from "src/models/enums/teacher-status.enum";
 
 @Injectable()
 export class GoogleAuthService {
@@ -20,7 +22,12 @@ export class GoogleAuthService {
     async googleAuth(googleInfo: any) {
         const { email, googleAccessToken, googleRefreshToken } = googleInfo;
         const user = await this.userService.findByEmail(email);
-        if (user) {
+
+        if (user instanceof (TeacherEntity) && user.status !== TeacherStatus.APPROVED)
+            return { unapprovedTeacher: true };
+        else if (!user)
+            return { newAccount: true };
+        else {
             console.log(
                 'same google refresh token?',
                 user.googleRefreshToken === googleRefreshToken,
@@ -46,7 +53,7 @@ export class GoogleAuthService {
                 newAccount: false,
                 jwt: this.jwtUtilService.issueJwt(payload),
             };
-        } else return { newAccount: true };
+        }
     }
 
     async googleRegisterStudent(createStudentDto: CreateStudentDto) {
@@ -62,15 +69,6 @@ export class GoogleAuthService {
     }
 
     async googleRegisterTeacher(createTeacherDto: CreateTeacherDto) {
-        const teacher = await this.teacherService.create(createTeacherDto);
-
-        const payload: Jwt = {
-            id: teacher.id,
-            role: teacher.role,
-            experience: teacher.experience,
-            googleAccessToken: createTeacherDto.googleAccessToken
-        };
-
-        return this.jwtUtilService.issueJwt(payload);
+        return await this.teacherService.create(createTeacherDto);;
     }
 }

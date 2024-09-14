@@ -93,18 +93,11 @@ export class AuthController {
       req.user,
     );
 
-    const { newAccount } = result;
-
-    // google login
-    if (!newAccount) {
-      const { jwt } = result;
-      const queryParams = new URLSearchParams({
-        jwt: jwt,
-      }).toString();
-      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
-    }
+    const { unapprovedTeacher, newAccount } = result;
+    if (unapprovedTeacher)
+      return res.redirect(`${process.env.ORIGIN}/?unapprovedTeacher=true`);
     // google register
-    else {
+    if (newAccount) {
       const queryParams = new URLSearchParams({
         email: req.user.email,
         googleAccessToken: req.user.googleAccessToken,
@@ -113,6 +106,14 @@ export class AuthController {
       return res.redirect(
         `${process.env.ORIGIN}/auth/register-additional?${queryParams}`,
       );
+    }
+    // google login
+    else {
+      const { jwt } = result;
+      const queryParams = new URLSearchParams({
+        jwt: jwt,
+      }).toString();
+      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
     }
   }
 
@@ -130,14 +131,13 @@ export class AuthController {
   }
 
   @PublicRoute()
-  @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('/google/register/teacher')
   async googleRegisterTeacher(@Body() createTeacherDto: CreateTeacherDto) {
-    const jwt = await this.authService.registerTeacher(
+    const teacher = await this.authService.registerTeacher(
       AuthProvider.GOOGLE,
       createTeacherDto,
     );
 
-    return { message: 'success', jwt };
+    return { message: 'success' };
   }
 }
