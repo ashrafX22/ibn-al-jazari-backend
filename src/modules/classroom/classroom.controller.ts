@@ -17,6 +17,7 @@ import {
   findClassroomsByStudentIdSwaggerDoc,
   findClassroomsByTeacherIdSwaggerDoc,
   findOneClassroomSwaggerDoc,
+  removeClassroomSwaggerDoc,
   updateClassroomSwaggerDoc,
 } from './classroom.swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -25,7 +26,7 @@ import { Role } from 'src/models/enums/role.enum';
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) { }
+  constructor(private readonly classroomService: ClassroomService) {}
 
   @createClassroomSwaggerDoc()
   @Roles(Role.TEACHER)
@@ -87,8 +88,8 @@ export class ClassroomController {
     return this.classroomService.update(id, updateClassroomDto);
   }
 
-  @createClassroomSwaggerDoc()
   @Delete(':id')
+  @removeClassroomSwaggerDoc()
   async remove(@Param('id') id: string) {
     return this.classroomService.remove(id);
   }

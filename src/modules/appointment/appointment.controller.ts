@@ -15,6 +15,7 @@ import {
   createAppointmentSwaggerDoc,
   findAllAppointmentsSwaggerDoc,
   findOneAppointmentSwaggerDoc,
+  removeAppointmentSwaggerDoc,
   updateAppointmentSwaggerDoc,
 } from './appointment.swagger';
 
@@ -54,7 +55,7 @@ export class AppointmentController {
   }
 
   @Delete(':id')
-  @createAppointmentSwaggerDoc()
+  @removeAppointmentSwaggerDoc()
   async remove(@Param('id') id: string) {
     return this.appointmentService.remove(id);
   }
