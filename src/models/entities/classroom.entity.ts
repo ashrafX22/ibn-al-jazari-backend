@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { Meeting } from './meeting.entity';
@@ -42,9 +43,6 @@ export class Classroom {
   @ManyToOne(() => Subject, (subject) => subject.classrooms)
   @JoinColumn({ name: 'subjectId' })
   subject: Subject;
-
-  @OneToMany(() => Meeting, (meeting) => meeting.class)
-  meetings: Meeting[];
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.classroom)
   enrollments: Enrollment[];
