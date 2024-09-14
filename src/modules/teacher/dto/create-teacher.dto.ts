@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Experience } from 'src/models/enums/experience.enum';
 import { CreateUserDto } from './../../user/dto/create.user.dto';
@@ -6,6 +6,7 @@ import { CreateUserDto } from './../../user/dto/create.user.dto';
 export class CreateTeacherDto extends CreateUserDto {
 
   @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty({
     description: "a summary about the teacher",
@@ -15,6 +16,7 @@ export class CreateTeacherDto extends CreateUserDto {
 
   // TODO: change to @IsUrl
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     description: "the url of the ijaza photo",
   })

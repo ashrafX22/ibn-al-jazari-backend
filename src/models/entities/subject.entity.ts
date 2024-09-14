@@ -13,7 +13,7 @@ export class Subject {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 20 })
   name: string;
 
   @Column()
