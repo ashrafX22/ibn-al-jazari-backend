@@ -68,17 +68,19 @@ export class CreateUserDto {
   })
   dateOfBirth: Date;
 
+  @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Access token for the user',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
-  googleAccessToken: string;
+  googleAccessToken?: string;
 
+  @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Refresh token for the user',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
-  googleRefreshToken: string;
+  googleRefreshToken?: string;
 }
