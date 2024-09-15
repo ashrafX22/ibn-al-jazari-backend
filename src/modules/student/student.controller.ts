@@ -20,7 +20,7 @@ import {
   findStudentByEmailSwaggerDoc,
   updateStudentSwaggerDoc,
   removeStudentSwaggerDoc,
-} from './student.swagger-doc';
+} from './student.swagger';
 
 @ApiTags('student')
 @Controller('student')
@@ -30,37 +30,40 @@ export class StudentController {
 
   @createStudentSwaggerDoc()
   @Post()
-  create(@Body() createStudentDto: CreateStudentDto) {
+  async create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentService.create(createStudentDto);
   }
 
   @findAllStudentsSwaggerDoc()
   @Get()
-  findAll() {
+  async findAll() {
     return this.studentService.findAll();
   }
 
   @findStudentByIdSwaggerDoc()
   @Get(':id')
-  findById(@Param('id') id: string) {
+  async findById(@Param('id') id: string) {
     return this.studentService.findById(+id);
   }
 
   @findStudentByEmailSwaggerDoc()
   @Get('email/:email')
-  findByEmail(@Param('email') email: string) {
+  async findByEmail(@Param('email') email: string) {
     return this.studentService.findByEmail(email);
   }
 
   @updateStudentSwaggerDoc()
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateStudentDto: UpdateStudentDto,
+  ) {
     return this.studentService.update(+id, updateStudentDto);
   }
 
   @removeStudentSwaggerDoc()
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.studentService.remove(+id);
   }
 }

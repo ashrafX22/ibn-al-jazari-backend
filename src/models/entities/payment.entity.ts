@@ -4,6 +4,7 @@ import {
     Column,
     CreateDateColumn,
     ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import { Student } from './student.entity';
 import { Classroom } from './classroom.entity';
@@ -16,14 +17,15 @@ export class Payment {
     id: number;
 
     @Column()
-    student_id: number;
+    studentId: number;
 
     @Column()
-    classroom_id: number;
+    classroomId: number;
 
     @Column()
-    payment_gateway_order_id: string;
+    paymentGatewayOrderId: string;
 
+    // TODO: should we keep this and why? we can get it from the subject price
     @Column('float')
     amount: number;
 
@@ -37,8 +39,10 @@ export class Payment {
     paymentMethod: PaymentMethod;
 
     @ManyToOne(() => Student, (student) => student.payments)
+    @JoinColumn({ name: 'studentId' })
     student: Student;
 
     @ManyToOne(() => Classroom, (classroom) => classroom.payments)
+    @JoinColumn({ name: 'classroomId' })
     classroom: Classroom;
 }

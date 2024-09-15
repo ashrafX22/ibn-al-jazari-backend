@@ -1,25 +1,30 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Classroom } from './classroom.entity';
 
 @Entity()
 export class Subject {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ unique: true })
-    name: string;
+  @Column({ unique: true })
+  name: string;
 
-    @Column('float')
-    price: number;
+  @Column()
+  price: number;
 
-    @CreateDateColumn()
-    created_at: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updated_at: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToMany(() => Classroom, (classroom) => classroom.subject)
+  classrooms: Classroom[];
 }

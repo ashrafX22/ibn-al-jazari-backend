@@ -35,9 +35,9 @@ export class TeacherService {
         experience
       });
 
-      await this.teacherRepository.save(teacher);
+      const savedTeacher = await this.teacherRepository.save(teacher);
 
-      return new TeacherEntity(flattenObject(teacher));
+      return new TeacherEntity(flattenObject(savedTeacher));
     } catch (error) {
       if (error.code === '23505')
         throw new ConflictException(error.detail);

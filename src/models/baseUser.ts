@@ -24,7 +24,7 @@ export class User {
   @Column()
   dateOfBirth: Date;
 
-  @Column()
+  @Column({ nullable: true })
   googleRefreshToken: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

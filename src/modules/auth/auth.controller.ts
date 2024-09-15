@@ -1,10 +1,29 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
-import { GoogleAuthGuard, JwtAuthGuard } from './utils/guards';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { GoogleAuthGuard } from './providers/google/google.guard';
 import { ApiTags } from '@nestjs/swagger';
-import { getUserSwaggerDoc, googleAuthSwaggerDoc, googleAuthCallbackSwaggerDoc, LocalRegisterSwaggerDoc, localLoginSwaggerDoc, googleRegisterSwaggerDoc } from './auth.swagger-doc';
+import {
+  getUserSwaggerDoc,
+  googleAuthSwaggerDoc,
+  googleAuthCallbackSwaggerDoc,
+  LocalRegisterSwaggerDoc,
+  localLoginSwaggerDoc,
+  googleRegisterSwaggerDoc,
+} from './auth.swagger';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthProvider } from './providers/auth-provider.enum';
+import { JwtAuthHeaderInterceptor } from './jwt/jwt-auth-header.interceptor';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -12,19 +31,30 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private authService: AuthService) { }
 
+  @getUserSwaggerDoc()
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
+  async getUser(@Req() req) {
+    return this.authService.getUser(req.user.email);
+  }
+
   // pass username and password in a json object
   @localLoginSwaggerDoc()
   @UseGuards(AuthGuard('local'))
+  @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('local/login')
   async localLogin(@Req() req) {
-    console.log("local login", req.user);
-    return this.authService.localLogin(req.user);
+    const jwt = await this.authService.login(AuthProvider.LOCAL, req.user);
+    return { message: "success", jwt };
   }
 
   @LocalRegisterSwaggerDoc()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.localRegister(createStudentDto);
+    return await this.authService.register(
+      AuthProvider.LOCAL,
+      createStudentDto,
+    );
   }
 
   // google auth steps
@@ -45,18 +75,23 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleAuthCallback(@Req() req, @Res() res) {
-    console.log("google login redirect");
+    console.log('google login redirect');
     console.log(req.user);
-    const result = await this.authService.googleAuth(req.user);
+
+    const result: any = await this.authService.login(
+      AuthProvider.GOOGLE,
+      req.user,
+    );
+
     const { newAccount } = result;
 
     // google login
     if (!newAccount) {
-      const { role, jwt } = result;
+      const { jwt } = result;
       const queryParams = new URLSearchParams({
         jwt: jwt,
       }).toString();
-      return res.redirect(`${process.env.ORIGIN}/${role}-home?${queryParams}`);
+      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
     }
     // google register
     else {
@@ -65,21 +100,22 @@ export class AuthController {
         googleAccessToken: req.user.googleAccessToken,
         googleRefreshToken: req.user.googleRefreshToken,
       }).toString();
-      return res.redirect(`${process.env.ORIGIN}/additional-info?${queryParams}`);
+      return res.redirect(
+        `${process.env.ORIGIN}/auth/register-additional?${queryParams}`,
+      );
     }
   }
 
   @googleRegisterSwaggerDoc()
+  @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('/google/register')
   async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.googleRegister(createStudentDto);
-  }
 
-  @getUserSwaggerDoc()
-  @UseGuards(JwtAuthGuard)
-  @Get('user')
-  getUser(@Req() req) {
-    console.log("req user", req.user);
-    return req.user;
+    const jwt = await this.authService.register(
+      AuthProvider.GOOGLE,
+      createStudentDto,
+    );
+
+    return { message: "success", jwt };
   }
 }

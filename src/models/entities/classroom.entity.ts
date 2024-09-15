@@ -1,49 +1,57 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    ManyToOne,
-    OneToMany,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { Meeting } from './meeting.entity';
 import { Enrollment } from './enrollment.entity';
 import { Payment } from './payment.entity';
+import { Subject } from './subject.entity';
+import { Appointment } from './appointment.entity';
 
 @Entity()
 export class Classroom {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ unique: true })
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    subject_id: number;
+  @Column()
+  teacherId: number;
 
-    @Column()
-    start_time: Date;
+  @Column()
+  subjectId: number;
 
-    @Column()
-    end_time: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @CreateDateColumn()
-    created_at: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-    @UpdateDateColumn()
-    updated_at: Date;
+  @ManyToOne(() => Teacher, (teacher) => teacher.classrooms)
+  @JoinColumn({ name: 'teacherId' })
+  teacher: Teacher;
 
-    @ManyToOne(() => Teacher, (teacher) => teacher.classrooms)
-    teacher: Teacher;
+  @ManyToOne(() => Subject, (subject) => subject.classrooms)
+  @JoinColumn({ name: 'subjectId' })
+  subject: Subject;
 
-    @OneToMany(() => Meeting, (meeting) => meeting.class)
-    meetings: Meeting[];
+  @OneToMany(() => Meeting, (meeting) => meeting.class)
+  meetings: Meeting[];
 
-    @OneToMany(() => Enrollment, (enrollment) => enrollment.classroom)
-    enrollments: Enrollment[];
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.classroom)
+  enrollments: Enrollment[];
 
-    @OneToMany(() => Payment, (payment) => payment.classroom)
-    payments: Payment[];
+  @OneToMany(() => Appointment, (appointment) => appointment.classroom)
+  appointments: Appointment[];
+
+  @OneToMany(() => Payment, (payment) => payment.classroom)
+  payments: Payment[];
 }

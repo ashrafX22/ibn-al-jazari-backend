@@ -1,21 +1,29 @@
-import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { Student } from './student.entity';
-import { Classroom } from './classroom.entity'
+import { Classroom } from './classroom.entity';
 
 @Entity()
 export class Enrollment {
-    @PrimaryColumn()
-    StudentId: number;
+  @PrimaryColumn()
+  studentId: number;
 
-    @PrimaryColumn()
-    classroomId: number;
+  @PrimaryColumn()
+  classroomId: number;
 
-    @Column()
-    timestamp: Date;
+  @CreateDateColumn()
+  enrollmentDate: Date;
 
-    @ManyToOne(() => Student, (student) => student.enrollments)
-    student: Student;
+  @ManyToOne(() => Student, (student) => student.enrollments)
+  @JoinColumn({ name: 'studentId' })
+  student: Student;
 
-    @ManyToOne(() => Classroom, (classroom) => classroom.enrollments)
-    classroom: Classroom;
+  @ManyToOne(() => Classroom, (classroom) => classroom.enrollments)
+  @JoinColumn({ name: 'classroomId' })
+  classroom: Classroom;
 }
