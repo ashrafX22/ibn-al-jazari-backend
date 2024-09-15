@@ -4,50 +4,39 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
-import { ClassroomService } from '../classroom/classroom.service';
-import { EnrollmentService } from '../enrollment/enrollment.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Meeting } from 'src/models/entities/meeting.entity';
 import { MeetingServiceFactory } from './factories/meeting-service.factory';
 import { Jwt } from '../auth/jwt/jwt.interface';
-import { MeetingDetails } from './interfaces/meeting-details.interface';
-import { UpdateMeetingDto } from './dto/update-meeting.dto';
-import { AppointmentService } from '../appointment/appointment.service';
+import { CreateMeetingDetails } from './interfaces/create-meeting-details.interface';
 import { MeetingEnity } from './entities/meeting.entity';
+import { MeetingProvider } from './enums/meeting-provider.enum';
 
 @Injectable()
 export class MeetingService {
   constructor(
     @InjectRepository(Meeting)
     private readonly meetingRepository: Repository<Meeting>,
-    private readonly classroomService: ClassroomService,
     private readonly meetingServiceFactory: MeetingServiceFactory,
-    private readonly appointmentService: AppointmentService,
-    private readonly enrollmentService: EnrollmentService,
-  ) {}
+  ) { }
 
   async create(
     creatorDetails: Jwt,
-    classroomId: string,
+    classroomDetails: any,
     createMeetingDto: CreateMeetingDto,
   ): Promise<MeetingEnity> {
+    console.log("create meeting service");
+
     const { provider } = createMeetingDto;
 
-    const classroom = await this.classroomService.findOne(classroomId);
-    if (!classroom) throw new NotFoundException('Classroom not found');
-
-    const classroomAppointments =
-      await this.appointmentService.findAppointmentsByClassroomId(classroomId);
-
-    const studentEmails =
-      await this.enrollmentService.findStudentEmailsByClassroomId(classroomId);
-
-    const meetingDetails: MeetingDetails = {
-      title: classroom.name,
-      appointments: classroomAppointments,
-      attendees: studentEmails,
+    const meetingDetails: CreateMeetingDetails = {
+      title: classroomDetails.name,
+      appointments: classroomDetails.appointments,
+      attendees: classroomDetails.students,
     };
+
+    console.log("meetingDetails", meetingDetails);
 
     const meetingService =
       this.meetingServiceFactory.getMeetingService(provider);
@@ -55,15 +44,18 @@ export class MeetingService {
       creatorDetails,
       meetingDetails,
     );
-    const meetingLink = meetingService.getMeetingLink(providerMeeting);
+    const { id, link } = meetingService.getProviderMeetingDetails(providerMeeting);
 
+    console.log("meetingLink", link);
     try {
       const meeting = this.meetingRepository.create({
-        classroomId,
-        link: meetingLink,
+        meetingProviderId: id,
+        link,
+        classroomId: classroomDetails.id,
       });
 
       const savedMeeting = await this.meetingRepository.save(meeting);
+      console.log("meeting", savedMeeting);
       return new MeetingEnity(savedMeeting);
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -94,5 +86,18 @@ export class MeetingService {
 
     await this.meetingRepository.delete(meeting);
     return new MeetingEnity(meeting);
+  }
+  async removeByClassroomId(creatorDetails: Jwt, classroomId: string, meetingProvider: MeetingProvider): Promise<void> {
+    const meeting = await this.meetingRepository.findOneBy({ classroomId });
+
+    if (!meeting) {
+      console.log(`removeByClassroomId: classroom ${classroomId} has no meeting`);
+      return;
+    };
+
+    const meetingService = this.meetingServiceFactory.getMeetingService(meetingProvider);
+    await meetingService.deleteMeeting(creatorDetails, meeting.meetingProviderId);
+
+    await this.meetingRepository.delete(meeting.id);
   }
 }

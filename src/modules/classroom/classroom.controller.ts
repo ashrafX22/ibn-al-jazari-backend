@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ClassroomService } from './classroom.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
@@ -23,11 +24,13 @@ import {
 } from './classroom.swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
+import { CreateAppointmentDto } from '../appointment/dto/create-appointment.dto';
+import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
 
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) {}
+  constructor(private readonly classroomService: ClassroomService) { }
 
   @createClassroomSwaggerDoc()
   @Roles(Role.TEACHER)
@@ -44,7 +47,7 @@ export class ClassroomController {
 
   @Roles(Role.TEACHER, Role.STUDENT)
   @Get('joinable')
-  async findJoinableClassrooms( @Req() req) {
+  async findJoinableClassrooms(@Req() req) {
     console.log("findJoinableClassrooms user", req.user);
     return await this.classroomService.findJoinableClassrooms(req.user.id);
   }
@@ -85,6 +88,15 @@ export class ClassroomController {
   @Get('student/:studentId')
   async findClassroomsByStudentId(@Param('studentId') studentId: string) {
     return await this.classroomService.findClassroomsByStudentId(studentId);
+  }
+
+  @Roles(Role.TEACHER)
+  @UseInterceptors(GoogleTokenInterceptor)
+  @Post(':classroomId/appointments/edit')
+  async editAppointments(@Req() req, @Param('classroomId') classroomId: string, @Body() createAppointmentDtos: CreateAppointmentDto[]) {
+    console.log("editAppointments", req.user, classroomId, createAppointmentDtos);
+    await this.classroomService.editAppointments(req.user, classroomId, createAppointmentDtos);
+    return { message: "success" };
   }
 
   @updateClassroomSwaggerDoc()

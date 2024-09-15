@@ -3,8 +3,9 @@ import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { Jwt } from 'src/modules/auth/jwt/jwt.interface';
 import { IMeetingService } from '../../interfaces/meeting-service.interface';
-import { MeetingDetails } from '../../interfaces/meeting-details.interface';
+import { CreateMeetingDetails } from '../../interfaces/create-meeting-details.interface';
 import { addHoursToDateTime } from 'src/shared/utils/add-hours.util';
+import { ProviderMeetingDetails } from '../../interfaces/provider-meeting-details.interface';
 
 @Injectable()
 export class GoogleMeetingService implements IMeetingService {
@@ -18,7 +19,7 @@ export class GoogleMeetingService implements IMeetingService {
     );
   }
 
-  async createMeeting(creatorDetails: Jwt, meetingDetails: MeetingDetails) {
+  async createMeeting(creatorDetails: Jwt, meetingDetails: CreateMeetingDetails) {
     const { googleAccessToken } = creatorDetails;
     console.log('GoogleMeetingService createMeeting');
 
@@ -56,7 +57,7 @@ export class GoogleMeetingService implements IMeetingService {
         // 'RRULE:FREQ=DAILY;COUNT=1'
         `RRULE:FREQ=WEEKLY;BYDAY=${days}`,
       ],
-      attendees: attendees.map((email) => ({ email })),
+      attendees: attendees.map((attendee: any) => attendee.email),
       reminders: {
         useDefault: false,
         overrides: [
@@ -89,7 +90,28 @@ export class GoogleMeetingService implements IMeetingService {
     }
   }
 
-  getMeetingLink(providerMeeting: any): string {
-    return providerMeeting.hangoutLink;
+  getProviderMeetingDetails(providerMeeting: any): ProviderMeetingDetails {
+    return { id: providerMeeting.id, link: providerMeeting.hangoutLink };
+  }
+
+  async deleteMeeting(creatorDetails: Jwt, meetingProviderId: string): Promise<void> {
+    const { googleAccessToken } = creatorDetails;
+
+    this.oauth2Client.setCredentials({ access_token: googleAccessToken });
+    const calendar = google.calendar({
+      version: 'v3',
+      auth: this.oauth2Client,
+    });
+
+    try {
+      await calendar.events.delete({
+        calendarId: "primary",
+        eventId: meetingProviderId,
+      });
+      console.log(`Event ${meetingProviderId} deleted successfully.`);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      throw new Error('Unable to delete event');
+    }
   }
 }

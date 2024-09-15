@@ -108,4 +108,8 @@ export class AppointmentService {
 
     return new AppointmentEntity(appointment);
   }
+
+  async removeByClassroomId(classroomId: string) {
+    await this.appointmentRepository.delete({ classroomId });
+  }
 }

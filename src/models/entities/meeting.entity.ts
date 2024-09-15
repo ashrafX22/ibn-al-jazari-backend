@@ -15,6 +15,9 @@ export class Meeting {
   id: string;
 
   @Column()
+  meetingProviderId: string;
+
+  @Column()
   link: string;
 
   @Column({ unique: true })

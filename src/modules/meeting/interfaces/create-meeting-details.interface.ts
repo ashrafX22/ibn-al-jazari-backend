@@ -1,6 +1,6 @@
 import { AppointmentEntity } from 'src/modules/appointment/entities/appointment.entity';
 
-export interface MeetingDetails {
+export interface CreateMeetingDetails {
   title: string;
 
   appointments: AppointmentEntity[];

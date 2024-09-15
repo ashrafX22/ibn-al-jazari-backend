@@ -3,10 +3,15 @@ import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
 import { Classroom } from 'src/models/entities/classroom.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EnrollmentService } from '../enrollment/enrollment.service';
 import { classroomEntity } from './entities/classroom.entity';
 import { getDayIndex } from 'src/models/enums/day.enum';
+import { CreateAppointmentDto } from '../appointment/dto/create-appointment.dto';
+import { AppointmentService } from '../appointment/appointment.service';
+import { MeetingService } from '../meeting/meeting.service';
+import { Jwt } from '../auth/jwt/jwt.interface';
+import { MeetingProvider } from '../meeting/enums/meeting-provider.enum';
 
 @Injectable()
 export class ClassroomService {
@@ -14,6 +19,8 @@ export class ClassroomService {
     @InjectRepository(Classroom)
     private readonly classroomRepository: Repository<Classroom>,
     private readonly enrollmentService: EnrollmentService,
+    private readonly appointmentService: AppointmentService,
+    private readonly meetingService: MeetingService,
   ) { }
 
   async create(
@@ -82,6 +89,7 @@ export class ClassroomService {
       throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
 
     return {
+      id: classroom.id,
       name: classroom.name,
       subject: {
         name: classroom.subject.name,
@@ -108,13 +116,13 @@ export class ClassroomService {
 
   async findWeeklyLessonsByTeacherId(teacherId: string) {
     try {
-      const classrooms = await this.classroomRepository
+      const weeklyLessons = await this.classroomRepository
         .createQueryBuilder('classroom')
         .innerJoin('classroom.subject', 'subject')
-        .leftJoin('classroom.meetings', 'meeting')
+        .leftJoin('classroom.meeting', 'meeting')
         .leftJoin('classroom.appointments', 'appointment')
         .select([
-          'classroom.id as "classroomId"',
+          'classroom.id AS "classroomId"',
           'classroom.name AS "classroomName"',
           'subject.name AS "subjectName"',
           'meeting.link AS "meetingLink"',
@@ -125,10 +133,11 @@ export class ClassroomService {
         .orderBy('appointment.startTime', 'ASC')
         .getRawMany();
 
-      return classrooms
-        .filter((classroom) => { classroom.meetingLink })
+      return weeklyLessons
+        .filter((classroom) => classroom.meetingLink)
         .map((classroom) => new classroomEntity(classroom));
     } catch (error) {
+      console.log("findWeeklyLessonsByTeacherId query error", error);
       return [];
     }
   }
@@ -142,27 +151,28 @@ export class ClassroomService {
         (enrollment) => enrollment['classroomId'],
       );
 
-      const classrooms = await this.classroomRepository
+      const weeklyLessons = await this.classroomRepository
         .createQueryBuilder('classroom')
         .innerJoin('classroom.subject', 'subject')
-        .leftJoin('classroom.meetings', 'meeting')
+        .leftJoin('classroom.meeting', 'meeting')
         .leftJoin('classroom.appointments', 'appointment')
         .select([
-          'classroom.id as "classroomId"',
-          'classroom.name as "classroomName"',
-          'subject.name as "subjectName"',
-          'meeting.link as "meetingLink"',
-          'appointment.day as "appointmentDay"',
-          'appointment.startTime as "appointmentStartTime"',
+          'classroom.id AS "classroomId"',
+          'classroom.name AS "classroomName"',
+          'subject.name AS "subjectName"',
+          'meeting.link AS "meetingLink"',
+          'appointment.day AS "appointmentDay"',
+          'appointment.startTime AS "appointmentStartTime"',
         ])
         .where('classroom.id IN (:...classroomIds)', { classroomIds })
         .orderBy('appointment.startTime', 'ASC')
         .getRawMany();
 
-      return classrooms
-        .filter((classroom) => { classroom.meetingLink })
+      return weeklyLessons
+        .filter((classroom) => classroom.meetingLink)
         .map((classroom) => new classroomEntity(classroom));
     } catch (error) {
+      console.log("findWeeklyLessonsByStudentId query error", error);
       return [];
     }
   }
@@ -251,9 +261,33 @@ export class ClassroomService {
     }
   }
 
-  // async editAppointments(appointments: A) {
+  async editAppointments(creatorDetails: Jwt, classroomId: string, createAppointmentDtos: CreateAppointmentDto[]) {
+    console.log("editAppointments service", creatorDetails, classroomId, createAppointmentDtos);
 
-  // }
+    // delete all classroom appointments
+    await this.appointmentService.removeByClassroomId(classroomId);
+    console.log("deleted old appointments");
+
+    // filter ids
+    createAppointmentDtos = createAppointmentDtos.map(
+      (createAppointmentDto) => { return { day: createAppointmentDto.day, startTime: createAppointmentDto.startTime } }
+    );
+    console.log("filtered appointments", createAppointmentDtos);
+
+    // add new appointments
+    for (const createAppointmentDto of createAppointmentDtos)
+      await this.appointmentService.create(classroomId, createAppointmentDto);
+    console.log("added new appointments");
+
+    // delete old meeting
+    // TODO: dynamically create meeting based on provider
+    await this.meetingService.removeByClassroomId(creatorDetails, classroomId, MeetingProvider.GOOGLE);
+    console.log("old meeting deleted");
+
+    // create new meeting
+    const classroomDetails = await this.findClassroomDetails(classroomId);
+    await this.meetingService.create(creatorDetails, classroomDetails, { provider: MeetingProvider.GOOGLE });
+  }
 
   async update(
     id: string,
