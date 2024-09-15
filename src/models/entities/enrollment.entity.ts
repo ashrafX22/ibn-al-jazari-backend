@@ -19,11 +19,15 @@ export class Enrollment {
   @CreateDateColumn()
   enrollmentDate: Date;
 
-  @ManyToOne(() => Student, (student) => student.enrollments)
+  @ManyToOne(() => Student, (student) => student.enrollments, {
+    onDelete: 'CASCADE', // When a student is deleted, the enrollment is also deleted
+  })
   @JoinColumn({ name: 'studentId' })
   student: Student;
 
-  @ManyToOne(() => Classroom, (classroom) => classroom.enrollments)
+  @ManyToOne(() => Classroom, (classroom) => classroom.enrollments, {
+    onDelete: 'CASCADE', // When a classroom is deleted, the enrollment is also deleted
+  })
   @JoinColumn({ name: 'classroomId' })
   classroom: Classroom;
 }

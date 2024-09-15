@@ -22,7 +22,9 @@ export class Appointment {
   @Column()
   startTime: string;
 
-  @ManyToOne(() => Classroom, (classroom) => classroom.appointments)
+  @ManyToOne(() => Classroom, (classroom) => classroom.appointments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'classroomId' })
   classroom: Classroom;
 }

@@ -38,11 +38,15 @@ export class Payment {
   @Column()
   paymentMethod: PaymentMethod;
 
-  @ManyToOne(() => Student, (student) => student.payments)
+  @ManyToOne(() => Student, (student) => student.payments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'studentId' })
   student: Student;
 
-  @ManyToOne(() => Classroom, (classroom) => classroom.payments)
+  @ManyToOne(() => Classroom, (classroom) => classroom.payments, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'classroomId' })
   classroom: Classroom;
 }
