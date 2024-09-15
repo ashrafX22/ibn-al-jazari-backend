@@ -7,6 +7,7 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { JwtAuthGuard } from './modules/auth/jwt/jwt.guard';
 import { RolesGuard } from './modules/auth/guards/roles.guard';
+import * as compression from 'compression';
 
 dotenv.config();
 
@@ -24,7 +25,9 @@ async function bootstrap() {
 
   // globals
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // Strip unwanted fields
+  }));
   app.useGlobalGuards(app.get(JwtAuthGuard), app.get(RolesGuard));
 
   // passort
@@ -36,6 +39,12 @@ async function bootstrap() {
       hidePoweredBy: true,
     }),
   );
+
+  // Enable shutdown hooks for graceful termination
+  app.enableShutdownHooks();
+
+  // to reduce payload sizes
+  app.use(compression());
 
   // swagger
   const config = new DocumentBuilder()

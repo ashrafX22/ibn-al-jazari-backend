@@ -50,7 +50,7 @@ import { APP_GUARD } from '@nestjs/core';
       ],
       migrations: [__dirname + '/migrations/*{.ts,.js}'],
       migrationsRun: true,
-      synchronize: true, // Set to false in production
+      synchronize: false, // Set to false in production
       logging: true,
     }),
     AuthModule,
@@ -72,4 +72,4 @@ import { APP_GUARD } from '@nestjs/core';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
