@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { EnrollmentService } from '../enrollment/enrollment.service';
 import { classroomEntity } from './entities/classroom.entity';
+import { getDayIndex } from 'src/models/enums/day.enum';
 
 @Injectable()
 export class ClassroomService {
@@ -94,7 +95,14 @@ export class ClassroomService {
         id: appointment.id,
         day: appointment.day,
         startTime: appointment.startTime,
-      })),
+      })).sort((a, b) => {
+        const dayComparison = getDayIndex(a.day) - getDayIndex(b.day);
+
+        if (dayComparison !== 0)
+          return dayComparison;
+
+        return a.startTime.localeCompare(b.startTime);
+      })
     };
   }
 
@@ -242,6 +250,10 @@ export class ClassroomService {
       return [];
     }
   }
+
+  // async editAppointments(appointments: A) {
+
+  // }
 
   async update(
     id: string,
