@@ -7,12 +7,14 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
 import { Enrollment } from './enrollment.entity';
 import { Payment } from './payment.entity';
 import { Subject } from './subject.entity';
 import { Appointment } from './appointment.entity';
+import { Meeting } from './meeting.entity';
 
 @Entity()
 export class Classroom {
@@ -57,6 +59,12 @@ export class Classroom {
     onUpdate: 'CASCADE', // update appointments if classroom ID is changed
   })
   appointments: Appointment[];
+
+  @OneToOne(() => Meeting, meeting => meeting.classroom, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  meeting: Meeting;
 
   @OneToMany(() => Payment, (payment) => payment.classroom, {
     cascade: true, // cascade operations on payments as well
