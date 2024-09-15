@@ -38,9 +38,9 @@ export class AuthController {
 
   @getUserSwaggerDoc()
   @Roles(Role.TEACHER, Role.STUDENT)
-  @Get('user')
+  @Get('me')
   async getUser(@Req() req) {
-    return this.authService.getUser(req.user.email);
+    return this.authService.getUser(req.user.id);
   }
 
   // pass username and password in a json object

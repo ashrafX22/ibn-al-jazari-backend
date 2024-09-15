@@ -15,8 +15,8 @@ export class AuthService {
     private googleAuthService: GoogleAuthService,
   ) { }
 
-  async getUser(email: string) {
-    const user = this.userService.findByEmail(email);
+  async getUser(id: string) {
+    const user = this.userService.findById(id);
 
     if (!user) throw new NotFoundException('user not found');
 
