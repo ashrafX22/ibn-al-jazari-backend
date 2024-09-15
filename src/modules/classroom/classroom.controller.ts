@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ClassroomService } from './classroom.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
@@ -17,72 +19,98 @@ import {
   findClassroomsByStudentIdSwaggerDoc,
   findClassroomsByTeacherIdSwaggerDoc,
   findOneClassroomSwaggerDoc,
+  removeClassroomSwaggerDoc,
   updateClassroomSwaggerDoc,
 } from './classroom.swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
+import { CreateAppointmentDto } from '../appointment/dto/create-appointment.dto';
+import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.interceptor';
 
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
   constructor(private readonly classroomService: ClassroomService) { }
 
-  @Post()
   @createClassroomSwaggerDoc()
+  @Roles(Role.TEACHER)
+  @Post()
   async create(@Body() createClassroomDto: CreateClassroomDto) {
-    return this.classroomService.create(createClassroomDto);
+    return await this.classroomService.create(createClassroomDto);
   }
 
-  @Get()
   @findAllClassroomsSwaggerDoc()
+  @Get()
   async findAll() {
-    return this.classroomService.findAll();
+    return await this.classroomService.findAll();
   }
 
-  @Get(':id')
+  @Roles(Role.TEACHER, Role.STUDENT)
+  @Get('joinable')
+  async findJoinableClassrooms(@Req() req) {
+    console.log("findJoinableClassrooms user", req.user);
+    return await this.classroomService.findJoinableClassrooms(req.user.id);
+  }
+
   @findOneClassroomSwaggerDoc()
+  @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.classroomService.findOne(+id);
+    return await this.classroomService.findOne(id);
   }
 
+  @Roles(Role.TEACHER, Role.STUDENT)
   @Get('details/:id')
   async findClassroomDetails(@Param('id') id: string) {
-    return this.classroomService.findClassroomDetails(+id);
+    return await this.classroomService.findClassroomDetails(id);
   }
 
+  @Roles(Role.TEACHER)
   @Get('teacher/:teacherId/lessons')
-  async findLessonsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findLessonsByTeacherId(+teacherId);
+  async findWeeklyLessonsByTeacherId(@Param('teacherId') teacherId: string) {
+    return await this.classroomService.findWeeklyLessonsByTeacherId(teacherId);
   }
 
+  @Roles(Role.STUDENT)
   @Get('student/:studentId/lessons')
-  async findLessonsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findLessonsByStudentId(+studentId);
+  async findWeeklyLessonsByStudentId(@Param('studentId') studentId: string) {
+    return await this.classroomService.findWeeklyLessonsByStudentId(studentId);
   }
 
-  @Get('teacher/:teacherId')
   @findClassroomsByTeacherIdSwaggerDoc()
-  async getClassroomsByTeacherId(@Param('teacherId') teacherId: string) {
-    return this.classroomService.findClassroomsByTeacherId(+teacherId);
+  @Roles(Role.TEACHER)
+  @Get('teacher/:teacherId')
+  async findClassroomsByTeacherId(@Param('teacherId') teacherId: string) {
+    return await this.classroomService.findClassroomsByTeacherId(teacherId);
   }
 
-  @Get('student/:studentId')
   @findClassroomsByStudentIdSwaggerDoc()
-  async getClassroomsByStudentId(@Param('studentId') studentId: string) {
-    return this.classroomService.findClassroomsByStudentId(+studentId);
+  @Roles(Role.STUDENT)
+  @Get('student/:studentId')
+  async findClassroomsByStudentId(@Param('studentId') studentId: string) {
+    return await this.classroomService.findClassroomsByStudentId(studentId);
   }
 
+  @Roles(Role.TEACHER)
+  @UseInterceptors(GoogleTokenInterceptor)
+  @Post(':classroomId/appointments/edit')
+  async editAppointments(@Req() req, @Param('classroomId') classroomId: string, @Body() createAppointmentDtos: CreateAppointmentDto[]) {
+    console.log("editAppointments", req.user, classroomId, createAppointmentDtos);
+    await this.classroomService.editAppointments(req.user, classroomId, createAppointmentDtos);
+    return { message: "success" };
+  }
 
-  @Patch(':id')
   @updateClassroomSwaggerDoc()
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateClassroomDto: UpdateClassroomDto,
   ) {
-    return this.classroomService.update(+id, updateClassroomDto);
+    return await this.classroomService.update(id, updateClassroomDto);
   }
 
   @Delete(':id')
-  @createClassroomSwaggerDoc()
+  @removeClassroomSwaggerDoc()
   async remove(@Param('id') id: string) {
-    return this.classroomService.remove(+id);
+    return await this.classroomService.remove(id);
   }
 }

@@ -2,16 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class classroomEntity {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   name: string;
 
   @ApiProperty()
-  teacherId: number;
+  teacherId: string;
 
   @ApiProperty()
-  subjectId: number;
+  subjectId: string;
 
   // add or exclude or expose properties as needed
 

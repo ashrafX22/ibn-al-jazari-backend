@@ -1,32 +1,35 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    ManyToOne,
-    JoinColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Classroom } from './classroom.entity';
 
 @Entity()
 export class Meeting {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    link: string;
+  @Column()
+  meetingProviderId: string;
 
-    @Column({ unique: true })
-    classroomId: number;
+  @Column()
+  link: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @Column({ unique: true })
+  classroomId: string;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @ManyToOne(() => Classroom, (classroom) => classroom.meetings)
-    @JoinColumn({ name: 'classroomId' })
-    class: Classroom;
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToOne(() => Classroom, classroom => classroom.meeting)
+  @JoinColumn({ name: 'classroomId' })
+  classroom: Classroom;
 }

@@ -7,27 +7,28 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Teacher } from './teacher.entity';
-import { Meeting } from './meeting.entity';
 import { Enrollment } from './enrollment.entity';
 import { Payment } from './payment.entity';
 import { Subject } from './subject.entity';
 import { Appointment } from './appointment.entity';
+import { Meeting } from './meeting.entity';
 
 @Entity()
 export class Classroom {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
+  @Column({ unique: true, length: 40 })
   name: string;
 
   @Column()
-  teacherId: number;
+  teacherId: string;
 
   @Column()
-  subjectId: number;
+  subjectId: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -35,23 +36,38 @@ export class Classroom {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Teacher, (teacher) => teacher.classrooms)
+  @ManyToOne(() => Teacher, (teacher) => teacher.classrooms, {
+    onDelete: 'CASCADE', // When a teacher is deleted, the classroom is also deleted
+  })
   @JoinColumn({ name: 'teacherId' })
   teacher: Teacher;
 
-  @ManyToOne(() => Subject, (subject) => subject.classrooms)
+  @ManyToOne(() => Subject, (subject) => subject.classrooms, {
+    onDelete: 'CASCADE', // When a subject is deleted, the classroom is also deleted
+  })
   @JoinColumn({ name: 'subjectId' })
   subject: Subject;
 
-  @OneToMany(() => Meeting, (meeting) => meeting.class)
-  meetings: Meeting[];
-
-  @OneToMany(() => Enrollment, (enrollment) => enrollment.classroom)
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.classroom, {
+    cascade: true, // this allows cascading operations on enrollments
+  })
   enrollments: Enrollment[];
 
-  @OneToMany(() => Appointment, (appointment) => appointment.classroom)
+  @OneToMany(() => Appointment, (appointment) => appointment.classroom, {
+    cascade: true, // cascade operations on appointments
+    onDelete: 'CASCADE', // delete appointments when the classroom is deleted
+    onUpdate: 'CASCADE', // update appointments if classroom ID is changed
+  })
   appointments: Appointment[];
 
-  @OneToMany(() => Payment, (payment) => payment.classroom)
+  @OneToOne(() => Meeting, meeting => meeting.classroom, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  meeting: Meeting;
+
+  @OneToMany(() => Payment, (payment) => payment.classroom, {
+    cascade: true, // cascade operations on payments as well
+  })
   payments: Payment[];
 }

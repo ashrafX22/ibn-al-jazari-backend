@@ -18,9 +18,16 @@ export class AppointmentService {
   ) {}
 
   async create(
-    classroomId: number,
+    classroomId: string,
     createAppointmentDto: CreateAppointmentDto,
   ): Promise<AppointmentEntity> {
+    // check if classroom has reached the maximum number of appointments
+    const appointments = await this.findAppointmentsByClassroomId(classroomId);
+    if (appointments.length > 7) {
+      throw new BadRequestException(
+        'You have reached the maximum number of appointments',
+      );
+    }
     try {
       const appointment = this.appointmentRepository.create({
         classroomId,
@@ -54,7 +61,7 @@ export class AppointmentService {
   }
 
   async findAppointmentsByClassroomId(
-    classroomId: number,
+    classroomId: string,
   ): Promise<AppointmentEntity[]> {
     const appointments = await this.appointmentRepository.findBy({
       classroomId,
@@ -64,7 +71,7 @@ export class AppointmentService {
     );
   }
 
-  async findOne(id: number): Promise<AppointmentEntity> {
+  async findOne(id: string): Promise<AppointmentEntity> {
     const appointment = await this.appointmentRepository.findOneBy({ id });
 
     if (!appointment) {
@@ -75,7 +82,7 @@ export class AppointmentService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateAppointmentDto: UpdateAppointmentDto,
   ): Promise<AppointmentEntity> {
     await this.appointmentRepository.update(id, updateAppointmentDto);
@@ -90,7 +97,7 @@ export class AppointmentService {
     return new AppointmentEntity(updatedAppointment);
   }
 
-  async remove(id: number): Promise<AppointmentEntity> {
+  async remove(id: string): Promise<AppointmentEntity> {
     const appointment = await this.appointmentRepository.findOneBy({ id });
 
     if (!appointment) {
@@ -100,5 +107,9 @@ export class AppointmentService {
     await this.appointmentRepository.delete(id);
 
     return new AppointmentEntity(appointment);
+  }
+
+  async removeByClassroomId(classroomId: string) {
+    await this.appointmentRepository.delete({ classroomId });
   }
 }

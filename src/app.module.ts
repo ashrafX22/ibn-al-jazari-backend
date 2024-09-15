@@ -21,9 +21,18 @@ import { ClassroomModule } from './modules/classroom/classroom.module';
 import { EnrollmentModule } from './modules/enrollment/enrollment.module';
 import { Appointment } from './models/entities/appointment.entity';
 import { AppointmentModule } from './modules/appointment/appointment.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 20,
+      },
+    ]),
+
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -55,6 +64,12 @@ import { AppointmentModule } from './modules/appointment/appointment.module';
     AppointmentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

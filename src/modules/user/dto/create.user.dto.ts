@@ -8,8 +8,10 @@ import {
   IsDateString,
   IsOptional,
   IsString,
+  IsNotEmpty,
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';
+import { hashSync } from 'bcrypt';
 
 export class CreateUserDto {
   @IsOptional()
@@ -21,6 +23,7 @@ export class CreateUserDto {
   })
   profilePicture?: string;
 
+  @IsNotEmpty()
   @IsString()
   @ApiProperty({
     description: 'The full name of the user',
@@ -39,10 +42,10 @@ export class CreateUserDto {
   @IsStrongPassword()
   @ApiProperty({
     description:
-      'The user\'s password. Set to "google" by default for Google authenticated users.',
+      'The user\'s password. Set to "G@$%^&g1e" by default for Google authenticated users.',
     example: 'P@ssw0rd!',
   })
-  password?: string = 'G@@@@@g1e';
+  password?: string = hashSync('G@$%^&g1e', 10);
 
   @IsEnum(Gender)
   @ApiProperty({
@@ -54,7 +57,7 @@ export class CreateUserDto {
   @IsPhoneNumber()
   @ApiProperty({
     description: 'The phone number of the user',
-    example: '+1234567890',
+    example: '+201029343723',
   })
   phoneNumber: string;
 
@@ -65,17 +68,19 @@ export class CreateUserDto {
   })
   dateOfBirth: Date;
 
+  @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Access token for the user',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
-  googleAccessToken: string = '';
+  googleAccessToken?: string;
 
+  @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'Refresh token for the user',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
-  googleRefreshToken: string = '';
+  googleRefreshToken?: string;
 }

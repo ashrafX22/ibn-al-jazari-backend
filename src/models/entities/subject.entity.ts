@@ -10,10 +10,10 @@ import { Classroom } from './classroom.entity';
 
 @Entity()
 export class Subject {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 20 })
   name: string;
 
   @Column()

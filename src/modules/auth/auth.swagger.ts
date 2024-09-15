@@ -121,7 +121,7 @@ export function googleAuthCallbackSwaggerDoc() {
   );
 }
 
-export function googleRegisterSwaggerDoc() {
+export function googleRegisterStudentSwaggerDoc() {
   return applyDecorators(
     ApiOperation({
       summary: 'Handles Google registration process of a student',

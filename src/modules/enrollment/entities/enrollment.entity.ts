@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class EnrollmentEntity {
   @ApiProperty()
-  studentId: number;
+  studentId: string;
 
   @ApiProperty()
-  classroomId: number;
+  classroomId: string;
 
   @ApiProperty()
   enrollmentDate: Date;

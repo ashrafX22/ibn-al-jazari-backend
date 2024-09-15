@@ -11,11 +11,32 @@ export class EnrollmentService {
   constructor(
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
-  ) { }
+  ) {}
 
   async create(
     createEnrollmentDto: CreateEnrollmentDto,
   ): Promise<EnrollmentEntity> {
+    // check if student has already reached the maximum number of enrollments
+    const studentId = createEnrollmentDto.studentId;
+    const studentEnrollments = await this.findEnrollmentsByStudentId(studentId);
+    if (studentEnrollments.length > 7) {
+      throw new HttpException(
+        'You have reached the maximum number of enrollments',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // check if classroom has reached the maximum number of enrollments
+    const classroomId = createEnrollmentDto.classroomId;
+    const classroomEnrollments =
+      await this.findEnrollmentsByClassroomId(classroomId);
+    if (classroomEnrollments.length > 5) {
+      throw new HttpException(
+        'This classroom has reached the maximum number of enrollments',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     try {
       const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
       const savedEnrollment = await this.enrollmentRepository.save(enrollment);
@@ -36,22 +57,33 @@ export class EnrollmentService {
     }
   }
 
+  async findEnrollmentsByClassroomId(
+    classroomId: string,
+  ): Promise<Enrollment[]> {
+    const enrollments = await this.enrollmentRepository.find({
+      where: { classroomId },
+    });
+    return enrollments;
+  }
+
   async findAll(): Promise<EnrollmentEntity[]> {
     const enrollments = await this.enrollmentRepository.find();
     return enrollments.map((enrollment) => new EnrollmentEntity(enrollment));
   }
 
-  async findStudentEmailsByClassroomId(classroomId: number): Promise<string[]> {
+  async findStudentEmailsByClassroomId(classroomId: string): Promise<string[]> {
     const enrollments = await this.enrollmentRepository.find({
       where: { classroomId },
       relations: ['student'], // ensure that the student relation is loaded
     });
 
-    return enrollments.map((enrollment) => enrollment['student']['common']['email']);
+    return enrollments.map(
+      (enrollment) => enrollment['student']['common']['email'],
+    );
   }
 
   async findEnrollmentsByStudentId(
-    studentId: number,
+    studentId: string,
   ): Promise<EnrollmentEntity[]> {
     const enrollments = await this.enrollmentRepository.find({
       where: { studentId },
@@ -60,8 +92,8 @@ export class EnrollmentService {
   }
 
   async findOne(
-    studentId: number,
-    classroomId: number,
+    studentId: string,
+    classroomId: string,
   ): Promise<EnrollmentEntity> {
     const enrollment = await this.enrollmentRepository.findOneBy({
       studentId,
@@ -76,8 +108,8 @@ export class EnrollmentService {
   }
 
   async update(
-    studentId: number,
-    classroomId: number,
+    studentId: string,
+    classroomId: string,
     updateEnrollmentDto: UpdateEnrollmentDto,
   ): Promise<EnrollmentEntity> {
     await this.enrollmentRepository.update(
@@ -97,8 +129,8 @@ export class EnrollmentService {
   }
 
   async remove(
-    studentId: number,
-    classroomId: number,
+    studentId: string,
+    classroomId: string,
   ): Promise<EnrollmentEntity> {
     const enrollment = await this.enrollmentRepository.findOneBy({
       studentId,

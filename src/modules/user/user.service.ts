@@ -8,7 +8,7 @@ export class UserService {
   constructor(
     private studentService: StudentService,
     private teacherService: TeacherService,
-  ) { }
+  ) {}
 
   services = [this.studentService, this.teacherService];
 
@@ -21,7 +21,7 @@ export class UserService {
     return result;
   }
 
-  async findById(id: number): Promise<UnionUserEntity> {
+  async findById(id: string): Promise<UnionUserEntity> {
     let result = null;
 
     for (const service of this.services)
@@ -41,7 +41,7 @@ export class UserService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateUserDto: Partial<UpdateUserDto>,
   ): Promise<UpdateUserDto> {
     let result = null;

@@ -17,41 +17,49 @@ import {
   googleAuthCallbackSwaggerDoc,
   LocalRegisterSwaggerDoc,
   localLoginSwaggerDoc,
-  googleRegisterSwaggerDoc,
+  googleRegisterStudentSwaggerDoc,
 } from './auth.swagger';
 import { CreateStudentDto } from 'src/modules/student/dto/create-student.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthProvider } from './providers/auth-provider.enum';
 import { JwtAuthHeaderInterceptor } from './jwt/jwt-auth-header.interceptor';
+import { PasswordHashInterceptor } from './interceptors/password-hash.interceptor';
+import { PublicRoute } from './public-route/public-route.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from 'src/models/enums/role.enum';
+import { CreateTeacherDto } from '../teacher/dto/create-teacher.dto';
 
 @ApiTags('auth')
-@Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
 
   @getUserSwaggerDoc()
-  @UseGuards(AuthGuard('jwt'))
-  @Get('user')
+  @Roles(Role.TEACHER, Role.STUDENT)
+  @Get('me')
   async getUser(@Req() req) {
-    return this.authService.getUser(req.user.email);
+    return this.authService.getUser(req.user.id);
   }
 
   // pass username and password in a json object
   @localLoginSwaggerDoc()
+  @PublicRoute()
   @UseGuards(AuthGuard('local'))
   @UseInterceptors(JwtAuthHeaderInterceptor)
   @Post('local/login')
   async localLogin(@Req() req) {
     const jwt = await this.authService.login(AuthProvider.LOCAL, req.user);
-    return { message: "success", jwt };
+    return { message: 'success', jwt };
   }
 
   @LocalRegisterSwaggerDoc()
+  @UseInterceptors(PasswordHashInterceptor)
+  @PublicRoute()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
-    return await this.authService.register(
+    return await this.authService.registerStudent(
       AuthProvider.LOCAL,
       createStudentDto,
     );
@@ -62,6 +70,7 @@ export class AuthController {
   // - user authenticates if not authenticated
   // - redirects to the googleRedirect endpoint
   @googleAuthSwaggerDoc()
+  @PublicRoute()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
   googleAuth() { }
@@ -72,6 +81,7 @@ export class AuthController {
   // - user is saved to req.user upon subsequent requests
   // - redirection to the frontend
   @googleAuthCallbackSwaggerDoc()
+  @PublicRoute()
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleAuthCallback(@Req() req, @Res() res) {
@@ -83,18 +93,11 @@ export class AuthController {
       req.user,
     );
 
-    const { newAccount } = result;
-
-    // google login
-    if (!newAccount) {
-      const { jwt } = result;
-      const queryParams = new URLSearchParams({
-        jwt: jwt,
-      }).toString();
-      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
-    }
+    const { unapprovedTeacher, newAccount } = result;
+    if (unapprovedTeacher)
+      return res.redirect(`${process.env.ORIGIN}/?unapprovedTeacher=true`);
     // google register
-    else {
+    if (newAccount) {
       const queryParams = new URLSearchParams({
         email: req.user.email,
         googleAccessToken: req.user.googleAccessToken,
@@ -104,18 +107,37 @@ export class AuthController {
         `${process.env.ORIGIN}/auth/register-additional?${queryParams}`,
       );
     }
+    // google login
+    else {
+      const { jwt } = result;
+      const queryParams = new URLSearchParams({
+        jwt: jwt,
+      }).toString();
+      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
+    }
   }
 
-  @googleRegisterSwaggerDoc()
+  @googleRegisterStudentSwaggerDoc()
+  @PublicRoute()
   @UseInterceptors(JwtAuthHeaderInterceptor)
-  @Post('/google/register')
-  async googleRegister(@Body() createStudentDto: CreateStudentDto) {
-
-    const jwt = await this.authService.register(
+  @Post('/google/register/student')
+  async googleRegisterStudent(@Body() createStudentDto: CreateStudentDto) {
+    const jwt = await this.authService.registerStudent(
       AuthProvider.GOOGLE,
       createStudentDto,
     );
 
-    return { message: "success", jwt };
+    return { message: 'success', jwt };
+  }
+
+  @PublicRoute()
+  @Post('/google/register/teacher')
+  async googleRegisterTeacher(@Body() createTeacherDto: CreateTeacherDto) {
+    const teacher = await this.authService.registerTeacher(
+      AuthProvider.GOOGLE,
+      createTeacherDto,
+    );
+
+    return { message: 'success' };
   }
 }

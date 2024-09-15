@@ -12,7 +12,9 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ default: 'google' })
+  @Column({
+    default: '$2b$10$yV79t9H2qypc.cwbrWf0AeQv0Dc7iXqVj/AsseiJMTBSTwMIQQRT2',
+  })
   password: string;
 
   @Column()

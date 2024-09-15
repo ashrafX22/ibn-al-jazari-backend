@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, MaxLength, IsNumber } from 'class-validator';
 export class CreateSubjectDto {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(50)
+  @MaxLength(20)
   @ApiProperty({
     description: 'The name of the subject',
   })
