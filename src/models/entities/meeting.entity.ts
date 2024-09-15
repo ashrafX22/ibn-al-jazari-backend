@@ -27,6 +27,6 @@ export class Meeting {
   updatedAt: Date;
 
   @OneToOne(() => Classroom)
-  @JoinColumn()
+  @JoinColumn({ name: 'classroomId' })
   class: Classroom;
 }
