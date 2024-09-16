@@ -26,7 +26,9 @@ export class Meeting {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => Classroom)
+  @OneToOne(() => Classroom, {
+    onDelete: 'CASCADE', // When a classroom is deleted, the meeting is also deleted
+  })
   @JoinColumn()
   class: Classroom;
 }
