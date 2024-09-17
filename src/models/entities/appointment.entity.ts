@@ -19,7 +19,9 @@ export class Appointment {
   @Column()
   day: Day;
 
-  @Column()
+  @Column({
+    type: 'time',
+  })
   startTime: string;
 
   @ManyToOne(() => Classroom, (classroom) => classroom.appointments, {

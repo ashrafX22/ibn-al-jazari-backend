@@ -29,7 +29,10 @@ export class Teacher {
   @Column({ default: TeacherStatus.PENDING })
   status: TeacherStatus;
 
-  @OneToMany(() => Classroom, (classroom) => classroom.teacher)
+  @OneToMany(() => Classroom, (classroom) => classroom.teacher, {
+    cascade: true,
+    onDelete: 'SET NULL', // Set null if classroom is deleted
+  })
   classrooms: Classroom[];
 
   @OneToMany(() => Paycheck, (teachersPayment) => teachersPayment.teacher)
