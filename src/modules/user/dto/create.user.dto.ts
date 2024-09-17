@@ -9,6 +9,8 @@ import {
   IsOptional,
   IsString,
   IsNotEmpty,
+  matches,
+  Matches,
 } from 'class-validator';
 import { Gender } from 'src/models/enums/gender.enum';
 import { hashSync } from 'bcrypt';
@@ -39,7 +41,16 @@ export class CreateUserDto {
   email: string;
 
   @IsOptional()
-  @IsStrongPassword()
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
+  @Matches(
+    '/^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$/',
+  )
   @ApiProperty({
     description:
       'The user\'s password. Set to "G@$%^&g1e" by default for Google authenticated users.',
