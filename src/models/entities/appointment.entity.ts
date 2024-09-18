@@ -24,6 +24,16 @@ export class Appointment {
   })
   startTime: string;
 
+  @Column({
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column({
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
   @ManyToOne(() => Classroom, (classroom) => classroom.appointments, {
     onDelete: 'CASCADE',
   })

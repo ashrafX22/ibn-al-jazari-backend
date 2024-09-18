@@ -4,7 +4,11 @@ import { OAuth2Client } from 'google-auth-library';
 import { Jwt } from 'src/modules/auth/jwt/jwt.interface';
 import { IMeetingService } from '../../interfaces/meeting-service.interface';
 import { CreateMeetingDetails } from '../../interfaces/create-meeting-details.interface';
-import { addHoursToDateTime } from 'src/shared/utils/add-hours.util';
+import {
+  addHoursToDateTime,
+  combineDateAndTime,
+  getNextDateForDay,
+} from 'src/shared/utils/dateTime.util';
 import { ProviderMeetingDetails } from '../../interfaces/provider-meeting-details.interface';
 
 @Injectable()
@@ -19,7 +23,10 @@ export class GoogleMeetingService implements IMeetingService {
     );
   }
 
-  async createMeeting(creatorDetails: Jwt, meetingDetails: CreateMeetingDetails) {
+  async createMeeting(
+    creatorDetails: Jwt,
+    meetingDetails: CreateMeetingDetails,
+  ) {
     const { googleAccessToken } = creatorDetails;
     console.log('GoogleMeetingService createMeeting');
 
@@ -37,7 +44,21 @@ export class GoogleMeetingService implements IMeetingService {
     const days = daysArray.join();
 
     // TODO: validate that there are appointmetns
-    const startTime = appointments[0].startTime;
+    const appointment = appointments[0];
+
+    // Get the next occurrence of the appointment's day
+    const nextDate = getNextDateForDay(appointment.day);
+
+    // Combine the next date with the startTime
+    const startDateTime = combineDateAndTime(nextDate, appointment.startTime);
+
+    // Set the end date-time (e.g., 1 hour after start)
+    const endDateTime = combineDateAndTime(
+      nextDate,
+
+      //TODO: make this dynamic, leave it up the teacher to choose the duration of the meeting.
+      addHoursToDateTime(appointment.startTime, 1),
+    );
 
     const event = {
       summary: title,
@@ -45,12 +66,12 @@ export class GoogleMeetingService implements IMeetingService {
       start: {
         // google converts whatever timezone you give to the timeZone variable you passed
         // '2024-08-31T18:00:00+03:00'
-        dateTime: startTime, // startTime,
+        dateTime: startDateTime,
         timeZone: 'Africa/Cairo',
       },
       end: {
         // '2024-08-31T18:00:00+03:00'
-        dateTime: addHoursToDateTime(startTime, 1),
+        dateTime: endDateTime,
         timeZone: 'Africa/Cairo',
       },
       recurrence: [
@@ -94,7 +115,10 @@ export class GoogleMeetingService implements IMeetingService {
     return { id: providerMeeting.id, link: providerMeeting.hangoutLink };
   }
 
-  async deleteMeeting(creatorDetails: Jwt, meetingProviderId: string): Promise<void> {
+  async deleteMeeting(
+    creatorDetails: Jwt,
+    meetingProviderId: string,
+  ): Promise<void> {
     const { googleAccessToken } = creatorDetails;
 
     this.oauth2Client.setCredentials({ access_token: googleAccessToken });
@@ -105,7 +129,7 @@ export class GoogleMeetingService implements IMeetingService {
 
     try {
       await calendar.events.delete({
-        calendarId: "primary",
+        calendarId: 'primary',
         eventId: meetingProviderId,
       });
       console.log(`Event ${meetingProviderId} deleted successfully.`);

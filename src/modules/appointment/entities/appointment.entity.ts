@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Day } from 'src/models/enums/day.enum';
 
 export class AppointmentEntity {
   @ApiProperty()
@@ -8,7 +9,7 @@ export class AppointmentEntity {
   classroomId: string;
 
   @ApiProperty()
-  day: string;
+  day: Day;
 
   @ApiProperty()
   startTime: string;
