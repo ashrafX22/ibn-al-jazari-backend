@@ -92,14 +92,13 @@ export class EnrollmentService {
   }
 
   async findOne(
-    studentId: string,
     classroomId: string,
+    studentId: string,
   ): Promise<EnrollmentEntity> {
     const enrollment = await this.enrollmentRepository.findOneBy({
       studentId,
       classroomId,
     });
-
     if (!enrollment) {
       throw new HttpException('Enrollment not found', HttpStatus.NOT_FOUND);
     }
@@ -129,14 +128,10 @@ export class EnrollmentService {
   }
 
   async remove(
-    studentId: string,
     classroomId: string,
+    studentId: string,
   ): Promise<EnrollmentEntity> {
-    const enrollment = await this.enrollmentRepository.findOneBy({
-      studentId,
-      classroomId,
-    });
-
+    const enrollment = await this.findOne(classroomId, studentId);
     if (!enrollment) {
       throw new HttpException('Enrollment not found', HttpStatus.NOT_FOUND);
     }
