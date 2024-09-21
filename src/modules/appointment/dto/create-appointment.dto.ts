@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsDateString, IsEnum, IsMilitaryTime, IsNotEmpty, IsString } from 'class-validator';
 import { Day } from 'src/models/enums/day.enum';
 
 export class CreateAppointmentDto {
@@ -10,10 +10,10 @@ export class CreateAppointmentDto {
 
   @ApiProperty({
     example: '14:00',
-    description: 'Start time in HH:mm format',
+    description: 'Start time in HH:MM format',
   })
   @IsString()
-  @IsDateString()
+  @IsMilitaryTime()
   @IsNotEmpty()
   startTime: string;
 }
