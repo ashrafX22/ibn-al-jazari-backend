@@ -95,7 +95,7 @@ export class AuthController {
 
     const { unapprovedTeacher, newAccount } = result;
     if (unapprovedTeacher)
-      return res.redirect(`${process.env.ORIGIN}/?unapprovedTeacher=true`);
+      return res.redirect(`${process.env.ORIGIN}/auth/login?unapprovedTeacher=true`);
     // google register
     if (newAccount) {
       const queryParams = new URLSearchParams({
@@ -113,7 +113,7 @@ export class AuthController {
       const queryParams = new URLSearchParams({
         jwt: jwt,
       }).toString();
-      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
+      return res.redirect(`${process.env.ORIGIN}/auth/login?${queryParams}`);
     }
   }
 
