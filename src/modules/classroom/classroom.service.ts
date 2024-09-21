@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
 import { Classroom } from 'src/models/entities/classroom.entity';
@@ -263,6 +263,8 @@ export class ClassroomService {
 
   async editAppointments(creatorDetails: Jwt, classroomId: string, createAppointmentDtos: CreateAppointmentDto[]) {
     console.log("editAppointments service", creatorDetails, classroomId, createAppointmentDtos);
+
+    if (createAppointmentDtos.length === 0) throw new BadRequestException('No Appointments Provided');
 
     // delete all classroom appointments
     await this.appointmentService.removeByClassroomId(classroomId);
