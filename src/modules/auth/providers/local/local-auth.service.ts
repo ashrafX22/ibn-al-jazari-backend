@@ -18,7 +18,7 @@ export class LocalAuthService {
     private userService: UserService,
     private studentService: StudentService,
     private jwtUtilService: JwtUtilService,
-  ) { }
+  ) {}
 
   async localValidateUser(
     email: string,
@@ -41,6 +41,12 @@ export class LocalAuthService {
   }
 
   async localRegister(createStudentDto: CreateStudentDto) {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(
+      createStudentDto.password,
+      saltRounds,
+    );
+    createStudentDto.password = hashedPassword;
     return await this.studentService.create(createStudentDto);
   }
 }
