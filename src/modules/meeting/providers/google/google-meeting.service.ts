@@ -4,7 +4,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { Jwt } from 'src/modules/auth/jwt/jwt.interface';
 import { IMeetingService } from '../../interfaces/meeting-service.interface';
 import { CreateMeetingDetails } from '../../interfaces/create-meeting-details.interface';
-import { addHoursToDateTime } from 'src/shared/utils/add-hours.util';
+import { getFirstNextDateTime, addHoursToDateTime } from 'src/shared/utils/time.util';
 import { ProviderMeetingDetails } from '../../interfaces/provider-meeting-details.interface';
 
 @Injectable()
@@ -36,8 +36,10 @@ export class GoogleMeetingService implements IMeetingService {
     );
     const days = daysArray.join();
 
-    // TODO: validate that there are appointmetns
+    const startDay = appointments[0].day;
     const startTime = appointments[0].startTime;
+
+    const startDateTime = getFirstNextDateTime(startDay, startTime, 'Africa/Cairo');
 
     const event = {
       summary: title,
@@ -45,12 +47,12 @@ export class GoogleMeetingService implements IMeetingService {
       start: {
         // google converts whatever timezone you give to the timeZone variable you passed
         // '2024-08-31T18:00:00+03:00'
-        dateTime: startTime, // startTime,
+        dateTime: startDateTime,
         timeZone: 'Africa/Cairo',
       },
       end: {
         // '2024-08-31T18:00:00+03:00'
-        dateTime: addHoursToDateTime(startTime, 1),
+        dateTime: addHoursToDateTime(startDateTime, 1),
         timeZone: 'Africa/Cairo',
       },
       recurrence: [

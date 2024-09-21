@@ -34,7 +34,7 @@ import { CreateTeacherDto } from '../teacher/dto/create-teacher.dto';
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @getUserSwaggerDoc()
   @Roles(Role.TEACHER, Role.STUDENT)
@@ -55,7 +55,7 @@ export class AuthController {
   }
 
   @LocalRegisterSwaggerDoc()
-  @UseInterceptors(PasswordHashInterceptor)
+  // @UseInterceptors(PasswordHashInterceptor)
   @PublicRoute()
   @Post('local/register')
   async localRegister(@Body() createStudentDto: CreateStudentDto) {
@@ -73,7 +73,7 @@ export class AuthController {
   @PublicRoute()
   @UseGuards(GoogleAuthGuard)
   @Get('google')
-  googleAuth() { }
+  googleAuth() {}
 
   // continue google auth steps
   // - again, google auth guard checks if the user is authenticated
@@ -95,7 +95,7 @@ export class AuthController {
 
     const { unapprovedTeacher, newAccount } = result;
     if (unapprovedTeacher)
-      return res.redirect(`${process.env.ORIGIN}/?unapprovedTeacher=true`);
+      return res.redirect(`${process.env.ORIGIN}/auth/login?unapprovedTeacher=true`);
     // google register
     if (newAccount) {
       const queryParams = new URLSearchParams({
@@ -113,7 +113,7 @@ export class AuthController {
       const queryParams = new URLSearchParams({
         jwt: jwt,
       }).toString();
-      return res.redirect(`${process.env.ORIGIN}/home?${queryParams}`);
+      return res.redirect(`${process.env.ORIGIN}/auth/login?${queryParams}`);
     }
   }
 
