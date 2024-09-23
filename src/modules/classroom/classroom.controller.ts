@@ -30,13 +30,16 @@ import { GoogleTokenInterceptor } from '../auth/providers/google/google-token.in
 @ApiTags('classroom')
 @Controller('classroom')
 export class ClassroomController {
-  constructor(private readonly classroomService: ClassroomService) { }
+  constructor(private readonly classroomService: ClassroomService) {}
 
   @createClassroomSwaggerDoc()
   @Roles(Role.TEACHER)
-  @Post()
-  async create(@Body() createClassroomDto: CreateClassroomDto) {
-    return await this.classroomService.create(createClassroomDto);
+  @Post('teacher/:teacherId')
+  async create(
+    @Param('teacherId') teacherId: string,
+    @Body() createClassroomDto: CreateClassroomDto,
+  ) {
+    return await this.classroomService.create(teacherId, createClassroomDto);
   }
 
   @findAllClassroomsSwaggerDoc()
@@ -45,10 +48,10 @@ export class ClassroomController {
     return await this.classroomService.findAll();
   }
 
-  @Roles(Role.TEACHER, Role.STUDENT)
+  @Roles(Role.STUDENT)
   @Get('joinable')
   async findJoinableClassrooms(@Req() req) {
-    console.log("findJoinableClassrooms user", req.user);
+    console.log('findJoinableClassrooms user', req.user);
     return await this.classroomService.findJoinableClassrooms(req.user.id);
   }
 
@@ -93,10 +96,23 @@ export class ClassroomController {
   @Roles(Role.TEACHER)
   @UseInterceptors(GoogleTokenInterceptor)
   @Post(':classroomId/appointments/edit')
-  async editAppointments(@Req() req, @Param('classroomId') classroomId: string, @Body() createAppointmentDtos: CreateAppointmentDto[]) {
-    console.log("editAppointments", req.user, classroomId, createAppointmentDtos);
-    await this.classroomService.editAppointments(req.user, classroomId, createAppointmentDtos);
-    return { message: "success" };
+  async editAppointments(
+    @Req() req,
+    @Param('classroomId') classroomId: string,
+    @Body() createAppointmentDtos: CreateAppointmentDto[],
+  ) {
+    console.log(
+      'editAppointments',
+      req.user,
+      classroomId,
+      createAppointmentDtos,
+    );
+    await this.classroomService.editAppointments(
+      req.user,
+      classroomId,
+      createAppointmentDtos,
+    );
+    return { message: 'success' };
   }
 
   @updateClassroomSwaggerDoc()
