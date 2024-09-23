@@ -49,10 +49,9 @@ export class ClassroomController {
   }
 
   @Roles(Role.STUDENT)
-  @Get('joinable')
-  async findJoinableClassrooms(@Req() req) {
-    console.log('findJoinableClassrooms user', req.user);
-    return await this.classroomService.findJoinableClassrooms(req.user.id);
+  @Get('student/:studentId/joinable')
+  async findJoinableClassrooms(@Param('studentId') studentId: string) {
+    return await this.classroomService.findJoinableClassrooms(studentId);
   }
 
   @findOneClassroomSwaggerDoc()
