@@ -3,28 +3,42 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
 import { PublicRouteService } from '../public-route/public.service';
-import { TeacherStatus } from 'src/models/enums/teacher-status.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    constructor(private reflector: Reflector, private publicRouteService: PublicRouteService) { }
+  constructor(
+    private reflector: Reflector,
+    private publicRouteService: PublicRouteService,
+  ) {}
 
-    canActivate(context: ExecutionContext): boolean {
-        console.log("RolesGuard");
-        // If the route is public, bypass the guard
-        if (this.publicRouteService.isPublicRoute(context))
-            return true;
+  canActivate(context: ExecutionContext): boolean {
+    console.log('RolesGuard');
+    // If the route is public, bypass the guard
+    if (this.publicRouteService.isPublicRoute(context)) return true;
 
-        // allow Role.ADMIN and roles specified using @Roles()
-        const requiredRoles = [Role.ADMIN, ...this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ])];
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
 
-        console.log("required roles", requiredRoles);
+    if (user.role === Role.ADMIN) return true;
 
-        const { user } = context.switchToHttp().getRequest();
+    // get roles specified using @Roles()
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
-        return requiredRoles.includes(user.role);
-    }
+    console.log('required roles', requiredRoles);
+
+    if (!requiredRoles.includes(user.role)) return false;
+
+    const teacherId = +request.params.teacherId;
+    if (teacherId && user.role === Role.TEACHER && teacherId !== user.id)
+      return false;
+
+    const studentId = +request.params.studentId;
+    if (studentId && user.role === Role.STUDENT && studentId !== user.id)
+      return false;
+
+    return true;
+  }
 }
