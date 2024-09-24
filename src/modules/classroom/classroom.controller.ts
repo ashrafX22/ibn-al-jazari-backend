@@ -62,8 +62,8 @@ export class ClassroomController {
 
   @Roles(Role.TEACHER, Role.STUDENT)
   @Get('details/:classroomId')
-  async findClassroomDetails(@Param('classroomId') id: string) {
-    return await this.classroomService.findClassroomDetails(id);
+  async findClassroomDetails(@Param('classroomId') classroomId: string) {
+    return await this.classroomService.findClassroomDetails(classroomId);
   }
 
   @Roles(Role.TEACHER)

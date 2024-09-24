@@ -26,6 +26,10 @@ import { Classroom } from 'src/models/entities/classroom.entity';
 import { Meeting } from 'src/models/entities/meeting.entity';
 import { PublicRouteService } from './public-route/public.service';
 import { JwtAuthGuard } from './jwt/jwt.guard';
+import { ClassroomModule } from '../classroom/classroom.module';
+import { EnrollmentModule } from '../enrollment/enrollment.module';
+import { TeacherIdorGuard } from './guards/teacher-idor.guard';
+import { StudentIdorGuard } from './guards/student-idor.guard';
 
 @Module({
   imports: [
@@ -37,6 +41,8 @@ import { JwtAuthGuard } from './jwt/jwt.guard';
       signOptions: { algorithm: 'HS256', expiresIn: '7d' },
     }),
     HttpModule,
+    ClassroomModule,
+    EnrollmentModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -49,6 +55,8 @@ import { JwtAuthGuard } from './jwt/jwt.guard';
     StudentService,
     TeacherService,
     RolesGuard,
+    TeacherIdorGuard,
+    StudentIdorGuard,
     ExperiencesGuard,
     JwtStrategy,
     JwtUtilService,
@@ -63,4 +71,4 @@ import { JwtAuthGuard } from './jwt/jwt.guard';
   ],
   exports: [AuthService, JwtModule, GoogleTokenService],
 })
-export class AuthModule { }
+export class AuthModule {}

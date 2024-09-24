@@ -3,16 +3,16 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
 import { PublicRouteService } from '../public-route/public.service';
-import { ClassroomService } from 'src/modules/classroom/classroom.service';
-import { EnrollmentService } from 'src/modules/enrollment/enrollment.service';
+import { TeacherIdorGuard } from './teacher-idor.guard';
+import { StudentIdorGuard } from './student-idor.guard';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private publicRouteService: PublicRouteService,
-    private classroomService: ClassroomService,
-    private enrollmentService: EnrollmentService,
+    private teacherIdorGuard: TeacherIdorGuard,
+    private studentIdorGuard: StudentIdorGuard,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -35,31 +35,12 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles.includes(user.role)) return false;
 
-    const teacherId = request.params.teacherId;
-    if (teacherId && user.role === Role.TEACHER) return teacherId === user.id;
+    const roleToGuard = {
+      [Role.TEACHER]: this.teacherIdorGuard,
+      [Role.STUDENT]: this.studentIdorGuard,
+    };
 
-    const studentId = request.params.studentId;
-    if (studentId && user.role === Role.STUDENT) return studentId === user.id;
-
-    const classroomId = request.params.classroomId;
-    if (classroomId) {
-      if (user.role === Role.TEACHER) {
-        const teacherId =
-          await this.classroomService.findTeacherId(classroomId);
-        return teacherId === user.id;
-      } else if (user.role === Role.STUDENT) {
-        const studentId = request.params.studentId;
-        if (studentId) return studentId === user.id;
-        else {
-          const enrollment = await this.enrollmentService.findOne(
-            classroomId,
-            user.id,
-          );
-          return !!enrollment;
-        }
-      }
-    }
-
-    return false;
+    // call Idor Guards
+    return await roleToGuard[user.role].canActivate(context);
   }
 }
