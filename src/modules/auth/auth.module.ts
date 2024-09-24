@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './providers/google/google.strategy';
@@ -41,8 +41,8 @@ import { StudentIdorGuard } from './guards/student-idor.guard';
       signOptions: { algorithm: 'HS256', expiresIn: '7d' },
     }),
     HttpModule,
-    ClassroomModule,
-    EnrollmentModule,
+    forwardRef(() => ClassroomModule),
+    forwardRef(() => EnrollmentModule),
   ],
   controllers: [AuthController],
   providers: [
