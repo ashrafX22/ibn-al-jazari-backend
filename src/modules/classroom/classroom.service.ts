@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
@@ -80,6 +81,20 @@ export class ClassroomService {
     }
 
     return new classroomEntity(classroom);
+  }
+
+  async findTeacherId(id: string): Promise<String> {
+    try {
+      const classroom = await this.classroomRepository
+        .createQueryBuilder('classroom')
+        .select('classroom.teacherId AS "teacherId"')
+        .where('classroom.id = :id', { id })
+        .getOne();
+
+      return classroom.teacherId;
+    } catch (error: any) {
+      throw new NotFoundException('classroom not found');
+    }
   }
 
   // works. However, the query itself return all fields.

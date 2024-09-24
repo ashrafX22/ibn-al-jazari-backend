@@ -61,8 +61,8 @@ export class ClassroomController {
   }
 
   @Roles(Role.TEACHER, Role.STUDENT)
-  @Get('details/:id')
-  async findClassroomDetails(@Param('id') id: string) {
+  @Get('details/:classroomId')
+  async findClassroomDetails(@Param('classroomId') id: string) {
     return await this.classroomService.findClassroomDetails(id);
   }
 

@@ -3,15 +3,19 @@ import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from 'src/models/enums/role.enum';
 import { PublicRouteService } from '../public-route/public.service';
+import { ClassroomService } from 'src/modules/classroom/classroom.service';
+import { EnrollmentService } from 'src/modules/enrollment/enrollment.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private publicRouteService: PublicRouteService,
+    private classroomService: ClassroomService,
+    private enrollmentService: EnrollmentService,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     console.log('RolesGuard');
     // If the route is public, bypass the guard
     if (this.publicRouteService.isPublicRoute(context)) return true;
@@ -31,14 +35,31 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles.includes(user.role)) return false;
 
-    const teacherId = +request.params.teacherId;
-    if (teacherId && user.role === Role.TEACHER && teacherId !== user.id)
-      return false;
+    const teacherId = request.params.teacherId;
+    if (teacherId && user.role === Role.TEACHER) return teacherId === user.id;
 
-    const studentId = +request.params.studentId;
-    if (studentId && user.role === Role.STUDENT && studentId !== user.id)
-      return false;
+    const studentId = request.params.studentId;
+    if (studentId && user.role === Role.STUDENT) return studentId === user.id;
 
-    return true;
+    const classroomId = request.params.classroomId;
+    if (classroomId) {
+      if (user.role === Role.TEACHER) {
+        const teacherId =
+          await this.classroomService.findTeacherId(classroomId);
+        return teacherId === user.id;
+      } else if (user.role === Role.STUDENT) {
+        const studentId = request.params.studentId;
+        if (studentId) return studentId === user.id;
+        else {
+          const enrollment = await this.enrollmentService.findOne(
+            classroomId,
+            user.id,
+          );
+          return !!enrollment;
+        }
+      }
+    }
+
+    return false;
   }
 }
