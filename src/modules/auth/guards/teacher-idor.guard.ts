@@ -12,6 +12,8 @@ export class TeacherIdorGuard implements CanActivate {
   constructor(private classroomService: ClassroomService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('TeacherIdorGuard');
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
@@ -22,11 +24,18 @@ export class TeacherIdorGuard implements CanActivate {
     }
 
     const teacherId = request.params.teacherId;
-    if (teacherId) return teacherId === user.id;
+    if (teacherId) {
+      console.log(`teacher-idor.guard.ts teacherId: `, teacherId);
+      return teacherId === user.id;
+    }
 
     const classroomId = request.params.classroomId;
     if (classroomId) {
       const teacherId = await this.classroomService.findTeacherId(classroomId);
+      console.log(
+        `teacher-idor.guard.ts classroomId ${classroomId}'s teacherId: `,
+        teacherId,
+      );
       return teacherId === user.id;
     }
 

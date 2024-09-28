@@ -87,7 +87,7 @@ export class ClassroomService {
     try {
       const classroom = await this.classroomRepository
         .createQueryBuilder('classroom')
-        .select('classroom.teacherId AS "teacherId"')
+        .select('classroom.teacherId')
         .where('classroom.id = :id', { id })
         .getOne();
 

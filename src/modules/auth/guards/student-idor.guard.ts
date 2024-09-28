@@ -12,6 +12,8 @@ export class StudentIdorGuard implements CanActivate {
   constructor(private enrollmentService: EnrollmentService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('StudentIdorGuard');
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
@@ -22,7 +24,10 @@ export class StudentIdorGuard implements CanActivate {
     }
 
     const studentId = request.params.studentId;
-    if (studentId) return studentId === user.id;
+    if (studentId) {
+      console.log(`student-idor.guard.ts studentId: `, studentId);
+      return studentId === user.id;
+    }
 
     const classroomId = request.params.classroomId;
     if (classroomId) {
@@ -30,6 +35,7 @@ export class StudentIdorGuard implements CanActivate {
         classroomId,
         user.id,
       );
+      console.log(`student-idor.guard.ts enrollment: `, enrollment);
       return !!enrollment;
     }
 
