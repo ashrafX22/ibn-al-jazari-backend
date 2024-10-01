@@ -23,6 +23,7 @@ import { Appointment } from './models/entities/appointment.entity';
 import { AppointmentModule } from './modules/appointment/appointment.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { APP_GUARD } from '@nestjs/core';
     ClassroomModule,
     MeetingModule,
     AppointmentModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [

@@ -18,7 +18,6 @@ import { AppointmentService } from '../appointment/appointment.service';
 import { MeetingService } from '../meeting/meeting.service';
 import { Jwt } from '../auth/jwt/jwt.interface';
 import { MeetingProvider } from '../meeting/enums/meeting-provider.enum';
-
 @Injectable()
 export class ClassroomService {
   constructor(
@@ -280,6 +279,22 @@ export class ClassroomService {
     } catch (error) {
       return [];
     }
+  }
+
+  async findPaymentDetailsByClassroomId(id: string): Promise<any> {
+    const classroom = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .leftJoin('classroom.subject', 'subject')
+      .select([
+        'classroom.id AS "id"',
+        'classroom.name AS "name"',
+        'subject.id AS "subjectId"',
+        'subject.name AS "subjectName"',
+        'subject.price AS "subjectPrice"',
+      ])
+      .where('classroom.id = (:id)', { id })
+      .getRawOne();
+    return classroom;
   }
 
   async editAppointments(

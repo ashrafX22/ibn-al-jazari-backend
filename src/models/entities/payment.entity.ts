@@ -5,11 +5,13 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Student } from './student.entity';
 import { Classroom } from './classroom.entity';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { PaymentStatus } from '../enums/payment-status.enum';
+import { PaymentGateway } from '../enums/payment-gateway.enum';
 
 @Entity()
 export class Payment {
@@ -23,20 +25,25 @@ export class Payment {
   classroomId: string;
 
   @Column()
-  paymentGatewayOrderId: string;
-
-  // TODO: should we keep this and why? we can get it from the subject price
-  @Column('float')
-  amount: number;
-
-  @Column()
-  status: PaymentStatus;
-
-  @CreateDateColumn()
-  timestamp: Date;
+  paymentGateway: PaymentGateway;
 
   @Column()
   paymentMethod: PaymentMethod;
+
+  @Column({ unique: true, nullable: true })
+  paymentGatewayOrderId: string;
+
+  @Column('float')
+  amount: number;
+
+  @Column({ default: PaymentStatus.PENDING })
+  status: PaymentStatus;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => Student, (student) => student.payments, {
     onDelete: 'CASCADE',
