@@ -23,13 +23,21 @@ export class TeacherIdorGuard implements CanActivate {
       );
     }
 
-    const teacherId = request.params.teacherId;
+    const teacherId =
+      request.params.teacherId ||
+      request.body.teacherId ||
+      request.query.teacherId;
+
     if (teacherId) {
       console.log(`teacher-idor.guard.ts teacherId: `, teacherId);
       return teacherId === user.id;
     }
 
-    const classroomId = request.params.classroomId;
+    const classroomId =
+      request.params.classroomId ||
+      request.body.classroomId ||
+      request.query.classroomId;
+
     if (classroomId) {
       const teacherId = await this.classroomService.findTeacherId(classroomId);
       console.log(

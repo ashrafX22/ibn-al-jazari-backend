@@ -8,6 +8,11 @@ export class CreateClassroomDto {
   @MaxLength(40)
   name: string;
 
+  @ApiProperty({ description: 'ID of the teacher' })
+  @IsString()
+  @IsNotEmpty()
+  teacherId: string;
+
   @ApiProperty({ description: 'ID of the subject' })
   @IsString()
   @IsNotEmpty()

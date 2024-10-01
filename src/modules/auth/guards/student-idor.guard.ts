@@ -23,13 +23,21 @@ export class StudentIdorGuard implements CanActivate {
       );
     }
 
-    const studentId = request.params.studentId;
+    const studentId =
+      request.params.studentId ||
+      request.body.studentId ||
+      request.query.studentId;
+
     if (studentId) {
       console.log(`student-idor.guard.ts studentId: `, studentId);
       return studentId === user.id;
     }
 
-    const classroomId = request.params.classroomId;
+    const classroomId =
+      request.params.classroomId ||
+      request.body.classroomId ||
+      request.query.classroomId;
+
     if (classroomId) {
       const enrollment = await this.enrollmentService.findOne(
         classroomId,

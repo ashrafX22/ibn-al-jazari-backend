@@ -34,7 +34,7 @@ export class SubjectController {
 
   @findAllSubjectsSwaggerDoc()
   @Roles(Role.TEACHER)
-  @Get('teacher/:teacherId')
+  @Get()
   async findAll() {
     return this.subjectService.findAll();
   }

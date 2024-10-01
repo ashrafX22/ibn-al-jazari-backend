@@ -30,11 +30,11 @@ export class ClassroomService {
   ) {}
 
   async create(
-    teacherId: string,
     createClassroomDto: CreateClassroomDto,
   ): Promise<classroomEntity> {
     // check if teacher has reached the maximum number of classrooms
     // so that he can't spam classrooms
+    const { teacherId } = createClassroomDto;
     const classrooms = await this.findClassroomsByTeacherId(teacherId);
     if (classrooms.length > 20) {
       throw new HttpException(
@@ -44,10 +44,7 @@ export class ClassroomService {
     }
 
     try {
-      const classroom = this.classroomRepository.create({
-        teacherId,
-        ...createClassroomDto,
-      });
+      const classroom = this.classroomRepository.create(createClassroomDto);
 
       const savedClassroom = await this.classroomRepository.save(classroom);
 

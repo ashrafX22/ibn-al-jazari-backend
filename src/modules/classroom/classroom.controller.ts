@@ -34,12 +34,9 @@ export class ClassroomController {
 
   @createClassroomSwaggerDoc()
   @Roles(Role.TEACHER)
-  @Post('teacher/:teacherId')
-  async create(
-    @Param('teacherId') teacherId: string,
-    @Body() createClassroomDto: CreateClassroomDto,
-  ) {
-    return await this.classroomService.create(teacherId, createClassroomDto);
+  @Post()
+  async create(@Body() createClassroomDto: CreateClassroomDto) {
+    return await this.classroomService.create(createClassroomDto);
   }
 
   @findAllClassroomsSwaggerDoc()
@@ -61,7 +58,7 @@ export class ClassroomController {
   }
 
   @Roles(Role.TEACHER, Role.STUDENT)
-  @Get('details/:classroomId')
+  @Get(':classroomId/details')
   async findClassroomDetails(@Param('classroomId') classroomId: string) {
     return await this.classroomService.findClassroomDetails(classroomId);
   }
