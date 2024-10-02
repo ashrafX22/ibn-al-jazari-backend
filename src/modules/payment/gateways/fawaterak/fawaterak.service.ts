@@ -41,9 +41,9 @@ export class FawaterakPaymentGatewayService implements IPaymentGatewayService {
   async create(
     createPaymentDetails: CreatePaymentDetails,
   ): Promise<AxiosResponse<any>> {
-    const { id, paymentMethod } = createPaymentDetails;
+    const { id, month, paymentMethod } = createPaymentDetails;
 
-    // TODO: add typing to classroom, payment month
+    // TODO: add typing to classroom
     const classroom = createPaymentDetails.classroom;
     const student = createPaymentDetails.student;
     const [firstName, ...rest] = student.name.split(' ');
@@ -72,7 +72,7 @@ export class FawaterakPaymentGatewayService implements IPaymentGatewayService {
       },
       cartItems: [
         {
-          name: classroom.name,
+          name: `مجموعة '${classroom.name}' لشهر ${month}`,
           price: classroom.subjectPrice,
           quantity: '1',
         },

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,21 +25,24 @@ export class PaymentService {
   ) {}
 
   async create(createPaymentDto: CreatePaymentDto) {
-    const { studentId, classroomId, paymentGateway, paymentMethod } =
+    const { studentId, classroomId, month, paymentGateway, paymentMethod } =
       createPaymentDto;
-
-    const paymentGatewayService =
-      this.paymentGatewayServiceFactory.getPaymentGatewayService(
-        paymentGateway,
-      );
 
     const classroom =
       await this.classroomService.findPaymentDetailsByClassroomId(classroomId);
     const student = await this.studentService.findById(studentId);
 
-    // TODO: make sure the student is enrolled inside this classroom.
-    // TODO: add payment month
-    // TODO: make sure the student has not already paid this classroom this month
+    const existingPayment = await this.paymentRepository.findOneBy({
+      studentId,
+      classroomId,
+      month,
+    });
+
+    if (existingPayment) {
+      throw new ConflictException(
+        'a payment with the exact same data already exists',
+      );
+    }
 
     // create a payment in database
     const payment = this.paymentRepository.create({
@@ -46,12 +53,18 @@ export class PaymentService {
 
     const createPaymentDetails: CreatePaymentDetails = {
       id: savedPayment.id,
-      paymentMethod,
       student,
       classroom,
+      month,
+      paymentMethod,
     };
 
     // create a payment using payment gateway
+    const paymentGatewayService =
+      this.paymentGatewayServiceFactory.getPaymentGatewayService(
+        paymentGateway,
+      );
+
     const gatewayPayment =
       await paymentGatewayService.create(createPaymentDetails);
 
