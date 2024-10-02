@@ -71,13 +71,19 @@ export class PaymentService {
     return gatewayPayment;
   }
 
-  async acceptPayment(paidPaymentDto: any) {
-    const { invoice_id } = paidPaymentDto;
+  // TODO: dynamically extract order id based on payment gateway
+  async acceptPayment(paidTransactionDto: any) {
+    const { invoice_id } = paidTransactionDto;
     const payment = this.paymentRepository.findOneBy({
       paymentGatewayOrderId: invoice_id,
+      status: PaymentStatus.PENDING,
     });
 
-    if (!payment) return null;
+    if (!payment) {
+      throw new NotFoundException(
+        `There is no pending payment with the paymentGatewayOrderId ${invoice_id}.`,
+      );
+    }
 
     await this.paymentRepository.update(
       { paymentGatewayOrderId: invoice_id },
@@ -85,13 +91,18 @@ export class PaymentService {
     );
   }
 
-  async rejectPayment(failedPaymentDto: any) {
-    const { invoice_id } = failedPaymentDto;
+  async rejectPayment(failedTransactionDto: any) {
+    const { invoice_id } = failedTransactionDto;
     const payment = this.paymentRepository.findOneBy({
       paymentGatewayOrderId: invoice_id,
+      status: PaymentStatus.PENDING,
     });
 
-    if (!payment) return null;
+    if (!payment) {
+      throw new NotFoundException(
+        `There is no pending payment with the paymentGatewayOrderId ${invoice_id}.`,
+      );
+    }
 
     await this.paymentRepository.update(
       { paymentGatewayOrderId: invoice_id },

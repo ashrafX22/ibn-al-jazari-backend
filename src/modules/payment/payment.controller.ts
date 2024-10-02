@@ -49,16 +49,16 @@ export class PaymentController {
   }
 
   @Post('webhook/success')
-  async acceptPayment(@Body() paidPaymentDto: any) {
-    console.log(`payment.controller.ts success webhook: `, paidPaymentDto);
-    await this.paymentService.acceptPayment(paidPaymentDto);
+  async acceptPayment(@Body() paidTransactionDto: any) {
+    console.log(`payment.controller.ts success webhook: `, paidTransactionDto);
+    await this.paymentService.acceptPayment(paidTransactionDto);
     return { message: 'success' };
   }
 
   @Post('webhook/failure')
-  async failureWebhook(@Body() failedPaymentDto: any) {
-    console.log(`payment.controller.ts failure webhook: `, failedPaymentDto);
-    await this.paymentService.rejectPayment(failedPaymentDto);
+  async rejectPayment(@Body() failedTransactionDto: any) {
+    console.log(`payment.controller.ts failure webhook: `, failedTransactionDto);
+    await this.paymentService.rejectPayment(failedTransactionDto);
     return { message: 'failure' };
   }
 
