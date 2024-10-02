@@ -18,6 +18,7 @@ import { Role } from 'src/models/enums/role.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { PaymentCallbackGuard } from './guards/payment-callback.guard';
 import { PaymentWebhookGuard } from './guards/payment-webhook.guard';
+import { PublicRoute } from '../auth/public-route/public-route.decorator';
 
 @ApiTags('payment')
 @Controller('payment')
@@ -30,6 +31,7 @@ export class PaymentController {
     return await this.paymentService.create(createPaymentDto);
   }
 
+  @PublicRoute()
   @UseGuards(PaymentCallbackGuard)
   @Get('callback/success')
   async success(@Query('invoice_id') invoiceId: string, @Res() res) {
@@ -41,6 +43,7 @@ export class PaymentController {
     return res.redirect(`${process.env.ORIGIN}?${queryParams}`);
   }
 
+  @PublicRoute()
   @UseGuards(PaymentCallbackGuard)
   @Get('callback/failure')
   async failure(@Query('invoice_id') invoiceId: string, @Res() res) {
@@ -52,6 +55,7 @@ export class PaymentController {
     return res.redirect(`${process.env.ORIGIN}${queryParams}`);
   }
 
+  @PublicRoute()
   @UseGuards(PaymentWebhookGuard)
   @Post('webhook/success')
   async acceptPayment(@Body() paidTransactionDto: any) {
@@ -60,6 +64,7 @@ export class PaymentController {
     return { message: 'success' };
   }
 
+  @PublicRoute()
   @UseGuards(PaymentWebhookGuard)
   @Post('webhook/failure')
   async rejectPayment(@Body() failedTransactionDto: any) {
