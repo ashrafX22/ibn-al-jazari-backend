@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -15,6 +16,7 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/models/enums/role.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { PaymentWebhookGuard } from './guards/payment-webhook.guard';
 
 @ApiTags('payment')
 @Controller('payment')
@@ -48,6 +50,7 @@ export class PaymentController {
     return res.redirect(`${process.env.ORIGIN}${queryParams}`);
   }
 
+  @UseGuards(PaymentWebhookGuard)
   @Post('webhook/success')
   async acceptPayment(@Body() paidTransactionDto: any) {
     console.log(`payment.controller.ts success webhook: `, paidTransactionDto);
@@ -55,9 +58,13 @@ export class PaymentController {
     return { message: 'success' };
   }
 
+  @UseGuards(PaymentWebhookGuard)
   @Post('webhook/failure')
   async rejectPayment(@Body() failedTransactionDto: any) {
-    console.log(`payment.controller.ts failure webhook: `, failedTransactionDto);
+    console.log(
+      `payment.controller.ts failure webhook: `,
+      failedTransactionDto,
+    );
     await this.paymentService.rejectPayment(failedTransactionDto);
     return { message: 'failure' };
   }
