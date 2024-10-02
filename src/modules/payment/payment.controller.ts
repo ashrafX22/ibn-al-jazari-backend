@@ -16,6 +16,7 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/models/enums/role.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { PaymentCallbackGuard } from './guards/payment-callback.guard';
 import { PaymentWebhookGuard } from './guards/payment-webhook.guard';
 
 @ApiTags('payment')
@@ -29,7 +30,7 @@ export class PaymentController {
     return await this.paymentService.create(createPaymentDto);
   }
 
-  // TODO: how should i know that only payment gateways call this?
+  @UseGuards(PaymentCallbackGuard)
   @Get('callback/success')
   async success(@Query('invoice_id') invoiceId: string, @Res() res) {
     console.log(`payment.controller.ts invoiceId: `, invoiceId);
@@ -40,6 +41,7 @@ export class PaymentController {
     return res.redirect(`${process.env.ORIGIN}?${queryParams}`);
   }
 
+  @UseGuards(PaymentCallbackGuard)
   @Get('callback/failure')
   async failure(@Query('invoice_id') invoiceId: string, @Res() res) {
     console.log(`payment.controller.ts invoiceId: `, invoiceId);

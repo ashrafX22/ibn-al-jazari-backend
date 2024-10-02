@@ -2,23 +2,23 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class PaymentWebhookGuard implements CanActivate {
+export class PaymentCallbackGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    console.log(`payment-webhook.guard.ts`);
+    console.log(`payment-callback.guard.ts`);
 
     const request = context.switchToHttp().getRequest();
 
-    const allowedPaymentGatewayIPs = [process.env.FAWATERAK_WEBHOOK_IP];
-    const paymentGatewayWebhookIP =
+    const allowedIPs = [process.env.FAWATERAK_CALLBACK_IP];
+    const paymentGatewayCallbackIP =
       request.headers['x-forwarded-for'].split(',')[0];
 
     console.log(
-      `payment-webhook.guard.ts paymentGatewayIP: `,
-      paymentGatewayWebhookIP,
+      `payment-callback.guard.ts paymentGatewayCallbackIP: `,
+      paymentGatewayCallbackIP,
     );
 
-    return allowedPaymentGatewayIPs.includes(paymentGatewayWebhookIP);
+    return allowedIPs.includes(paymentGatewayCallbackIP);
   }
 }
