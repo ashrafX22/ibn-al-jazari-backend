@@ -1,4 +1,10 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
 import { Classroom } from 'src/models/entities/classroom.entity';
@@ -21,14 +27,14 @@ export class ClassroomService {
     private readonly enrollmentService: EnrollmentService,
     private readonly appointmentService: AppointmentService,
     private readonly meetingService: MeetingService,
-  ) { }
+  ) {}
 
   async create(
     createClassroomDto: CreateClassroomDto,
   ): Promise<classroomEntity> {
     // check if teacher has reached the maximum number of classrooms
     // so that he can't spam classrooms
-    const teacherId = createClassroomDto.teacherId;
+    const { teacherId } = createClassroomDto;
     const classrooms = await this.findClassroomsByTeacherId(teacherId);
     if (classrooms.length > 20) {
       throw new HttpException(
@@ -74,6 +80,20 @@ export class ClassroomService {
     return new classroomEntity(classroom);
   }
 
+  async findTeacherId(id: string): Promise<String> {
+    try {
+      const classroom = await this.classroomRepository
+        .createQueryBuilder('classroom')
+        .select('classroom.teacherId')
+        .where('classroom.id = :id', { id })
+        .getOne();
+
+      return classroom.teacherId;
+    } catch (error: any) {
+      throw new NotFoundException('classroom not found');
+    }
+  }
+
   // works. However, the query itself return all fields.
   async findClassroomDetails(id: string): Promise<any> {
     const classroom = await this.classroomRepository
@@ -99,18 +119,19 @@ export class ClassroomService {
         name: enrollment.student.common.name,
         email: enrollment.student.common.email,
       })),
-      appointments: classroom.appointments.map((appointment) => ({
-        id: appointment.id,
-        day: appointment.day,
-        startTime: appointment.startTime,
-      })).sort((a, b) => {
-        const dayComparison = getDayIndex(a.day) - getDayIndex(b.day);
+      appointments: classroom.appointments
+        .map((appointment) => ({
+          id: appointment.id,
+          day: appointment.day,
+          startTime: appointment.startTime,
+        }))
+        .sort((a, b) => {
+          const dayComparison = getDayIndex(a.day) - getDayIndex(b.day);
 
-        if (dayComparison !== 0)
-          return dayComparison;
+          if (dayComparison !== 0) return dayComparison;
 
-        return a.startTime.localeCompare(b.startTime);
-      })
+          return a.startTime.localeCompare(b.startTime);
+        }),
     };
   }
 
@@ -137,7 +158,7 @@ export class ClassroomService {
         .filter((classroom) => classroom.meetingLink)
         .map((classroom) => new classroomEntity(classroom));
     } catch (error) {
-      console.log("findWeeklyLessonsByTeacherId query error", error);
+      console.log('findWeeklyLessonsByTeacherId query error', error);
       return [];
     }
   }
@@ -172,7 +193,7 @@ export class ClassroomService {
         .filter((classroom) => classroom.meetingLink)
         .map((classroom) => new classroomEntity(classroom));
     } catch (error) {
-      console.log("findWeeklyLessonsByStudentId query error", error);
+      console.log('findWeeklyLessonsByStudentId query error', error);
       return [];
     }
   }
@@ -235,7 +256,7 @@ export class ClassroomService {
         (enrollment) => enrollment['classroomId'],
       );
 
-      console.log("classroomIds", classroomIds);
+      console.log('classroomIds', classroomIds);
 
       const query = this.classroomRepository
         .createQueryBuilder('classroom')
@@ -261,34 +282,55 @@ export class ClassroomService {
     }
   }
 
-  async editAppointments(creatorDetails: Jwt, classroomId: string, createAppointmentDtos: CreateAppointmentDto[]) {
-    console.log("editAppointments service", creatorDetails, classroomId, createAppointmentDtos);
+  async editAppointments(
+    creatorDetails: Jwt,
+    classroomId: string,
+    createAppointmentDtos: CreateAppointmentDto[],
+  ) {
+    console.log(
+      'editAppointments service',
+      creatorDetails,
+      classroomId,
+      createAppointmentDtos,
+    );
 
-    if (createAppointmentDtos.length === 0) throw new BadRequestException('No Appointments Provided');
+    if (createAppointmentDtos.length === 0)
+      throw new BadRequestException('No Appointments Provided');
 
     // delete all classroom appointments
     await this.appointmentService.removeByClassroomId(classroomId);
-    console.log("deleted old appointments");
+    console.log('deleted old appointments');
 
     // filter ids
     createAppointmentDtos = createAppointmentDtos.map(
-      (createAppointmentDto) => { return { day: createAppointmentDto.day, startTime: createAppointmentDto.startTime } }
+      (createAppointmentDto) => {
+        return {
+          day: createAppointmentDto.day,
+          startTime: createAppointmentDto.startTime,
+        };
+      },
     );
-    console.log("filtered appointments", createAppointmentDtos);
+    console.log('filtered appointments', createAppointmentDtos);
 
     // add new appointments
     for (const createAppointmentDto of createAppointmentDtos)
       await this.appointmentService.create(classroomId, createAppointmentDto);
-    console.log("added new appointments");
+    console.log('added new appointments');
 
     // delete old meeting
     // TODO: dynamically create meeting based on provider
-    await this.meetingService.removeByClassroomId(creatorDetails, classroomId, MeetingProvider.GOOGLE);
-    console.log("old meeting deleted");
+    await this.meetingService.removeByClassroomId(
+      creatorDetails,
+      classroomId,
+      MeetingProvider.GOOGLE,
+    );
+    console.log('old meeting deleted');
 
     // create new meeting
     const classroomDetails = await this.findClassroomDetails(classroomId);
-    await this.meetingService.create(creatorDetails, classroomDetails, { provider: MeetingProvider.GOOGLE });
+    await this.meetingService.create(creatorDetails, classroomDetails, {
+      provider: MeetingProvider.GOOGLE,
+    });
   }
 
   async update(
