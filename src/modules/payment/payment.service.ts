@@ -119,6 +119,16 @@ export class PaymentService {
     return payments.map((payment) => new PaymentEntity(payment));
   }
 
+  async findPaymentsByStudentId(studentId: string): Promise<PaymentEntity[]> {
+    const payments = await this.paymentRepository.find({
+      where: { studentId: studentId },
+    });
+
+    if (!payments) return null;
+
+    return payments.map((payment) => new PaymentEntity(payment));
+  }
+
   async findOne(id: string): Promise<PaymentEntity> {
     const payment = await this.paymentRepository.findOneBy({ id });
 

@@ -81,6 +81,11 @@ export class PaymentController {
     return await this.paymentService.findAll();
   }
 
+  @Get('student/:studentId')
+  async findPaymentsByStudentId(@Param('studentId') studentId: string) {
+    return await this.paymentService.findPaymentsByStudentId(studentId)
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.paymentService.findOne(id);
