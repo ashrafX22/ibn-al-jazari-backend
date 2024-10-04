@@ -8,6 +8,7 @@ import { CreatePaymentDetails } from '../../interfaces/create-payment-details.in
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from 'src/models/entities/payment.entity';
 import { Repository } from 'typeorm';
+import { PaymentEntity } from '../../entities/payment.entity';
 
 @Injectable()
 export class FawaterakPaymentGatewayService implements IPaymentGatewayService {
@@ -40,7 +41,7 @@ export class FawaterakPaymentGatewayService implements IPaymentGatewayService {
 
   async create(
     createPaymentDetails: CreatePaymentDetails,
-  ): Promise<AxiosResponse<any>> {
+  ): Promise<PaymentEntity> {
     const { id, month, paymentMethod } = createPaymentDetails;
 
     // TODO: add typing to classroom
@@ -105,5 +106,9 @@ export class FawaterakPaymentGatewayService implements IPaymentGatewayService {
       console.error('Error:', error.message);
       throw error;
     }
+  }
+
+  getOrderId(paymentDto: any) {
+    return paymentDto.invoice_id;
   }
 }
