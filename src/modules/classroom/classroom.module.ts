@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ClassroomService } from './classroom.service';
 import { ClassroomController } from './classroom.controller';
 import { Classroom } from 'src/models/entities/classroom.entity';
@@ -14,7 +14,7 @@ import { JwtUtilService } from '../auth/jwt/jwt-util.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Classroom, Enrollment]),
-    AuthModule,
+    forwardRef(() => AuthModule),
     EnrollmentModule,
     AppointmentModule,
     MeetingModule,
@@ -23,4 +23,4 @@ import { JwtUtilService } from '../auth/jwt/jwt-util.service';
   providers: [ClassroomService, JwtUtilService],
   exports: [ClassroomService],
 })
-export class ClassroomModule { }
+export class ClassroomModule {}

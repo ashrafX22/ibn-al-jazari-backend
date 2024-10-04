@@ -29,7 +29,7 @@ import { PublicRoute } from '../auth/public-route/public-route.decorator';
 @Controller('student')
 @UseInterceptors(ClassSerializerInterceptor)
 export class StudentController {
-  constructor(private readonly studentService: StudentService) { }
+  constructor(private readonly studentService: StudentService) {}
 
   @createStudentSwaggerDoc()
   @Post()
@@ -39,7 +39,7 @@ export class StudentController {
 
   @findAllStudentsSwaggerDoc()
   @Roles(Role.TEACHER)
-  @Get()
+  @Get('teacher/:teacherId')
   async findAll() {
     return await this.studentService.findAll();
   }

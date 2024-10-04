@@ -24,7 +24,7 @@ import { Role } from 'src/models/enums/role.enum';
 @ApiTags('subject')
 @Controller('subject')
 export class SubjectController {
-  constructor(private readonly subjectService: SubjectService) { }
+  constructor(private readonly subjectService: SubjectService) {}
 
   @createSubjectSwaggerDoc()
   @Post()

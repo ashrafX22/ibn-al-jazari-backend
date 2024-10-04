@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
@@ -26,13 +25,16 @@ import { Role } from 'src/models/enums/role.enum';
 @ApiTags('enrollment')
 @Controller('enrollment')
 export class EnrollmentController {
-  constructor(private readonly enrollmentService: EnrollmentService) { }
+  constructor(private readonly enrollmentService: EnrollmentService) {}
 
   @createEnrollmentSwaggerDoc()
   @Roles(Role.TEACHER, Role.STUDENT)
-  @Post()
-  async create(@Body() createEnrollmentDto: CreateEnrollmentDto) {
-    return this.enrollmentService.create(createEnrollmentDto);
+  @Post(':classroomId/:studentId')
+  async create(
+    @Param('classroomId') classroomId: string,
+    @Param('studentId') studentId: string,
+  ) {
+    return this.enrollmentService.create(classroomId, studentId);
   }
 
   @findAllEnrollmentsSwaggerDoc()
@@ -43,9 +45,7 @@ export class EnrollmentController {
 
   @findEnrollmentsByStudentIdSwaggerDoc()
   @Get('student/:studentId')
-  async findStudentEnrollmentsByStudentId(
-    @Param('studentId') studentId: string,
-  ) {
+  async findEnrollmentsByStudentId(@Param('studentId') studentId: string) {
     return this.enrollmentService.findEnrollmentsByStudentId(studentId);
   }
 

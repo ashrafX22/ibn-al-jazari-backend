@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,10 +13,10 @@ export class EnrollmentService {
   ) {}
 
   async create(
-    createEnrollmentDto: CreateEnrollmentDto,
+    classroomId: string,
+    studentId: string,
   ): Promise<EnrollmentEntity> {
     // check if student has already reached the maximum number of enrollments
-    const studentId = createEnrollmentDto.studentId;
     const studentEnrollments = await this.findEnrollmentsByStudentId(studentId);
     if (studentEnrollments.length > 7) {
       throw new HttpException(
@@ -27,7 +26,6 @@ export class EnrollmentService {
     }
 
     // check if classroom has reached the maximum number of enrollments
-    const classroomId = createEnrollmentDto.classroomId;
     const classroomEnrollments =
       await this.findEnrollmentsByClassroomId(classroomId);
     if (classroomEnrollments.length > 5) {
@@ -38,7 +36,10 @@ export class EnrollmentService {
     }
 
     try {
-      const enrollment = this.enrollmentRepository.create(createEnrollmentDto);
+      const enrollment = this.enrollmentRepository.create({
+        classroomId,
+        studentId,
+      });
       const savedEnrollment = await this.enrollmentRepository.save(enrollment);
       return new EnrollmentEntity(savedEnrollment);
     } catch (error) {
@@ -99,9 +100,8 @@ export class EnrollmentService {
       studentId,
       classroomId,
     });
-    if (!enrollment) {
-      throw new HttpException('Enrollment not found', HttpStatus.NOT_FOUND);
-    }
+
+    if (!enrollment) return null;
 
     return new EnrollmentEntity(enrollment);
   }
