@@ -13,6 +13,7 @@ import { StudentService } from '../student/student.service';
 import { ClassroomService } from '../classroom/classroom.service';
 import { PaymentGatewayServiceFactory } from './factories/payment-gateway-service.factory';
 import { CreatePaymentDetails } from './interfaces/create-payment-details.interface';
+import { PaymentEntity } from './entities/payment.entity';
 
 @Injectable()
 export class PaymentService {
@@ -24,7 +25,7 @@ export class PaymentService {
     private readonly classroomService: ClassroomService,
   ) {}
 
-  async create(createPaymentDto: CreatePaymentDto) {
+  async create(createPaymentDto: CreatePaymentDto): Promise<PaymentEntity> {
     const { studentId, classroomId, month, paymentGateway, paymentMethod } =
       createPaymentDto;
 
@@ -68,7 +69,7 @@ export class PaymentService {
     const gatewayPayment =
       await paymentGatewayService.create(createPaymentDetails);
 
-    return gatewayPayment;
+    return this.findOne(savedPayment.id);
   }
 
   // TODO: dynamically extract order id based on payment gateway
@@ -110,21 +111,34 @@ export class PaymentService {
     );
   }
 
-  async findAll() {
-    return await this.paymentRepository.find();
+  async findAll(): Promise<PaymentEntity[]> {
+    const payments = await this.paymentRepository.find();
+
+    if (!payments) return null;
+
+    return payments.map((payment) => new PaymentEntity(payment));
   }
 
-  async findOne(id: string) {
-    return await this.paymentRepository.findOneBy({ id });
+  async findOne(id: string): Promise<PaymentEntity> {
+    const payment = await this.paymentRepository.findOneBy({ id });
+
+    if (!payment) return null;
+
+    return new PaymentEntity(payment);
   }
 
-  async update(id: string, updatePaymentDto: UpdatePaymentDto) {
+  async update(
+    id: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<PaymentEntity> {
     await this.paymentRepository.update(id, updatePaymentDto);
     const updatedPayment = await this.paymentRepository.findOneBy({ id });
+
     if (!updatedPayment) {
       throw new NotFoundException('Payment not found.');
     }
-    return updatedPayment;
+
+    return new PaymentEntity(updatedPayment);
   }
 
   async remove(id: string) {
